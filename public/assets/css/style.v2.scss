@@ -1,0 +1,669 @@
+@import url('https://fonts.googleapis.com/css2?family=Gupter:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;0,6..12,1000;1,6..12,200;1,6..12,300;1,6..12,400;1,6..12,500;1,6..12,600;1,6..12,700;1,6..12,800;1,6..12,900;1,6..12,1000&display=swap');
+
+:root {
+    // font
+    --gupter : "Gupter", sans-serif;
+    --inter : "Inter", sans-serif;
+    --poppins : "Poppins", sans-serif;
+    --nunito-sans : "Nunito Sans", sans-serif;
+
+    // color
+    --primary: #E81E20;
+    --white: #fff;
+    --neutral-10: #eaeaea;
+    --neutral-20: #f9f9f9;
+    --neutral-30: #f4f4f4;
+    --neutral-50: #959595;
+    --neutral-90: #38383A;
+    --neutral-100 : #000;
+    --secondary : #F5FEFD;
+
+    --blue: #0019FF;
+    --blue-hover : #9975FF;
+
+    --success-hover: #63FF84;
+    --success-focus: #808000;
+
+    --tosca-focus: #00B9B9;
+
+    --warniing: #FFD700;
+
+    --purple: #DB00FF;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--poppins);
+}
+
+// LOADER
+#loader {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .loading-icon {
+        width: 42px;
+        height: auto;
+        animation: loadingAnimation 1s infinite;
+    }
+}
+
+@keyframes loadingAnimation {
+    0% {
+    transform: rotate(0deg);
+    }
+    100% {
+    transform: rotate(360deg);
+    }
+}
+
+
+/*====================================
+            WIDH / HEIGHT
+====================================*/
+// width
+.w-80 {
+    width: 80%;
+}
+.w-90 {
+    width: 90%;
+}
+
+/*====================================
+            BUTTON
+====================================*/
+.btn-rounded {
+    border-radius: 15px;
+}
+
+.btn {
+    font-family: var(--poppins);
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 16px;
+
+    &.primary {
+        color: var(--white);
+        background-color: var(--primary);
+    }
+}
+
+.btn-text-md {
+    font-size: 24px;
+    font-weight: 700;
+    padding: 4px 15px;
+}
+
+/*====================================
+            FORM
+====================================*/
+
+// form group
+.form-group {
+    position: relative;
+
+    &.icon {
+        svg {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            top: 10px;
+            left: 10px;
+
+            path {
+                fill: var(--neutral-50);
+            }
+        }
+
+        input,select {
+            padding: 0px 45px;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+        }
+    }
+
+}
+
+.form-label-section {
+    color: var(--neutral-100);
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--gupter);
+}
+
+// form-control
+.form-control {
+    height: 47px;
+    background-color: var(--neutral-30);
+    color: var(--neutral-50);
+    font-size: 16px;
+    font-family: var(--inter);
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    padding: 0px 20px;
+    
+    &::placeholder {
+        font-weight: 400;
+    }
+}
+
+.input-group {
+    .input-group-append, .input-group-prepend {
+        align-items: center;
+        background-color: var(--neutral-50);
+        padding-left: 5px;
+
+        span {
+            font-weight: 700;
+            border: none;
+        }
+    }
+}
+
+/*====================================
+            PROGRESS BAR
+====================================*/
+.maha__progress-bar {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background-color: var(--neutral-10);
+    border-radius: 20px;
+    overflow: hidden;
+
+    .progress-bar-fill {
+        position: absolute;
+        top: 0;
+        width: 50%;
+        max-width: 100%;
+        height: 100%;
+        background-color: var(--neutral-100);
+        text-align: center;
+        color: var(--white);
+        font-weight: 700;
+
+        p {
+            margin-left: 5px;
+        }
+    }
+}
+
+
+
+/*====================================
+            AUTH PAGE
+====================================*/
+
+.auth-header-wrapper
+{
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    width: 100%;    
+    padding: 0px 25px 25px;
+    // margin-bottom: 40px;
+    text-align: center;
+    background-color: var(--white);
+    border-radius: 0px 0px 80px 80px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+
+    .header-logo 
+    {
+        width: 100%;
+        max-width: 400px;
+        max-height: auto;
+    }
+}
+
+
+.auth-wrapper {
+    margin-top: 180px;
+    padding: 0px 30px;
+
+    .auth-header {
+
+        .auth-title {
+            color: var(--neutral-90);
+            font-size: 34px;
+            font-weight: 600;
+        }
+    }
+
+    .auth-form-footer {
+        >p {
+            font-size: 13px;
+            color: var(--neutral-50);
+
+            a {
+                font-weight: 700;
+                color: var(--primary);
+            }
+        }
+    }
+}
+
+#login__page, #register__page
+{
+    background-color: var(--white);
+}
+
+// Register
+#register__page {
+    .auth-header-wrapper {
+        margin-bottom: 20px;
+    }
+}
+
+
+
+/*====================================
+            DASHBOARD KARYAWAN
+====================================*/
+
+// HEADER
+.employee-header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;;
+    padding: 30px 25px 25px;
+    background-color: var(--primary);
+    border-radius: 0px 0px 30px 30px;
+    font-family: var(--nunito-sans);
+
+    .header-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        p {
+            margin: 0;
+        }
+
+        .header-profile-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            overflow: hidden;
+
+            >img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        .header-profile-employee {
+            .profile-name {
+                font-size: 27px;
+                font-weight: 600;
+                color: var(--white);
+            }
+
+            .profile-jobtitle {
+                font-size: 15px;
+                font-weight: 400;
+                color: var(--white);
+            }
+        }
+    }
+
+
+    .header-icon-nav {
+        svg {
+            width: 20px;
+            height: 20px;
+
+            path {
+                fill: var(--white);
+            }
+        }
+
+        .dropdown-menu {
+            transform: translate(-70%, 20%);
+        }
+    }
+}
+
+// MENU SECTION
+#main-dashboard {
+    font-family: var(--nunito-sans);
+    padding: 0px 35px;
+    margin: 30px 0px 200px;
+
+
+    .personal-data-progress {
+        margin-bottom: 30px;
+        
+        >a {
+            >p {
+                font-size: 15px;
+                color: var(--neutral-90);
+                margin-bottom: 5px;
+            }
+        }
+
+        .maha__progress-bar {
+            .progress-bar-fill {
+                background-color: var(--blue-hover);
+            }
+        }
+    }
+
+    #menu-wrapper {
+        position: relative;
+
+        .suspend-wrapper {
+            position: absolute;
+            top: -10px;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);    
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;;
+            margin-bottom: 15px;
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.30);
+            text-align: center;
+            height: 80%;
+
+            .menu-item-icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                justify-content: center;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                padding: 15px;
+                background-color: var(--neutral-90);;
+
+                &.success-hover {
+                    background-color: var(--success-hover);
+                }
+
+                &.blue {
+                    background-color: var(--blue);
+                }
+
+                &.tosca-focus {
+                    background-color: var(--tosca-focus);
+                }
+
+                &.warning {
+                    background-color: var(--warning);
+                }
+
+                &.purple {
+                    background-color: var(--purple);
+                }
+
+                &.primary {
+                    background-color: var(--primary);
+                }
+
+                &.success-focus {
+                    background-color: var(--success-focus);
+                }
+
+                svg {
+                    width: 20px;
+                    height: 20px;
+
+                    path {
+                        fill: var(--white);
+                    }
+                }
+            }
+
+            .menu-item-title {
+                color: var(--neutral-100);
+                font-size: 12px;
+                font-weight: 700;
+                margin-top: 10px;
+                margin-bottom: 0px;
+            }
+        }
+    }
+}
+
+/*====================================
+        PARTIAL NAV TITLE SECTION
+====================================*/
+
+.huader-main {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    padding-right: 25px;
+    z-index: 100;
+    background-color: var(--neutral-20);
+
+    p {
+        margin: 0;
+        font-family: var(--poppins);
+    }
+
+    .header-main-title {
+        padding: 12px 25px 18px;
+        background-color: var(--primary);
+        border-radius: 0px 10px 0px 0px;
+
+        p {
+            font-size: 28px;
+            color: var(--white);
+            font-weight: 700s;
+        }
+    }
+
+    .step-label {
+        font-size: 20px;
+        font-weight: 700;
+    }
+}
+
+
+/*====================================
+        BIODATA SECTION
+====================================*/
+
+#form-bio {
+    padding: 0px 25px;
+    margin: 75px 0px 50px;
+    overflow: scroll;
+}
+
+
+
+/*====================================
+            SIGNATURE
+====================================*/
+.signature-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 30px;
+
+    .signature-pad {
+        margin: 50px 0px 10px;
+        width: 100%;
+        height: 200px;
+        background-color: #DDDDDD;
+    }
+
+    .qrcode-signature {
+        
+        .signature-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+            img {
+                position: absolute;
+                top: 100px;
+                width: auto;
+                max-height: 200px;
+            }
+        }
+        
+        svg {
+            position: absolute;
+            height: 70px;
+            bottom: 100px;
+            right: 40px;
+            width: 70px;
+        }
+    }
+}
+
+
+
+/*====================================
+            PAKTA INTEGRITAS
+====================================*/
+
+#pakta-integritas-section {
+    overflow: scroll;
+    
+    .letter-wrapper {
+        box-shadow: 4px 2px 15px 1px rgba(0, 0, 0, 0.2);
+        width: 750px;
+        margin: 75px auto 90px;
+        padding: 20px;
+
+        .letter-inner {
+            font-family: var(--inter);
+            color: var(--neutral-100);
+            width: 100%;
+    
+            .letter-header-footer {
+                img {
+                    width: 100%;
+                }
+            }
+    
+            .letter-body {
+                margin-top: 50px;
+                padding: 0px 50px;
+                text-align: justify;
+    
+                p,td,li {
+                    font-size: 12px;
+                    margin: 0px;
+                }
+
+                strong {
+                    font-weight: 700;
+                }
+    
+                .letter-title {
+                    font-weight: 700;
+                    font-size: 14px;
+                    text-decoration: underline;
+                    text-align: center;
+                }
+
+                .letter-number {
+                    text-align: center;
+                    margin-top: -5px;
+                }
+    
+                .letter-content {
+                    margin-top: 50px;
+                }
+    
+                .letter-signature-wrapper {
+                    width: fit-content;
+                    margin-top: 30px;
+                    margin-left: auto;
+                    text-align: center;
+    
+                    .letter-signature-name {
+                        font-weight: 700;
+                        text-decoration: underline;
+                        margin: 0px;
+                    }
+    
+                    .letter-signature-jabatan {
+                        font-size: 11px;
+                        margin: 0px;
+                    }
+    
+                    .letter-signature-inner {
+                        position: relative;
+                        width: 150px;
+                        height: 80px;
+                        // display: flex;
+                        // align-items: end;
+                        // justify-content: center;
+    
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            object-position: center;
+                        }
+    
+                        svg {
+                            position: absolute;
+                            bottom: 0;
+                            right: 0;
+                            width: 30px;
+                            height: 30px;
+                        }
+                    }
+    
+                    #btnAgree {
+                        cursor: none;
+                    }
+                }
+
+
+                .pasal-wrapper {
+                    margin-top: 20px;
+
+                    .pasal-title {
+                        text-align: center;
+
+                        p {
+                            font-weight: 700;
+                        }
+                    }
+
+                    .pasal-body {
+                        
+                    }
+                }
+            }
+        }
+    }
+}
