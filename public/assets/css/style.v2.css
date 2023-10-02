@@ -1,0 +1,554 @@
+@import url("https://fonts.googleapis.com/css2?family=Gupter:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;0,6..12,1000;1,6..12,200;1,6..12,300;1,6..12,400;1,6..12,500;1,6..12,600;1,6..12,700;1,6..12,800;1,6..12,900;1,6..12,1000&display=swap");
+:root {
+  --gupter: "Gupter", sans-serif;
+  --inter: "Inter", sans-serif;
+  --poppins: "Poppins", sans-serif;
+  --nunito-sans: "Nunito Sans", sans-serif;
+  --primary: #E81E20;
+  --white: #fff;
+  --neutral-10: #eaeaea;
+  --neutral-20: #f9f9f9;
+  --neutral-30: #f4f4f4;
+  --neutral-50: #959595;
+  --neutral-90: #38383A;
+  --neutral-100: #000;
+  --secondary: #F5FEFD;
+  --blue: #0019FF;
+  --blue-hover: #9975FF;
+  --success-hover: #63FF84;
+  --success-focus: #808000;
+  --tosca-focus: #00B9B9;
+  --warniing: #FFD700;
+  --purple: #DB00FF;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--poppins);
+}
+
+#loader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#loader .loading-icon {
+  width: 42px;
+  height: auto;
+  animation: loadingAnimation 1s infinite;
+}
+
+@keyframes loadingAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/*====================================
+            WIDH / HEIGHT
+====================================*/
+.w-80 {
+  width: 80%;
+}
+
+.w-90 {
+  width: 90%;
+}
+
+/*====================================
+            BUTTON
+====================================*/
+.btn-rounded {
+  border-radius: 15px;
+}
+
+.btn {
+  font-family: var(--poppins);
+  font-size: 20px;
+  font-weight: 700;
+  border-radius: 16px;
+}
+.btn.primary {
+  color: var(--white);
+  background-color: var(--primary);
+}
+
+.btn-text-md {
+  font-size: 24px;
+  font-weight: 700;
+  padding: 4px 15px;
+}
+
+/*====================================
+            FORM
+====================================*/
+.form-group {
+  position: relative;
+}
+.form-group.icon svg {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  top: 10px;
+  left: 10px;
+}
+.form-group.icon svg path {
+  fill: var(--neutral-50);
+}
+.form-group.icon input, .form-group.icon select {
+  padding: 0px 45px;
+}
+.form-group.icon select {
+  -moz-appearance: none;
+       appearance: none;
+  -webkit-appearance: none;
+}
+
+.form-label-section {
+  color: var(--neutral-100);
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--gupter);
+}
+
+.form-control {
+  height: 47px;
+  background-color: var(--neutral-30);
+  color: var(--neutral-50);
+  font-size: 16px;
+  font-family: var(--inter);
+  font-weight: 600;
+  border: none;
+  border-radius: 30px;
+  padding: 0px 20px;
+}
+.form-control::-moz-placeholder {
+  font-weight: 400;
+}
+.form-control::placeholder {
+  font-weight: 400;
+}
+
+.input-group .input-group-append, .input-group .input-group-prepend {
+  align-items: center;
+  background-color: var(--neutral-50);
+  padding-left: 5px;
+}
+.input-group .input-group-append span, .input-group .input-group-prepend span {
+  font-weight: 700;
+  border: none;
+}
+
+/*====================================
+            PROGRESS BAR
+====================================*/
+.maha__progress-bar {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background-color: var(--neutral-10);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.maha__progress-bar .progress-bar-fill {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  max-width: 100%;
+  height: 100%;
+  background-color: var(--neutral-100);
+  text-align: center;
+  color: var(--white);
+  font-weight: 700;
+}
+.maha__progress-bar .progress-bar-fill p {
+  margin-left: 5px;
+}
+
+/*====================================
+            AUTH PAGE
+====================================*/
+.auth-header-wrapper {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  padding: 0px 25px 25px;
+  text-align: center;
+  background-color: var(--white);
+  border-radius: 0px 0px 80px 80px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.auth-header-wrapper .header-logo {
+  width: 100%;
+  max-width: 400px;
+  max-height: auto;
+}
+
+.auth-wrapper {
+  margin-top: 180px;
+  padding: 0px 30px;
+}
+.auth-wrapper .auth-header .auth-title {
+  color: var(--neutral-90);
+  font-size: 34px;
+  font-weight: 600;
+}
+.auth-wrapper .auth-form-footer > p {
+  font-size: 13px;
+  color: var(--neutral-50);
+}
+.auth-wrapper .auth-form-footer > p a {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+#login__page, #register__page {
+  background-color: var(--white);
+}
+
+#register__page .auth-header-wrapper {
+  margin-bottom: 20px;
+}
+
+/*====================================
+            DASHBOARD KARYAWAN
+====================================*/
+.employee-header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  padding: 30px 25px 25px;
+  background-color: var(--primary);
+  border-radius: 0px 0px 30px 30px;
+  font-family: var(--nunito-sans);
+}
+.employee-header-nav .header-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.employee-header-nav .header-profile p {
+  margin: 0;
+}
+.employee-header-nav .header-profile .header-profile-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.employee-header-nav .header-profile .header-profile-img > img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+}
+.employee-header-nav .header-profile .header-profile-employee .profile-name {
+  font-size: 27px;
+  font-weight: 600;
+  color: var(--white);
+}
+.employee-header-nav .header-profile .header-profile-employee .profile-jobtitle {
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--white);
+}
+.employee-header-nav .header-icon-nav svg {
+  width: 20px;
+  height: 20px;
+}
+.employee-header-nav .header-icon-nav svg path {
+  fill: var(--white);
+}
+.employee-header-nav .header-icon-nav .dropdown-menu {
+  transform: translate(-70%, 20%);
+}
+
+#main-dashboard {
+  font-family: var(--nunito-sans);
+  padding: 0px 35px;
+  margin: 30px 0px 200px;
+}
+#main-dashboard .personal-data-progress {
+  margin-bottom: 30px;
+}
+#main-dashboard .personal-data-progress > a > p {
+  font-size: 15px;
+  color: var(--neutral-90);
+  margin-bottom: 5px;
+}
+#main-dashboard .personal-data-progress .maha__progress-bar .progress-bar-fill {
+  background-color: var(--blue-hover);
+}
+#main-dashboard #menu-wrapper {
+  position: relative;
+}
+#main-dashboard #menu-wrapper .suspend-wrapper {
+  position: absolute;
+  top: -10px;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+#main-dashboard #menu-wrapper .menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 15px;
+  background-color: var(--white);
+  border-radius: 15px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  height: 80%;
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 15px;
+  background-color: var(--neutral-90);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.success-hover {
+  background-color: var(--success-hover);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.blue {
+  background-color: var(--blue);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.tosca-focus {
+  background-color: var(--tosca-focus);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.warning {
+  background-color: var(--warning);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.purple {
+  background-color: var(--purple);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.primary {
+  background-color: var(--primary);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon.success-focus {
+  background-color: var(--success-focus);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon svg {
+  width: 20px;
+  height: 20px;
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-icon svg path {
+  fill: var(--white);
+}
+#main-dashboard #menu-wrapper .menu-item .menu-item-title {
+  color: var(--neutral-100);
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+/*====================================
+        PARTIAL NAV TITLE SECTION
+====================================*/
+.huader-main {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  padding-right: 25px;
+  z-index: 100;
+  background-color: var(--neutral-20);
+}
+.huader-main p {
+  margin: 0;
+  font-family: var(--poppins);
+}
+.huader-main .header-main-title {
+  padding: 12px 25px 18px;
+  background-color: var(--primary);
+  border-radius: 0px 10px 0px 0px;
+}
+.huader-main .header-main-title p {
+  font-size: 28px;
+  color: var(--white);
+  font-weight: 700s;
+}
+.huader-main .step-label {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/*====================================
+        BIODATA SECTION
+====================================*/
+#form-bio {
+  padding: 0px 25px;
+  margin: 75px 0px 50px;
+  overflow: scroll;
+}
+
+/*====================================
+            SIGNATURE
+====================================*/
+.signature-wrapper {
+  position: relative;
+  width: 100%;
+  padding: 30px;
+}
+.signature-wrapper .signature-pad {
+  margin: 50px 0px 10px;
+  width: 100%;
+  height: 200px;
+  background-color: #DDDDDD;
+}
+.signature-wrapper .qrcode-signature .signature-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.signature-wrapper .qrcode-signature .signature-image img {
+  position: absolute;
+  top: 100px;
+  width: auto;
+  max-height: 200px;
+}
+.signature-wrapper .qrcode-signature svg {
+  position: absolute;
+  height: 70px;
+  bottom: 100px;
+  right: 40px;
+  width: 70px;
+}
+
+/*====================================
+            PAKTA INTEGRITAS
+====================================*/
+#pakta-integritas-section {
+  overflow: scroll;
+}
+
+/*====================================
+            LETTER
+====================================*/
+.letter-wrapper {
+  box-shadow: 4px 2px 15px 1px rgba(0, 0, 0, 0.2);
+  width: 750px;
+  margin: 75px auto 90px;
+  padding: 20px;
+}
+.letter-wrapper .letter-inner {
+  font-family: var(--inter);
+  color: var(--neutral-100);
+  width: 100%;
+}
+.letter-wrapper .letter-inner .letter-header-footer img {
+  width: 100%;
+}
+.letter-wrapper .letter-inner .letter-body {
+  margin-top: 50px;
+  padding: 0px 50px;
+  text-align: justify;
+}
+.letter-wrapper .letter-inner .letter-body p, .letter-wrapper .letter-inner .letter-body td, .letter-wrapper .letter-inner .letter-body li {
+  font-size: 12px;
+  margin: 0px;
+}
+.letter-wrapper .letter-inner .letter-body strong {
+  font-weight: 700;
+}
+.letter-wrapper .letter-inner .letter-body .letter-title {
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: underline;
+  text-align: center;
+}
+.letter-wrapper .letter-inner .letter-body .letter-number {
+  text-align: center;
+  margin-top: -5px;
+}
+.letter-wrapper .letter-inner .letter-body .letter-content {
+  margin-top: 50px;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper {
+  width: -moz-fit-content;
+  width: fit-content;
+  margin-top: 30px;
+  margin-left: auto;
+  text-align: center;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-name {
+  font-weight: 700;
+  text-decoration: underline;
+  margin: 0px;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-jabatan {
+  font-size: 11px;
+  margin: 0px;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-inner {
+  position: relative;
+  width: 150px;
+  height: 80px;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-inner img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: center;
+     object-position: center;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-inner svg {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+}
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper #btnAgree {
+  cursor: none;
+}
+.letter-wrapper .letter-inner .letter-body .pasal-wrapper {
+  margin-top: 20px;
+}
+.letter-wrapper .letter-inner .letter-body .pasal-wrapper .pasal-title {
+  text-align: center;
+}
+.letter-wrapper .letter-inner .letter-body .pasal-wrapper .pasal-title p {
+  font-weight: 700;
+}
+.letter-wrapper .letter-inner .table-identity-contract td, .letter-wrapper .letter-inner .table-identity-contract th {
+  padding-left: 10px;
+}
+
+/*====================================
+            CONFIRM BIODATA
+====================================*/
+.biodata-confirm-wrapper .biodata-confirm-title {
+  font-size: 30px;
+  font-weight: 700;
+}/*# sourceMappingURL=style.v2.css.map */
