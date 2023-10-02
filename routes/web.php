@@ -6,10 +6,16 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KonfigurasiController;
+use App\Http\Controllers\Pengajuan\CSRController;
+use App\Http\Controllers\Pengajuan\HutangOperasionalController;
+use App\Http\Controllers\Pengajuan\OperasionalKantorController;
+use App\Http\Controllers\Pengajuan\PelatihanKaryawanController;
+use App\Http\Controllers\Pengajuan\ReimbursementController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Psy\VarDumper\Presenter;
+use App\Http\Controllers\PengajuanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,7 +30,7 @@ use Psy\VarDumper\Presenter;
 
 
 // AUTH ROUTE
-Route::middleware(['guest'])->group(function() {
+Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::get('/register', [AuthController::class, 'register'])->name('register');
     Route::post('/register', [AuthController::class, 'prosesRegister'])->name('register.proses');
@@ -37,14 +43,14 @@ Route::middleware(['guest'])->group(function() {
 
 
 // Route::middleware(['auth'])->group(function() {
-    Route::get('/suspend', function() {
-        return "
+Route::get('/suspend', function () {
+    return "
             <script>
                 alert('Akun anda suspend, silahkan hubungi HRD!');
                 location.href = '/proseslogout';
             </script>
         ";
-    })->name('suspend');
+})->name('suspend');
 // });
 
 Route::get('/proseslogout', [AuthController::class, 'proseslogout'])->name('karyawan.logout');
@@ -58,9 +64,9 @@ Route::middleware(['guest:user'])->group(function () {
     Route::post('/prosesloginadmin', [AuthController::class, 'prosesloginadmin']);
 });
 
-Route::middleware('isNotSuspend')->group(function() {
+Route::middleware('isNotSuspend')->group(function () {
     Route::middleware('auth:karyawan')->group(function () {
-        
+
         // Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('karyawan');
 
@@ -97,6 +103,16 @@ Route::middleware('isNotSuspend')->group(function() {
         Route::get('/presensi/buatizin', [PresensiController::class, 'buatizin']);
         Route::post('/presensi/storeizin', [PresensiController::class, 'storeizin']);
         Route::post('/presensi/cekpengajuanizin', [PresensiController::class, 'cekpengajuanizin']);
+
+        // Pengajuan
+        Route::resource('pengajuan', PengajuanController::class);
+        Route::group(['prefix' => 'pengajuan'], function () {
+            Route::resource('hutangoperasional', HutangOperasionalController::class);
+            Route::resource('operasionalkantor', OperasionalKantorController::class);
+            Route::resource('pelatihankaryawan', PelatihanKaryawanController::class);
+            Route::resource('reimbursement', ReimbursementController::class);
+            Route::resource('csr', CSRController::class);
+        });
     });
 });
 
@@ -112,7 +128,7 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/karyawan/{nik}/update', [KaryawanController::class, 'update']);
     Route::post('/karyawan/{nik}/delete', [KaryawanController::class, 'delete']);
 
-    Route::post('/karyawan/data',[KaryawanController::class, 'karyawanData'])->name('karyawan.data');
+    Route::post('/karyawan/data', [KaryawanController::class, 'karyawanData'])->name('karyawan.data');
     Route::post('/karyawan/verification-register', [KaryawanController::class, 'verificationRegister'])->name('karyawan.verification.register');
 
     //Departemen
