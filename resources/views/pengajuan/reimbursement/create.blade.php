@@ -15,30 +15,30 @@
         <form>
 
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Perihal Pekerjaan">
+                <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Item">
+                <input type="text" class="form-control" placeholder="Item">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Qty">
+                <input type="number" class="form-control" placeholder="Qty">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Satuan">
+                <input type="number" class="form-control" placeholder="Satuan">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Harga Satuan">
+                <input type="number" class="form-control" placeholder="Harga Satuan">
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Jumlah Harga">
+                <input type="number" class="form-control" placeholder="Jumlah Harga">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Keterangan">
+                <input type="text" class="form-control" placeholder="Keterangan">
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Total Biaya">
+                <input type="number" class="form-control" placeholder="Total Biaya">
             </div>
             <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>
