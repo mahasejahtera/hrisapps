@@ -4,7 +4,7 @@
 <body>
     <header>
         <div class="bg-prima btn-header">
-            <h2 class="text-sec pt-1">
+            <h2 class="text-sec pt-2 p-1">
                 Rencana Kerja
             </h2>
         </div>

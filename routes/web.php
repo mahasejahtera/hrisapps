@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\ExLoginController;
 
-
-Route::get('/', function () {
+Route::get('/dashboard', function () {
     return view('rencanakerja.dashboard');
-});
+})->name('dashboard');
 
 //karyawan
 Route::get('/karyawan/option', function () {
@@ -26,3 +26,7 @@ Route::get('/karyawan/add-rkk', function () {
 Route::get('/karyawan/detail-rkk', function () {
     return view('rencanakerja.karyawan.detail-rkk');
 });
+
+//example login
+Route::get('/', [ExLoginController::class, 'index'])->name('login');
+Route::post('/exlogin', [ExLoginController::class, 'exlogin']);

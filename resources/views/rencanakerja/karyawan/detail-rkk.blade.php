@@ -3,20 +3,12 @@
 <body>
     <header>
         <div class="bg-prima btn-header">
-            <h2 class="text-sec pt-1">
+            <h2 class="text-sec pt-2 p-1">
                 Rencana Kerja
             </h2>
         </div>
     </header>
-    <style>
-        .container-detail-rkk {
-            background-color: #EFEFEF;
-        }
 
-        .detail-rkk-pd {
-            padding: 10px;
-        }
-    </style>
     <div class="container-detail-rkk m-2">
         <div class="detail-rkk-pd">
             <h4>Perihal</h4>

@@ -1,6 +1,7 @@
 @include('template.header')
 
 <body>
+    
     <header id="header-nav">
         <div class="employee-header-nav">
             <div class="header-profile">
@@ -130,6 +131,7 @@
             </div>
         </section>
     </main>
+    <!-- Menampilkan nilai sesi 'kode_dept' -->
 
 </body>
 @include('template.footer')
