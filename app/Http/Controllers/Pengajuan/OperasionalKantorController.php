@@ -15,6 +15,11 @@ class OperasionalKantorController extends Controller
     public function index()
     {
         //
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+        //
+        return view('pengajuan.operasionalkantor.index', $data);
     }
 
     /**
@@ -41,6 +46,7 @@ class OperasionalKantorController extends Controller
     public function store(Request $request)
     {
         //
+        return redirect()->route('operasionalkantor.index');
     }
 
     /**

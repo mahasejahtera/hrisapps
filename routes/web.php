@@ -105,7 +105,6 @@ Route::middleware('isNotSuspend')->group(function () {
         Route::post('/presensi/cekpengajuanizin', [PresensiController::class, 'cekpengajuanizin']);
 
         // Pengajuan
-        Route::resource('pengajuan', PengajuanController::class);
         Route::group(['prefix' => 'pengajuan'], function () {
             Route::resource('hutangoperasional', HutangOperasionalController::class);
             Route::resource('operasionalkantor', OperasionalKantorController::class);
@@ -113,6 +112,7 @@ Route::middleware('isNotSuspend')->group(function () {
             Route::resource('reimbursement', ReimbursementController::class);
             Route::resource('csr', CSRController::class);
         });
+        Route::resource('pengajuan', PengajuanController::class);
     });
 });
 

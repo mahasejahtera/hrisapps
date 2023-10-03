@@ -15,7 +15,8 @@
         <div class="text-center">
             <h2>Reimbursement</h2>
         </div>
-        <form>
+        <form action="{{ route('reimbursement.store') }}" method="POST">
+            @csrf
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Nomor">
             </div>

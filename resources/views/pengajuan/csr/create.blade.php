@@ -15,7 +15,8 @@
         <div class="text-center">
             <h2>CSR</h2>
         </div>
-        <form action="{{ route('csr.index') }}">
+        <form action="{{ route('csr.store') }}" method="POST">
+            @csrf
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Nomor">
             </div>

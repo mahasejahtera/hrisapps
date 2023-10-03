@@ -15,8 +15,8 @@
         <div class="text-center">
             <h2>Pelatihan Karyawan</h2>
         </div>
-        <form>
-
+        <form action="{{ route('pelatihankaryawan.store') }}" method="POST">
+            @csrf
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
             </div>

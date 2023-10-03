@@ -15,7 +15,8 @@
         <div class="text-center">
             <h2>Operasional Kantor</h2>
         </div>
-        <form>
+        <form action="{{ route('operasionalkantor.store') }}" method="POST">
+            @csrf
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Nomor">
             </div>

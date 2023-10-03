@@ -15,6 +15,11 @@ class ReimbursementController extends Controller
     public function index()
     {
         //
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+        //
+        return view('pengajuan.reimbursement.index', $data);
     }
 
     /**
@@ -41,6 +46,7 @@ class ReimbursementController extends Controller
     public function store(Request $request)
     {
         //
+        return redirect()->route('reimbursement.index');
     }
 
     /**

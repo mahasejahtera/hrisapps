@@ -16,8 +16,8 @@
             <h2>Hutang Operasional</h2>
         </div>
 
-        <form action="{{ route('hutangoperasional.index') }}" method="GET">
-
+        <form action="{{ route('hutangoperasional.store') }}" method="POST">
+            @csrf
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Nomor">
             </div>

@@ -15,6 +15,11 @@ class PelatihanKaryawanController extends Controller
     public function index()
     {
         //
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+        //
+        return view('pengajuan.pelatihankaryawan.index', $data);
     }
 
     /**
@@ -41,6 +46,7 @@ class PelatihanKaryawanController extends Controller
     public function store(Request $request)
     {
         //
+        return redirect()->route('pelatihankaryawan.index');
     }
 
     /**

@@ -19,7 +19,7 @@ class HutangOperasionalController extends Controller
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
         ];
         //
-        return view('pengajuan.hutangoperasional.create', $data);
+        return view('pengajuan.hutangoperasional.index', $data);
     }
 
     /**
@@ -45,6 +45,7 @@ class HutangOperasionalController extends Controller
     public function store(Request $request)
     {
         //
+        return redirect()->route('hutangoperasional.index');
     }
 
     /**

@@ -19,7 +19,7 @@ class CSRController extends Controller
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
         ];
         //
-        return view('pengajuan.csr.create', $data);
+        return view('pengajuan.csr.index', $data);
     }
 
     /**
@@ -46,6 +46,7 @@ class CSRController extends Controller
     public function store(Request $request)
     {
         //
+        return redirect()->route('csr.index');
     }
 
     /**
