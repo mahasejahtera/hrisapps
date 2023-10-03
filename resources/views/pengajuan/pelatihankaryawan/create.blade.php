@@ -12,6 +12,9 @@
                 <div style="width: 100%; height: 100%; color: white; font-size: 28px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Form Pengajuan</div>
             </div>
         </div>
+        <div class="text-center">
+            <h2>Pelatihan Karyawan</h2>
+        </div>
         <form>
 
             <div class="form-group">

@@ -12,8 +12,21 @@
                 <div style="width: 100%; height: 100%; color: white; font-size: 28px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Form Pengajuan</div>
             </div>
         </div>
+        <div class="text-center">
+            <h2>Hutang Operasional</h2>
+        </div>
+
         <form action="{{ route('hutangoperasional.index') }}" method="GET">
 
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Nomor">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Tanggal">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Due Date">
+            </div>
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
             </div>

@@ -12,14 +12,25 @@
                 <div style="width: 100%; height: 100%; color: white; font-size: 28px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Form Pengajuan</div>
             </div>
         </div>
+        <div class="text-center">
+            <h2>Operasional Kantor</h2>
+        </div>
         <form>
-
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Nomor">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Tanggal">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Due Date">
+            </div>
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Item">
+                <input type="text" class="form-control" placeholder="Jenis Pengeluaran/Merk/Spesifikasi">
             </div>
             <div class="form-group">
                 <input type="number" class="form-control" placeholder="Qty">
