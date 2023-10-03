@@ -40,7 +40,7 @@
             <div class="form-group">
                 <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Total Biaya">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>
 
 
