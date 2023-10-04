@@ -2,29 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ExLoginController;
+use App\Http\Controllers\Rencanakerja\KaryawanController;
 
 Route::get('/dashboard', function () {
     return view('rencanakerja.dashboard');
 })->name('dashboard');
 
 //karyawan
-Route::get('/karyawan/option', function () {
-    return view('rencanakerja.karyawan.option');
-});
-Route::get('/karyawan/listrkk', function () {
-    return view('rencanakerja.karyawan.listrkk');
-});
-Route::get('/karyawan/task', function () {
-    return view('rencanakerja.karyawan.task');
-});
-Route::get('/karyawan/detail-task', function () {
-    return view('rencanakerja.karyawan.detail-task');
-});
-Route::get('/karyawan/add-rkk', function () {
-    return view('rencanakerja.karyawan.add-rkk');
-});
-Route::get('/karyawan/detail-rkk', function () {
-    return view('rencanakerja.karyawan.detail-rkk');
+Route::prefix('karyawan')->group(function () {
+    Route::get('/option', [KaryawanController::class, 'option']);
+    Route::get('/listrkk', [KaryawanController::class, 'listrkk'])->name('list-rkk');
+    Route::get('/task', [KaryawanController::class, 'task']);
+    Route::get('/detail-task', [KaryawanController::class, 'detailtask']);
+    Route::get('/add-rkk', [KaryawanController::class, 'addrkk']);
+    Route::post('/addrkk/proses', [KaryawanController::class, 'addrkkstore']);
+    Route::get('/detailrkk/{id}', [KaryawanController::class, 'detailrkk'])->name('detail-rkk');
 });
 
 //example login

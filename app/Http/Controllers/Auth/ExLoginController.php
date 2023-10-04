@@ -4,23 +4,22 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Karyawan;
+
 
 class ExLoginController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function exlogin(Request $request )
     {
-        $departemen = $request->input('kode_dept');
-        $role = $request->input('role_id');
-        $request->session()->put('kode_dept', $departemen);
-        $request->session()->put('role_id', $role);
+        $kary = $request->input('id_karyawan');
+        $request->session()->put('id_karyawan', $kary);
         return redirect()->route('dashboard');
     }
     public function index()
     {
-        return view('rencanakerja.ex-login');
+        $kary = Karyawan::all();
+        return view('rencanakerja.ex-login')->with('kary', $kary);
     }
 
 }
