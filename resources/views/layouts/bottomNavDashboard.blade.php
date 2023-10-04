@@ -1,6 +1,6 @@
 <!-- App Bottom Menu -->
 <div class="appBottomMenu">
-    <a href="{{ route('karyawan') }}" class="item {{ request()->is('dashboard') ? 'active' : '' }}">
+    <a href="#" class="item {{ request()->is('dashboard') ? 'active' : '' }}">
         <div class="col">
             <ion-icon name="home-outline"></ion-icon>
             <strong>Home</strong>
