@@ -1,20 +1,11 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CabangController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DepartemenController;
-use App\Http\Controllers\KaryawanController;
-use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\Pengajuan\CSRController;
 use App\Http\Controllers\Pengajuan\HutangOperasionalController;
 use App\Http\Controllers\Pengajuan\OperasionalKantorController;
 use App\Http\Controllers\Pengajuan\PelatihanKaryawanController;
 use App\Http\Controllers\Pengajuan\ReimbursementController;
-use App\Http\Controllers\PresensiController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Psy\VarDumper\Presenter;
 use App\Http\Controllers\PengajuanController;
 
 /*
