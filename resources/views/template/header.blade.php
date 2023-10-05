@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.v2.css') }}">
     <link rel="manifest" href="__manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <title>Development</title>
 </head>

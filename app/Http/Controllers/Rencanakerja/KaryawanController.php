@@ -41,21 +41,28 @@ class KaryawanController extends Controller
     {
         $idk = $request->session()->get('id_karyawan');
         $file = $request->file('lampiran');
-        $filename = $file->getClientOriginalName();
-        $file_jadi = date('ymdhis') . $filename;
-        $file->move(public_path('images/rencanakerja'), $file_jadi);
-        $data = [
-            'id_karyawan' => $idk,
-            'perihal' => $request->perihal,
-            'lokasi' => $request->lokasi,
-            'waktu' => $request->waktu,
-            'target_penyelesaian' => $request->target,
-            'keterangan' => $request->keterangan,
-            'lampiran' => $file_jadi,
-            'prioritas' => $request->prioritas,
-        ];
-        Rencanakerja::create($data);
-        return redirect('/karyawan/listrkk/')->with('success', 'Rencana Kerja Ditambah !');
+
+        if ($file->getClientOriginalExtension() === 'pdf') {
+            $filename = $file->getClientOriginalName();
+            $file_jadi = date('ymdhis') . $filename;
+            $file->move(public_path('images/rencanakerja'), $file_jadi);
+            $data = [
+                'id_karyawan' => $idk,
+                'perihal' => $request->perihal,
+                'lokasi' => $request->lokasi,
+                'waktu' => $request->waktu,
+                'target_penyelesaian' => $request->target,
+                'keterangan' => $request->keterangan,
+                'lampiran' => $file_jadi,
+                'prioritas' => $request->prioritas,
+            ];
+
+            Rencanakerja::create($data);
+            return redirect('/karyawan/listrkk/')->with('success', 'Rencana Kerja Ditambah !');
+        } else {
+            return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
+        }
+
 
     }
 

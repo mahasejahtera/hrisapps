@@ -8,8 +8,7 @@
             </h2>
         </div>
     </header>
-    <div class="">
-
+    <div class="container-add-rkk">
         @if (!$data)
             <img src="{{ asset('assets/img/iconrkk.png') }}" alt="">
         @else
