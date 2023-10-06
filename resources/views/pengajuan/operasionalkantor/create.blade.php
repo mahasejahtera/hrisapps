@@ -18,38 +18,38 @@
         <form action="{{ route('operasionalkantor.store') }}" method="POST">
             @csrf
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Nomor">
+                <input type="text" name="nomor" class="form-control" placeholder="Nomor" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Tanggal">
+                <input type="text" name="tanggal" class="form-control" placeholder="Tanggal" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Due Date">
+                <input type="text" name="due_date" class="form-control" placeholder="Due Date" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
+                <input type="text" name="perihal_pekerjaan" class="form-control" placeholder="Perihal Pekerjaan" required>
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Jenis Pengeluaran/Merk/Spesifikasi">
+                <input type="text" name="jenis_pengeluaran" class="form-control" placeholder="Jenis Pengeluaran/Merk/Spesifikasi" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Qty">
+                <input type="number" name="qty" class="form-control" placeholder="Qty" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Satuan">
+                <input type="number" name="satuan" class="form-control" placeholder="Satuan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Harga Satuan">
+                <input type="number" name="harga_satuan" class="form-control" placeholder="Harga Satuan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Jumlah Harga">
+                <input type="number" name="jumlah_harga" class="form-control" placeholder="Jumlah Harga" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Keterangan">
+                <input type="number" name="keterangan" class="form-control" placeholder="Keterangan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Total Biaya">
+                <input type="number" name="total_biaya" class="form-control" placeholder="Total Biaya" required>
             </div>
             <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>

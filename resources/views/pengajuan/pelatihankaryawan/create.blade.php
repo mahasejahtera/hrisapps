@@ -18,28 +18,28 @@
         <form action="{{ route('pelatihankaryawan.store') }}" method="POST">
             @csrf
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
+                <input type="text" name="perihal_pekerjaan" class="form-control" placeholder="Perihal Pekerjaan" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Item">
+                <input type="text" name="item" class="form-control" placeholder="Item" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Qty">
+                <input type="number" name="qty" class="form-control" placeholder="Qty" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Satuan">
+                <input type="number" name="satuan" class="form-control" placeholder="Satuan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Harga Satuan">
+                <input type="number" name="harga_satuan" class="form-control" placeholder="Harga Satuan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Jumlah Harga">
+                <input type="number" name="jumlah_harga" class="form-control" placeholder="Jumlah Harga" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Keterangan">
+                <input type="text" name="keterangan" class="form-control" placeholder="Keterangan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Total Biaya">
+                <input type="number" name="total_biaya" class="form-control" placeholder="Total Biaya" required>
             </div>
             <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>

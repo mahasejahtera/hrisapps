@@ -19,38 +19,37 @@
         <form action="{{ route('hutangoperasional.store') }}" method="POST">
             @csrf
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Nomor">
+                <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Nomor" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Tanggal">
+                <input type="text" name="tanggal" class="form-control"  value="{{ old('tanggal') }}" placeholder="Tanggal" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Due Date">
+                <input type="text" name="due_date" class="form-control"  value="{{ old('due_date') }}" placeholder="Due Date" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Perihal Pekerjaan">
-            </div>
-
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Item">
+                <input type="text" name="perihal_pekerjaan" class="form-control"  value="{{ old('perihal_pekerjaan') }}" placeholder="Perihal Pekerjaan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Qty">
+                <input type="text" name="item" class="form-control"  value="{{ old('item') }}" placeholder="Item" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Satuan">
+                <input type="number" name="qty" class="form-control" value="{{ old('qty') }}" placeholder="Qty" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Harga Satuan">
+                <input type="number" name="satuan" class="form-control" value="{{ old('satuan') }}" placeholder="Satuan" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Jumlah Harga">
+                <input type="number" name="harga_satuan" class="form-control" value="{{ old('harga_satuan') }}" placeholder="Harga Satuan" required>
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Keterangan">
+                <input type="number" name="jumlah_harga" class="form-control" value="{{ old('jumlah_harga') }}" placeholder="Jumlah Harga" required>
             </div>
             <div class="form-group">
-                <input type="number" class="form-control" placeholder="Total Biaya">
+                <input type="text" name="keterangan" class="form-control" value="{{ old('keterangan') }}" placeholder="Keterangan">
+            </div>
+            <div class="form-group">
+                <input type="number" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required>
             </div>
             <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>
