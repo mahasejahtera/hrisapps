@@ -2,7 +2,7 @@
 
 <body>
     <header>
-        <div class="bg-prima btn-header">
+        <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
                Tugas
             </h2>

@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ExLoginController;
 use App\Http\Controllers\Rencanakerja\KaryawanController;
+use App\Http\Controllers\Rencanakerja\ManajerController;
 
 Route::get('/dashboard', function () {
     return view('rencanakerja.dashboard');
 })->name('dashboard');
 
-//karyawan
+//karyawan Rencana Kerja
 Route::prefix('karyawan')->group(function () {
     Route::get('/option', [KaryawanController::class, 'option']);
     Route::get('/listrkk', [KaryawanController::class, 'listrkk'])->name('list-rkk');
@@ -18,6 +19,14 @@ Route::prefix('karyawan')->group(function () {
     Route::post('/addrkk/proses', [KaryawanController::class, 'addrkkstore']);
     Route::get('/detailrkk/{id}', [KaryawanController::class, 'detailrkk'])->name('detail-rkk');
 });
+
+//manajer Rencana Kerja
+Route::prefix('manajer')->group(function () {
+    Route::get('/option', [ManajerController::class, 'option']);
+    Route::get('/listrkk', [ManajerController::class, 'listrkk']);
+    Route::get('/detailrkkkaryawan', [ManajerController::class, 'detailrkkkaryawan']);
+});
+
 
 //example login
 Route::get('/', [ExLoginController::class, 'index'])->name('login');

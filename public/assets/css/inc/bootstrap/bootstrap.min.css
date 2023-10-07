@@ -5535,6 +5535,7 @@ a.close.disabled {
   height: 100%;
   overflow: hidden;
   outline: 0;
+  margin-top:70px;
 }
 .modal-dialog {
   position: relative;

@@ -23,7 +23,7 @@
             </a>
         </div>
     </div>
-    
+
 </body>
 @include('template.bottomNav')
 @include('template.footer')

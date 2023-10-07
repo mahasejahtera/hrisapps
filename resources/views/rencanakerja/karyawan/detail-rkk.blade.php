@@ -2,13 +2,13 @@
 
 <body>
     <header>
-        <div class="bg-prima btn-header">
+        <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
                 Detail Tugas
             </h2>
         </div>
     </header>
-    <div class="container-detail-task m-2">
+    <div class="container-detail-task ml-2 mb-2 mr-2">
         <table>
             <tr>
                 <td>Perihal </td>

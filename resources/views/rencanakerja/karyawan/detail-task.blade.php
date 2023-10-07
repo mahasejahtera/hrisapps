@@ -1,10 +1,10 @@
 @include('template.header')
 
 <body>
-     <header>
-        <div class="bg-prima btn-header">
+    <header>
+        <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
-               Detail Tugas
+                Detail Tugas
             </h2>
         </div>
     </header>
