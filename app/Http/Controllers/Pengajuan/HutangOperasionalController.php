@@ -45,6 +45,7 @@ class HutangOperasionalController extends Controller
     public function store(Request $request)
     {
         //
+        
         return redirect()->route('hutangoperasional.index');
     }
 

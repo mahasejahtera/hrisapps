@@ -1,5 +1,12 @@
 @extends('layouts.pengajuan')
 
+@push('styles')
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+@endpush
+
 @section('content')
 
 {{-- START : MAIN --}}
@@ -22,32 +29,41 @@
                 <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Nomor" required>
             </div>
             <div class="form-group">
-                <input type="text" name="tanggal" class="form-control"  value="{{ old('tanggal') }}" placeholder="Tanggal" required>
+                <input type="text" name="tanggal" class="form-control calendar" value="{{ old('tanggal') }}" placeholder="Tanggal" autocomplete="off" required>
             </div>
             <div class="form-group">
-                <input type="text" name="due_date" class="form-control"  value="{{ old('due_date') }}" placeholder="Due Date" required>
+                <input type="text" name="due_date" class="form-control calendar" value="{{ old('due_date') }}" placeholder="Due Date" autocomplete="off" required>
             </div>
             <div class="form-group">
-                <input type="text" name="perihal_pekerjaan" class="form-control"  value="{{ old('perihal_pekerjaan') }}" placeholder="Perihal Pekerjaan" required>
+                <input type="text" name="perihal_pekerjaan" class="form-control" value="{{ old('perihal_pekerjaan') }}" placeholder="Perihal Pekerjaan" required>
             </div>
+            <!-- Input multi-baris untuk item -->
+            <table class="table" id="item-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Qty</th>
+                        <th>Satuan</th>
+                        <th>Harga Satuan</th>
+                        <th>Jumlah Harga</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="item[]" class="form-control"></td>
+                        <td><input type="number" name="qty[]" class="form-control"></td>
+                        <td><input type="text" name="satuan[]" class="form-control"></td>
+                        <td><input type="number" name="harga_satuan[]" class="form-control"></td>
+                        <td><input type="number" name="jumlah_harga[]" class="form-control"></td>
+                        <td><input type="text" name="keterangan[]" class="form-control"></td>
+                    </tr>
+                </tbody>
+            </table>
             <div class="form-group">
-                <input type="text" name="item" class="form-control"  value="{{ old('item') }}" placeholder="Item" required>
+                <button type="button" class="btn btn-primary" id="add-item">Tambah Item</button>
             </div>
-            <div class="form-group">
-                <input type="number" name="qty" class="form-control" value="{{ old('qty') }}" placeholder="Qty" required>
-            </div>
-            <div class="form-group">
-                <input type="number" name="satuan" class="form-control" value="{{ old('satuan') }}" placeholder="Satuan" required>
-            </div>
-            <div class="form-group">
-                <input type="number" name="harga_satuan" class="form-control" value="{{ old('harga_satuan') }}" placeholder="Harga Satuan" required>
-            </div>
-            <div class="form-group">
-                <input type="number" name="jumlah_harga" class="form-control" value="{{ old('jumlah_harga') }}" placeholder="Jumlah Harga" required>
-            </div>
-            <div class="form-group">
-                <input type="text" name="keterangan" class="form-control" value="{{ old('keterangan') }}" placeholder="Keterangan">
-            </div>
+            
             <div class="form-group">
                 <input type="number" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required>
             </div>
@@ -62,3 +78,30 @@
 
 
 @endsection
+
+@push('myscript')
+
+<!-- Bootstrap-datepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.calendar').datepicker({
+            format: 'yyyy-mm-dd', // Format tanggal yang diinginkan
+            autoclose: true, // Menutup kalender setelah memilih tanggal
+        });
+    });
+    // Script untuk menambahkan baris input item secara dinamis
+    $('#add-item').click(function() {
+        $('#item-table tbody').append(`
+            <tr>
+                <td><input type="text" name="item[]" class="form-control"></td>
+                <td><input type="number" name="qty[]" class="form-control"></td>
+                <td><input type="text" name="satuan[]" class="form-control"></td>
+                <td><input type="number" name="harga_satuan[]" class="form-control"></td>
+                <td><input type="number" name="jumlah_harga[]" class="form-control"></td>
+                <td><input type="text" name="keterangan[]" class="form-control"></td>
+            </tr>
+        `);
+    });
+</script>
+@endpush
