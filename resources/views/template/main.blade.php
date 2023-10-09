@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.v2.css') }}">
     <link rel="manifest" href="__manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <title>asdasdsad</title>
 </head>
@@ -31,8 +30,8 @@
 
     @yield('header')
     @yield('content')
-
     @include('template.bottomNav')
+
     <script src="{{ asset('assets/js/lib/jquery-3.4.1.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
     <script src="{{ asset('assets/js/lib/popper.min.js') }}"></script>
@@ -47,7 +46,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('assets/js/base.js') }}"></script>
+    @if (session('success'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil',
+                    text: '{{ session('success') }}',
+                });
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: '{{ session('error') }}',
+                });
+            });
+        </script>
+    @endif
+
 </body>
 
 </html>

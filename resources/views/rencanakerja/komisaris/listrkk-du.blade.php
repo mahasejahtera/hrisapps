@@ -12,7 +12,7 @@
             <img src="{{ asset('assets/img/iconrkk.png') }}" alt="">
         @else
             @foreach ($data as $d)
-                <a href="{{ route('detail-rkk-manajer', ['id' => $d->id]) }}">
+                <a href="{{ route('detail-rkk-du-from-komisaris', ['id' => $d->id]) }}">
                     <div class="container-task m-2">
                         <div class="icon-task text-warning">
                             <ion-icon name="calendar-outline"></ion-icon>
@@ -25,8 +25,6 @@
                 </a>
             @endforeach
         @endif
-        <a href="/manajer/add-rkk" class="btn bg-prima floating-button-rkk text-sec">
-            +
-        </a>
+
     </div>
 @endsection

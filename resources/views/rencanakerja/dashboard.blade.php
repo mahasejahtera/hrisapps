@@ -9,7 +9,7 @@
                     <img src="{{ asset('images/ardi.jpg') }}" alt="default avatar">
                 </div>
                 <div class="header-profile-employee">
-                    <p class="profile-name">Ardi Firmansyah</p>
+                    <p class="profile-name">{{ $data->nama }}</p>
                     <p class="profile-jobtitle">Software Engineer</p>
                 </div>
             </div>
@@ -66,15 +66,29 @@
                     </a>
                 </div>
                 <div class="col-4">
-                    <a href="/karyawan/option" class="menu-item">
-                        <div class="menu-item-icon blue">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 256 256">
-                                <path
-                                    d="M28,64A12,12,0,0,1,40,52H216a12,12,0,0,1,0,24H40A12,12,0,0,1,28,64Zm12,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24Zm104,40H40a12,12,0,0,0,0,24H144a12,12,0,0,0,0-24Zm88,0H220V168a12,12,0,0,0-24,0v12H184a12,12,0,0,0,0,24h12v12a12,12,0,0,0,24,0V204h12a12,12,0,0,0,0-24Z">
-                                </path>
-                            </svg>
-                        </div>
-                        <p class="menu-item-title">Rencana Kerja</p>
+                    @if ($data->role_id == 1)
+                        <a href="/karyawan/option" class="menu-item">
+                        @elseif ($data->role_id == 2)
+                            @if ($data->kode_dept == 'HR')
+                                <a href="/manajer/hrd/option" class="menu-item">
+                                @else
+                                    <a href="/manajer/option" class="menu-item">
+                            @endif
+                        @elseif ($data->role_id == 3)
+                            <a href="/pm/option" class="menu-item">
+                            @elseif ($data->role_id == 4)
+                                <a href="/direktur/option" class="menu-item">
+                                @elseif ($data->role_id == 5)
+                                    <a href="/komisaris/option" class="menu-item">
+                    @endif
+                    <div class="menu-item-icon blue">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 256 256">
+                            <path
+                                d="M28,64A12,12,0,0,1,40,52H216a12,12,0,0,1,0,24H40A12,12,0,0,1,28,64Zm12,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24Zm104,40H40a12,12,0,0,0,0,24H144a12,12,0,0,0,0-24Zm88,0H220V168a12,12,0,0,0-24,0v12H184a12,12,0,0,0,0,24h12v12a12,12,0,0,0,24,0V204h12a12,12,0,0,0,0-24Z">
+                            </path>
+                        </svg>
+                    </div>
+                    <p class="menu-item-title">Rencana Kerja</p>
                     </a>
                 </div>
                 <div class="col-4">

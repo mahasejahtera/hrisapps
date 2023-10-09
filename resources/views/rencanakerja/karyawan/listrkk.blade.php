@@ -1,15 +1,14 @@
 @include('template.header')
-
 <body>
     <header>
-        <div class="bg-prima btn-header fix-header" >
+        <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
                 List Rencana Kerja
             </h2>
         </div>
     </header>
     <div class="container-add-rkk">
-        @if (!$data)
+        @if (count($data) === 0)
             <img src="{{ asset('assets/img/iconrkk.png') }}" alt="">
         @else
             @foreach ($data as $d)

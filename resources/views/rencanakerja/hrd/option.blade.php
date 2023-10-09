@@ -9,13 +9,13 @@
     </header>
     <div class="mt-3">
         <div class="container-option">
-            <a href="/manajer/listrkk/karyawan">
+            <a href="/manajer/hrd/optiondepartment">
                 <div class="badge-option">2</div>
                 <div class="text-center text-dark">Rencana Kerja Karyawan</div>
             </a>
         </div>
         <div class="container-option">
-            <a href="/manajer/listrkk">
+            <a href="/manajer/hrd/listrkk">
                 <div class="badge-option">7</div>
                 <div class="text-center text-dark">Rencana Kerja Pribadi</div>
             </a>

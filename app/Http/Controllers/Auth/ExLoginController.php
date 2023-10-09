@@ -22,4 +22,11 @@ class ExLoginController extends Controller
         return view('rencanakerja.ex-login')->with('kary', $kary);
     }
 
+    public function dashboard(Request $request)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $data = Karyawan::where('id', $idk)->first();
+        return view('rencanakerja.dashboard')->with(compact('data'));
+    }
+
 }

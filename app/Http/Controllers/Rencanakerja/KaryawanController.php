@@ -41,7 +41,6 @@ class KaryawanController extends Controller
     {
         $idk = $request->session()->get('id_karyawan');
         $file = $request->file('lampiran');
-
         if ($file->getClientOriginalExtension() === 'pdf') {
             $filename = $file->getClientOriginalName();
             $file_jadi = date('ymdhis') . $filename;
@@ -62,8 +61,6 @@ class KaryawanController extends Controller
         } else {
             return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
         }
-
-
     }
 
     public function detailrkk(string $id)

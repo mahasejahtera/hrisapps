@@ -1,31 +1,24 @@
-@include('template.header')
-
-
-<body>
+@extends('template.main')
+@section('content')
     <header>
         <div class="bg-prima btn-header">
             <h2 class="text-sec pt-2 p-1">
-                Rencana Kerja
+                Departemen
             </h2>
         </div>
     </header>
     <div class="mt-3">
         <div class="container-option">
-            <a href="">
+            <a href="/pm/listrkk/eng">
                 <div class="badge-option">2</div>
-                <div class="text-center text-dark">Daftar Tugas</div>
+                <div class="text-center text-dark">Engineering Department</div>
             </a>
         </div>
         <div class="container-option">
-            <a href="/karyawan/listrkk">
+            <a href="/pm/listrkk/pro">
                 <div class="badge-option">7</div>
-                <div class="text-center text-dark">Daftar Rencana Kerja</div>
+                <div class="text-center text-dark">Production Department</div>
             </a>
         </div>
     </div>
-
-</body>
-@include('template.bottomNav')
-@include('template.footer')
-
-</html>
+@endsection

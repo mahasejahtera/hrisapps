@@ -1,6 +1,5 @@
-@include('template.header')
-
-<body>
+@extends('template.main')
+@section('content')
     <header>
         <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
@@ -36,18 +35,12 @@
             </tr>
             <tr>
                 <td>Lampiran</td>
-                <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank"
-                        class="text-danger">Klik disini</a></td>
+                <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank" class="text-danger">Klik
+                        disini</a></td>
             </tr>
 
     </div>
     </table>
     <div class="text-right"><a href="" class="btn btn-success">Proses</a></div>
     </div>
-
-</body>
-
-@include('template.bottomNav')
-@include('template.footer')
-
-</html>
+@endsection

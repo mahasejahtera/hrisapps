@@ -17,6 +17,15 @@ class Rencanakerja extends Model
         'keterangan',
         'lampiran',
         'prioritas',
+        'revisi',
+        'lampiran_revisi',
+        'ket_revisi',
+        'status',
+        'manajer_approval',
+        'pm_approval',
+        'hrd_approval',
+        'direktur_approval',
+        'komisaris_approval',
     ];
     protected $table = 'rencanakerjas';
 

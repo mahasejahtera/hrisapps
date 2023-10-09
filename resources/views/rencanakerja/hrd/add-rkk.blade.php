@@ -8,9 +8,8 @@
             </h2>
         </div>
     </header>
-
     <div class="container-add-rkk" style="margin-top: 120px;">
-        <form action="/karyawan/addrkk/proses" method="post" enctype="multipart/form-data">
+        <form action="/manajer/hrd/addrkk/proses" method="post" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
                 <input type="text" name="perihal" class="form-control" placeholder="Perihal">
@@ -66,9 +65,7 @@
     $('input[type="file"]').on('change', function(e) {
         var $this = $(this);
         var fileName = e.target.files[0].name;
-
         $this.siblings().text(fileName);
     });
 </script>
-
 </html>

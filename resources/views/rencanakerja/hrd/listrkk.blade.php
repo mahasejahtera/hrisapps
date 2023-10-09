@@ -1,5 +1,5 @@
-@extends('template.main')
-@section('content')
+@include('template.header')
+<body>
     <header>
         <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
@@ -12,7 +12,8 @@
             <img src="{{ asset('assets/img/iconrkk.png') }}" alt="">
         @else
             @foreach ($data as $d)
-                <a href="{{ route('detail-rkk-manajer', ['id' => $d->id]) }}">
+                <a href="{{ route('detail-rkk-hrd', ['id' => $d->id]) }}">
+
                     <div class="container-task m-2">
                         <div class="icon-task text-warning">
                             <ion-icon name="calendar-outline"></ion-icon>
@@ -25,8 +26,12 @@
                 </a>
             @endforeach
         @endif
-        <a href="/manajer/add-rkk" class="btn bg-prima floating-button-rkk text-sec">
+        <a href="/manajer/hrd/add-rkk" class="btn bg-prima floating-button-rkk text-sec">
             +
         </a>
     </div>
-@endsection
+</body>
+@include('template.bottomNav')
+@include('template.footer')
+
+</html>
