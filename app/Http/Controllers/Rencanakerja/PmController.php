@@ -20,7 +20,6 @@ class PmController extends Controller
         return view('rencanakerja.pm.option-department');
     }
 
-
     public function listrkk(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');
@@ -31,7 +30,13 @@ class PmController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'TK')->whereIn('role_id', [1, 2]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 0)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.pm.listrkk-engineering')->with(compact('data'));
     }
 
@@ -39,7 +44,13 @@ class PmController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'PR')->whereIn('role_id', [1, 2]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 0)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.pm.listrkk-production')->with(compact('data'));
     }
 
@@ -78,11 +89,31 @@ class PmController extends Controller
     public function detailrkkeng(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.pm.detail-rkk-eng')->with(compact('data'));
     }
     public function detailrkkpro(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.pm.detail-rkk-pro')->with(compact('data'));
+    }
+
+    public function approvalpm(Request $request){
+        $id = $request->id;
+        $data = Rencanakerja::where('id', $id)->first();
+        $karyawan = Karyawan::where('id', $data->id_karyawan)->first();
+        $data->status = 0;
+        $data->pm_approval = 1;
+        $data->save();
+        if($karyawan->kode_dept == 'TK'){
+        return redirect()->route('pm-listrkk-eng')->with('success', 'Rencana Kerja Disetujui !');
+        }else{
+        return redirect()->route('pm-listrkk-pro')->with('success', 'Rencana Kerja Disetujui !');
+        }
     }
 }

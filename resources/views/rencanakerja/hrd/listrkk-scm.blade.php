@@ -22,6 +22,11 @@
                             <div class="job-title">{{ $d->waktu }}</div>
                         </div>
                     </div>
+                    @if ($d->status === 0)
+                        <div class="badge-status-new">Baru</div>
+                    @else
+                        <div class="badge-status-read">Dibaca</div>
+                    @endif
                 </a>
             @endforeach
         @endif

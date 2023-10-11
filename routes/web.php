@@ -30,24 +30,25 @@ Route::prefix('manajer')->group(function () {
     Route::get('/add-rkk', [ManajerController::class, 'addrkk']);
     Route::post('/addrkk/proses', [ManajerController::class, 'addrkkstore']);
     Route::get('/detailrkk/{id}', [ManajerController::class, 'detailrkk'])->name('detail-rkk-manajer');
-    Route::get('/listrkk/karyawan', [ManajerController::class, 'listrkkkaryawan']);
+    Route::get('/listrkk/karyawan', [ManajerController::class, 'listrkkkaryawan'])->name('manajer-listrkk-karyawan');
+    Route::post('/approval', [ManajerController::class, 'approvalmanajer']);
 });
 
 //manajer hrd rkk
 Route::prefix('manajer/hrd')->group(function () {
     Route::get('/option', [HrdController::class, 'option']);
     Route::get('/optiondepartment', [HrdController::class, 'optiondepartment']);
-    Route::get('/listrkk', [HrdController::class, 'listrkk']);
+    Route::get('/listrkk', [HrdController::class, 'listrkk'])->name('list-rkk-hrd');
     Route::get('/detailrkk/{id}', [HrdController::class, 'detailrkk'])->name('detail-rkk-hrd');
     Route::get('/add-rkk', [HrdController::class, 'addrkk']);
     Route::post('/addrkk/proses', [HrdController::class, 'addrkkstore']);
-    Route::get('/eng', [HrdController::class, 'listrkkeng']);
-    Route::get('/pro', [HrdController::class, 'listrkkpro']);
-    Route::get('/scm', [HrdController::class, 'listrkkscm']);
-    Route::get('/fin', [HrdController::class, 'listrkkfin']);
-    Route::get('/it', [HrdController::class, 'listrkkit']);
-    Route::get('/mr', [HrdController::class, 'listrkkmr']);
-    Route::get('/hrd', [HrdController::class, 'listrkkhrd']);
+    Route::get('/eng', [HrdController::class, 'listrkkeng'])->name('hrd-listrkk-eng');
+    Route::get('/pro', [HrdController::class, 'listrkkpro'])->name('hrd-listrkk-pro');
+    Route::get('/scm', [HrdController::class, 'listrkkscm'])->name('hrd-listrkk-scm');
+    Route::get('/fin', [HrdController::class, 'listrkkfin'])->name('hrd-listrkk-fin');
+    Route::get('/it', [HrdController::class, 'listrkkit'])->name('hrd-listrkk-it');
+    Route::get('/mr', [HrdController::class, 'listrkkmr'])->name('hrd-listrkk-mr');
+    Route::get('/hrd', [HrdController::class, 'listrkkhrd'])->name('hrd-listrkk-hrd');
     Route::get('/detailrkk/eng/{id}', [HrdController::class, 'detailrkkeng'])->name('detail-rkk-eng-from-hrd');
     Route::get('/detailrkk/pro/{id}', [HrdController::class, 'detailrkkpro'])->name('detail-rkk-pro-from-hrd');
     Route::get('/detailrkk/scm/{id}', [HrdController::class, 'detailrkkscm'])->name('detail-rkk-scm-from-hrd');
@@ -55,6 +56,8 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::get('/detailrkk/it/{id}', [HrdController::class, 'detailrkkit'])->name('detail-rkk-it-from-hrd');
     Route::get('/detailrkk/mr/{id}', [HrdController::class, 'detailrkkmr'])->name('detail-rkk-mr-from-hrd');
     Route::get('/detailrkk/hrd/{id}', [HrdController::class, 'detailrkkhrd'])->name('detail-rkk-hrd-from-hrd');
+    Route::post('/approval', [HrdController::class, 'approvalhrd']);
+
 });
 
 //project manager rkk
@@ -65,24 +68,26 @@ Route::prefix('pm')->group(function () {
     Route::get('/add-rkk', [PmController::class, 'addrkk']);
     Route::post('/addrkk/proses', [PmController::class, 'addrkkstore']);
     Route::get('/detailrkk/{id}', [PmController::class, 'detailrkk'])->name('detail-rkk-pm');
-    Route::get('/listrkk/eng', [PmController::class, 'listrkkengineering']);
-    Route::get('/listrkk/pro', [PmController::class, 'listrkkproduction']);
+    Route::get('/listrkk/eng', [PmController::class, 'listrkkengineering'])->name('pm-listrkk-eng');
+    Route::get('/listrkk/pro', [PmController::class, 'listrkkproduction'])->name('pm-listrkk-pro');
     Route::get('/detailrkk/eng/{id}', [PmController::class, 'detailrkkeng'])->name('detail-rkk-eng-from-pm');
     Route::get('/detailrkk/pro/{id}', [PmController::class, 'detailrkkpro'])->name('detail-rkk-pro-from-pm');
+    Route::post('/approval', [PmController::class, 'approvalpm']);
+
 });
 
 //Direktur
 Route::prefix('direktur')->group(function () {
     Route::get('/option', [DirekturController::class, 'option']);
-    Route::get('/optiondepartment', [DirekturController::class, 'optiondepartment']);
-    Route::get('/eng', [DirekturController::class, 'listrkkeng']);
-    Route::get('/pro', [DirekturController::class, 'listrkkpro']);
-    Route::get('/scm', [DirekturController::class, 'listrkkscm']);
-    Route::get('/fin', [DirekturController::class, 'listrkkfin']);
-    Route::get('/it', [DirekturController::class, 'listrkkit']);
-    Route::get('/mr', [DirekturController::class, 'listrkkmr']);
-    Route::get('/hrd', [DirekturController::class, 'listrkkhrd']);
-    Route::get('/du', [DirekturController::class, 'listrkkdu']);
+    Route::get('/optiondepartment', [DirekturController::class, 'optiondepartment'])->name('dpoption');
+    Route::get('/eng', [DirekturController::class, 'listrkkeng'])->name('direktur-listrkk-eng');
+    Route::get('/pro', [DirekturController::class, 'listrkkpro'])->name('direktur-listrkk-pro');
+    Route::get('/scm', [DirekturController::class, 'listrkkscm'])->name('direktur-listrkk-scm');
+    Route::get('/fin', [DirekturController::class, 'listrkkfin'])->name('direktur-listrkk-fin');
+    Route::get('/it', [DirekturController::class, 'listrkkit'])->name('direktur-listrkk-it');
+    Route::get('/mr', [DirekturController::class, 'listrkkmr'])->name('direktur-listrkk-mr');
+    Route::get('/hrd', [DirekturController::class, 'listrkkhrd'])->name('direktur-listrkk-hrd');
+    Route::get('/du', [DirekturController::class, 'listrkkdu'])->name('direktur-listrkk-du');
     Route::get('/detailrkk/du/{id}', [DirekturController::class, 'detailrkkdu'])->name('detail-rkk-du-from-direktur');
     Route::get('/detailrkk/eng/{id}', [DirekturController::class, 'detailrkkeng'])->name('detail-rkk-eng-from-direktur');
     Route::get('/detailrkk/pro/{id}', [DirekturController::class, 'detailrkkpro'])->name('detail-rkk-pro-from-direktur');
@@ -91,20 +96,22 @@ Route::prefix('direktur')->group(function () {
     Route::get('/detailrkk/it/{id}', [DirekturController::class, 'detailrkkit'])->name('detail-rkk-it-from-direktur');
     Route::get('/detailrkk/mr/{id}', [DirekturController::class, 'detailrkkmr'])->name('detail-rkk-mr-from-direktur');
     Route::get('/detailrkk/hrd/{id}', [DirekturController::class, 'detailrkkhrd'])->name('detail-rkk-hrd-from-direktur');
+    Route::post('/approval', [DirekturController::class, 'approvaldirektur']);
+
 });
 
 //komisaris rkk
 Route::prefix('komisaris')->group(function () {
     Route::get('/option', [KomisarisController::class, 'option']);
     Route::get('/optiondepartment', [KomisarisController::class, 'optiondepartment']);
-    Route::get('/eng', [KomisarisController::class, 'listrkkeng']);
-    Route::get('/pro', [KomisarisController::class, 'listrkkpro']);
-    Route::get('/scm', [KomisarisController::class, 'listrkkscm']);
-    Route::get('/fin', [KomisarisController::class, 'listrkkfin']);
-    Route::get('/it', [KomisarisController::class, 'listrkkit']);
-    Route::get('/mr', [KomisarisController::class, 'listrkkmr']);
-    Route::get('/hrd', [KomisarisController::class, 'listrkkhrd']);
-    Route::get('/du', [KomisarisController::class, 'listrkkdu']);
+    Route::get('/eng', [KomisarisController::class, 'listrkkeng'])->name('komisaris-listrkk-eng');
+    Route::get('/pro', [KomisarisController::class, 'listrkkpro'])->name('komisaris-listrkk-pro');
+    Route::get('/scm', [KomisarisController::class, 'listrkkscm'])->name('komisaris-listrkk-scm');
+    Route::get('/fin', [KomisarisController::class, 'listrkkfin'])->name('komisaris-listrkk-fin');
+    Route::get('/it', [KomisarisController::class, 'listrkkit'])->name('komisaris-listrkk-it');
+    Route::get('/mr', [KomisarisController::class, 'listrkkmr'])->name('komisaris-listrkk-mr');
+    Route::get('/hrd', [KomisarisController::class, 'listrkkhrd'])->name('komisaris-listrkk-hrd');
+    Route::get('/du', [KomisarisController::class, 'listrkkdu'])->name('komisaris-listrkk-du');
     Route::get('/detailrkk/du/{id}', [KomisarisController::class, 'detailrkkdu'])->name('detail-rkk-du-from-komisaris');
     Route::get('/detailrkk/eng/{id}', [KomisarisController::class, 'detailrkkeng'])->name('detail-rkk-eng-from-komisaris');
     Route::get('/detailrkk/pro/{id}', [KomisarisController::class, 'detailrkkpro'])->name('detail-rkk-pro-from-komisaris');
@@ -113,6 +120,8 @@ Route::prefix('komisaris')->group(function () {
     Route::get('/detailrkk/it/{id}', [KomisarisController::class, 'detailrkkit'])->name('detail-rkk-it-from-komisaris');
     Route::get('/detailrkk/mr/{id}', [KomisarisController::class, 'detailrkkmr'])->name('detail-rkk-mr-from-komisaris');
     Route::get('/detailrkk/hrd/{id}', [KomisarisController::class, 'detailrkkhrd'])->name('detail-rkk-hrd-from-komisaris');
+    Route::post('/approval', [KomisarisController::class, 'approvalkomisaris']);
+
 });
 
 //example login rkk

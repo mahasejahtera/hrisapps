@@ -59,6 +59,9 @@ class ManajerController extends Controller
     public function detailrkkkaryawan(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.manajer.detail-rkk-karyawan')->with(compact('data'));
     }
 
@@ -69,10 +72,24 @@ class ManajerController extends Controller
     $data = Rencanakerja::join('karyawans', 'rencanakerjas.id_karyawan', '=', 'karyawans.id')
         ->where('karyawans.role_id', 1)
         ->where('karyawans.kode_dept', $datak->kode_dept)
+        ->where('rencanakerjas.manajer_approval', 0)
         ->select('rencanakerjas.*')
         ->get();
     return view('rencanakerja.manajer.listrkk-karyawan')->with(compact('data'));
     }
 
-
+    public function approvalmanajer(Request $request){
+        $id = $request->id;
+        $data = Rencanakerja::where('id', $id)->first();
+        $karyawan = Karyawan::where('id', $data->id_karyawan)->first();
+        $data->manajer_approval = 1;
+        $data->status = 0;
+        if($karyawan->kode_dept == 'TK' || $karyawan->kode_dept == 'PR'){
+            $data->pm_approval = 0;
+        }else{
+            $data->pm_approval = 1;
+        }
+        $data->save();
+        return redirect()->route('manajer-listrkk-karyawan')->with('success', 'Rencana Kerja Disetujui !');
+    }
 }

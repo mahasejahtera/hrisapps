@@ -1,4 +1,5 @@
 @include('template.header')
+
 <body>
     <header>
         <div class="bg-prima btn-header fix-header">
@@ -22,6 +23,7 @@
                             <div>{{ $d->perihal }}</div>
                             <div class="job-title">{{ $d->waktu }}</div>
                         </div>
+                        
                     </div>
                 </a>
             @endforeach
@@ -33,5 +35,16 @@
 </body>
 @include('template.bottomNav')
 @include('template.footer')
+@if (session('success'))
+    <script>
+        $(document).ready(function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: '{{ session('success') }}',
+            });
+        });
+    </script>
+@endif
 
 </html>

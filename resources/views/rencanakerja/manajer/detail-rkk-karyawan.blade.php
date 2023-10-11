@@ -41,7 +41,11 @@
     </div>
     </table>
     <div class="d-flex">
-        <a href="" class="btn btn-success ml-auto">Terima</a>
+        <form method="POST" action="/manajer/approval" class="ml-auto">
+            @csrf
+            <input type="hidden" name="id" value="{{ $data->id }}">
+            <button type="submit" class="btn btn-success">Terima</button>
+        </form>
         <a href="" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Revisi</a>
     </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

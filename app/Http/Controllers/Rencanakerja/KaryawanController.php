@@ -40,6 +40,7 @@ class KaryawanController extends Controller
     public function addrkkstore(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
         $file = $request->file('lampiran');
         if ($file->getClientOriginalExtension() === 'pdf') {
             $filename = $file->getClientOriginalName();
@@ -55,7 +56,20 @@ class KaryawanController extends Controller
                 'lampiran' => $file_jadi,
                 'prioritas' => $request->prioritas,
             ];
-
+            if($karyawan->kode_dept == 'HR'){
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
+            }elseif ($karyawan->kode_dept == 'DU') {
+                $data['manajer_approval'] = 1;
+                $data['hrd_approval'] = 1;
+                $data['pm_approval'] = 1;
+            }else{
+                $data['manajer_approval'] = 0;
+                $data['hrd_approval'] = 0;
+                $data['pm_approval'] = 0;
+                $data['direktur_approval'] = 0;
+                $data['komisaris_approval'] = 0;
+            }
             Rencanakerja::create($data);
             return redirect('/karyawan/listrkk/')->with('success', 'Rencana Kerja Ditambah !');
         } else {

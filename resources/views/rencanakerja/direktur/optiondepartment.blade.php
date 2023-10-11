@@ -1,7 +1,7 @@
 @extends('template.main')
 @section('content')
     <header>
-        <div class="bg-prima btn-header">
+        <div class="bg-prima btn-header ">
             <h2 class="text-sec pt-2 p-1">
                 Departemen
             </h2>

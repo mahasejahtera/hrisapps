@@ -68,7 +68,13 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'TK')->whereIn('role_id', [1, 2, 3]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-eng')->with(compact('data'));
     }
 
@@ -76,7 +82,13 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'PR')->whereIn('role_id', [1, 2, 3]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-pro')->with(compact('data'));
     }
 
@@ -84,7 +96,13 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'SC')->whereIn('role_id', [1, 2]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-scm')->with(compact('data'));
     }
 
@@ -92,7 +110,13 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'IT')->whereIn('role_id', [1, 2]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-it')->with(compact('data'));
     }
 
@@ -100,7 +124,13 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'HR')->where('role_id', 1);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-hrd')->with(compact('data'));
     }
 
@@ -108,7 +138,13 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'KU')->whereIn('role_id', [1,2]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-fin')->with(compact('data'));
     }
 
@@ -116,50 +152,102 @@ class HrdController extends Controller
     {
         $data = Rencanakerja::whereHas('karyawan', function ($query) {
             $query->where('kode_dept', 'PN')->whereIn('role_id', [1,2]);
-        })->get();
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
         return view('rencanakerja.hrd.listrkk-mr')->with(compact('data'));
     }
 
     public function detailrkkeng(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-eng')->with(compact('data'));
     }
 
     public function detailrkkpro(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-pro')->with(compact('data'));
     }
 
     public function detailrkkfin(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-fin')->with(compact('data'));
     }
 
     public function detailrkkit(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-it')->with(compact('data'));
     }
 
     public function detailrkkmr(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-mr')->with(compact('data'));
     }
 
     public function detailrkkscm(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-scm')->with(compact('data'));
     }
 
     public function detailrkkhrd(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
+        $updatedata = Rencanakerja::where('id', $id)->first();
+        $updatedata->status = 1;
+        $updatedata->save();
         return view('rencanakerja.hrd.detail-rkk-hrd')->with(compact('data'));
     }
 
+    public function approvalhrd(Request $request){
+        $id = $request->id;
+        $data = Rencanakerja::where('id', $id)->first();
+        $karyawan = Karyawan::where('id', $data->id_karyawan)->first();
+        $data->hrd_approval = 1;
+        $data->status = 0;
+        $data->save();
+        if($karyawan->kode_dept == 'TK'){
+            return redirect()->route('hrd-listrkk-eng')->with('success', 'Rencana Kerja Disetujui !');
+        }elseif($karyawan->kode_dept == 'PR'){
+            return redirect()->route('hrd-listrkk-pro')->with('success', 'Rencana Kerja Disetujui !');
+        }elseif($karyawan->kode_dept == 'SC'){
+            return redirect()->route('hrd-listrkk-scm')->with('success', 'Rencana Kerja Disetujui !');
+        }elseif($karyawan->kode_dept == 'IT'){
+            return redirect()->route('hrd-listrkk-it')->with('success', 'Rencana Kerja Disetujui !');
+        }elseif($karyawan->kode_dept == 'KU'){
+            return redirect()->route('hrd-listrkk-fin')->with('success', 'Rencana Kerja Disetujui !');
+        }elseif($karyawan->kode_dept == 'PN'){
+            return redirect()->route('hrd-listrkk-mr')->with('success', 'Rencana Kerja Disetujui !');
+        }elseif($karyawan->kode_dept == 'HR'){
+            return redirect()->route('hrd-listrkk-hrd')->with('success', 'Rencana Kerja Disetujui !');
+        }else{
+            return redirect()->route('listrkk-hrd')->with('error', 'Departemen tidak ditemukan');
+        }
+    }
 }
