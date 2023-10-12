@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pengajuan;
 
 use App\Http\Controllers\Controller;
+use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
 
 class HutangOperasionalController extends Controller
@@ -45,7 +46,23 @@ class HutangOperasionalController extends Controller
     public function store(Request $request)
     {
         //
-        
+        // Validasi input
+        $request->validate([
+            'nomor' => 'required',
+            'tanggal' => 'required|date',
+            'due_date' => 'required|date',
+            'perihal_pekerjaan' => 'required',
+            'total_biaya' => 'required|numeric',
+        ]);
+
+        // Simpan data ke database
+        $post = new SubmitPengajuan();
+        $post->nomor = $request->input('nomor');
+        $post->tanggal = $request->input('tanggal');
+        $post->due_date = $request->input('due_date');
+        $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
+        $post->total_biaya = $request->input('total_biaya');
+        $post->save();
         return redirect()->route('hutangoperasional.index');
     }
 

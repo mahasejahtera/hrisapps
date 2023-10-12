@@ -29,10 +29,10 @@
                 <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Nomor" required>
             </div>
             <div class="form-group">
-                <input type="text" name="tanggal" class="form-control calendar" value="{{ old('tanggal') }}" placeholder="Tanggal" autocomplete="off" required>
+                <input type="text" name="tanggal" class="form-control calendar" value="{{ old('tanggal')??date('Y-m-d') }}" placeholder="Tanggal" autocomplete="off" required>
             </div>
             <div class="form-group">
-                <input type="text" name="due_date" class="form-control calendar" value="{{ old('due_date') }}" placeholder="Due Date" autocomplete="off" required>
+                <input type="text" name="due_date" class="form-control calendar" value="{{ old('due_date')??date('Y-m-d') }}" placeholder="Due Date" autocomplete="off" required>
             </div>
             <div class="form-group">
                 <input type="text" name="perihal_pekerjaan" class="form-control" value="{{ old('perihal_pekerjaan') }}" placeholder="Perihal Pekerjaan" required>
