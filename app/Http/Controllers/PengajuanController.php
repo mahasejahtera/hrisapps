@@ -11,6 +11,11 @@ class PengajuanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        session(['id' => 9]);
+    }
+
     public function index()
     {
         //

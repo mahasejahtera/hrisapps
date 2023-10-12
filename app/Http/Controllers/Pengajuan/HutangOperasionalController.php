@@ -13,12 +13,24 @@ class HutangOperasionalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct()
+    {
+        session([
+            'id' => 9,
+            'kode_dept' => 2
+        ]);
+    }
+
     public function index()
     {
         //
+        $pengajuan = SubmitPengajuan::where(['id_karyawan'=>session('id')])->get();
+        // dd($pengajuan);
         $data = [
-            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'pengajuan' => $pengajuan
         ];
+
         //
         return view('pengajuan.hutangoperasional.index', $data);
     }
@@ -60,6 +72,8 @@ class HutangOperasionalController extends Controller
         $post->nomor = $request->input('nomor');
         $post->tanggal = $request->input('tanggal');
         $post->due_date = $request->input('due_date');
+        $post->id_karyawan = session('id');
+        $post->id_karyawan = session('id');
         $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
         $post->total_biaya = $request->input('total_biaya');
         $post->save();
