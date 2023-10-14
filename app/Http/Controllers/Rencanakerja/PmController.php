@@ -13,7 +13,6 @@ class PmController extends Controller
     public function option()
     {
         return view('rencanakerja.pm.option');
-
     }
     public function optiondepartment()
     {
@@ -74,6 +73,8 @@ class PmController extends Controller
                 'keterangan' => $request->keterangan,
                 'lampiran' => $file_jadi,
                 'prioritas' => $request->prioritas,
+                'manajer_approval' => 1,
+                'pm_approval' => 1,
             ];
             Rencanakerja::create($data);
             return redirect('/pm/listrkk/')->with('success', 'Rencana Kerja Ditambah !');
@@ -90,16 +91,20 @@ class PmController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.pm.detail-rkk-eng')->with(compact('data'));
     }
     public function detailrkkpro(string $id)
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.pm.detail-rkk-pro')->with(compact('data'));
     }
 
@@ -116,4 +121,65 @@ class PmController extends Controller
         return redirect()->route('pm-listrkk-pro')->with('success', 'Rencana Kerja Disetujui !');
         }
     }
+
+    public function revisirkk(Request $request) {
+        $id = $request->id;
+        $datakaryawan = Rencanakerja::where('id', $id)->first();
+        $file = $request->file('lampiran');
+        if ($file->getClientOriginalExtension() === 'pdf') {
+            $filename = $file->getClientOriginalName();
+            $file_jadi = date('ymdhis') . $filename;
+            $file->move(public_path('images/rencanakerja/revisi'), $file_jadi);
+            $data = [
+                'status' => 3,
+                'lampiran_revisi' => $file_jadi,
+                'ket_revisi' => $request->keterangan,
+            ];
+            Rencanakerja::where('id', $id)->update($data);
+            if($datakaryawan->karyawan->kode_dept === 'TK'){
+                return redirect('/pm/listrkk/eng')->with('success', 'Revisi Dikirim!');
+            }else{
+                return redirect('/pm/listrkk/pro')->with('success', 'Revisi Dikirim!');
+            }
+        } else {
+            return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
+        }
+    }
+
+    public function revisiadd(string $id)
+    {
+        $data = Rencanakerja::where('id', $id)->first();
+        return view('rencanakerja.pm.revisi')->with(compact('data'));
+    }
+
+    public function revisiproses(Request $request)
+    {
+        $id = $request->id;
+        $file = $request->file('lampiran');
+        if ($file->getClientOriginalExtension() === 'pdf') {
+            $filename = $file->getClientOriginalName();
+            $file_jadi = date('ymdhis') . $filename;
+            $file->move(public_path('images/rencanakerja'), $file_jadi);
+        $data = [
+            'status' => 0,
+            'manajer_approval' => 1,
+            'hrd_approval' => 0,
+            'pm_approval' => 1,
+            'direktur_approval' => 0,
+            'komisaris_approval' => 0,
+            'perihal' => $request->perihal,
+            'lokasi' => $request->lokasi,
+            'waktu' => $request->waktu,
+            'target_penyelesaian' => $request->target,
+            'keterangan' => $request->keterangan,
+            'lampiran' => $file_jadi,
+            'prioritas' => $request->prioritas,
+        ];
+        Rencanakerja::where('id', $id)->update($data);
+        return redirect()->route('list-rkk-pm')->with('success', 'Rencana Kerja Direvisi !');
+        } else {
+            return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
+        }
+    }
+
 }

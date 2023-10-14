@@ -58,23 +58,34 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="post" action="/manajer/revisi" enctype="multipart/form-data">
                         @csrf
-                        <div class="input-group form-group">
-                            <div class="custom-file form-control">
-                                <input type="file">
-                            </div>
+                        <div class="input-group">
+                            div class="custom-file form-control">
+                            <input type="file" class="custom-file-input" id="inputGroupFile04"
+                                aria-describedby="inputGroupFileAddon04" name="lampiran">
+                            <label class="custom-file-label" for="inputGroupFile04">Lampiran</label>
                         </div>
                         <div class="form-group">
-                            <textarea class="form-control" id="message-text" placeholder="Keterangan" rows="5"></textarea>
+                            <textarea class="form-control" id="message-text" name="keterangan" placeholder="Keterangan" rows="5"></textarea>
+                        </div>
+                        <input type="hidden" name="id" value="{{ $data->id }}">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Kirim</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Kirim</button>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+@section('scriptJS')
+    <script>
+        $('input[type="file"]').on('change', function(e) {
+            var $this = $(this);
+            var fileName = e.target.files[0].name;
+            $this.siblings().text(fileName);
+        });
+    </script>
 @endsection

@@ -23,7 +23,9 @@
                             <div>{{ $d->perihal }}</div>
                             <div class="job-title">{{ $d->waktu }}</div>
                         </div>
-                        
+                        @if ($d->status === 3)
+                            <div class="badge-status-revisi">Revisi</div>
+                        @endif
                     </div>
                 </a>
             @endforeach

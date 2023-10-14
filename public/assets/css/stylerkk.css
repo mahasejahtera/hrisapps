@@ -136,3 +136,13 @@ img {
     padding: 4px 10px;
     border-radius: 10px;
 }
+
+.badge-status-revisi {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 10px;
+}

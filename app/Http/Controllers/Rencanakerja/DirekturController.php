@@ -136,8 +136,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-du')->with(compact('data'));
     }
 
@@ -145,8 +147,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-eng')->with(compact('data'));
     }
 
@@ -154,8 +158,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-pro')->with(compact('data'));
     }
 
@@ -163,8 +169,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-fin')->with(compact('data'));
     }
 
@@ -172,8 +180,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-it')->with(compact('data'));
     }
 
@@ -181,8 +191,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-mr')->with(compact('data'));
     }
 
@@ -190,8 +202,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-scm')->with(compact('data'));
     }
 
@@ -199,8 +213,10 @@ class DirekturController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         $updatedata = Rencanakerja::where('id', $id)->first();
-        $updatedata->status = 1;
-        $updatedata->save();
+        if($data->status == 0){
+            $updatedata->status = 1;
+            $updatedata->save();
+        }
         return view('rencanakerja.direktur.detail-rkk-hrd')->with(compact('data'));
     }
 

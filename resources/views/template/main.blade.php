@@ -23,7 +23,7 @@
     <link rel="manifest" href="__manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 
-    <title>asdasdsad</title>
+    <title>PT Maha Akbar Sejahtera</title>
 </head>
 
 <body>
@@ -70,6 +70,7 @@
             });
         </script>
     @endif
+    @yield('scriptJS')
 
 </body>
 

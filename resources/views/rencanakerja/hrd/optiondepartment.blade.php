@@ -15,6 +15,12 @@
             </a>
         </div>
         <div class="container-option">
+            <a href="/manajer/hrd/pm">
+                <div class="badge-option">2</div>
+                <div class="text-center text-dark">Project Manager</div>
+            </a>
+        </div>
+        <div class="container-option">
             <a href="/manajer/hrd/eng">
                 <div class="badge-option">7</div>
                 <div class="text-center text-dark">Engineer Department</div>

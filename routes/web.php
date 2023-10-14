@@ -20,18 +20,26 @@ Route::prefix('karyawan')->group(function () {
     Route::get('/add-rkk', [KaryawanController::class, 'addrkk']);
     Route::post('/addrkk/proses', [KaryawanController::class, 'addrkkstore']);
     Route::get('/detailrkk/{id}', [KaryawanController::class, 'detailrkk'])->name('detail-rkk');
+    Route::get('/revisi/{id}', [KaryawanController::class, 'revisi'])->name('karyawan-revisi');
+    Route::post('/revisi/proses', [KaryawanController::class, 'revisiproses']);
+
+
 });
 
 //manajer umum rkk
 Route::prefix('manajer')->group(function () {
     Route::get('/option', [ManajerController::class, 'option']);
-    Route::get('/listrkk', [ManajerController::class, 'listrkk']);
+    Route::get('/listrkk', [ManajerController::class, 'listrkk'])->name('list-rkk-manajer');
     Route::get('/detailrkkkaryawan/{id}', [ManajerController::class, 'detailrkkkaryawan'])->name('detail-rkk-karyawan-from-manajer');
     Route::get('/add-rkk', [ManajerController::class, 'addrkk']);
     Route::post('/addrkk/proses', [ManajerController::class, 'addrkkstore']);
     Route::get('/detailrkk/{id}', [ManajerController::class, 'detailrkk'])->name('detail-rkk-manajer');
     Route::get('/listrkk/karyawan', [ManajerController::class, 'listrkkkaryawan'])->name('manajer-listrkk-karyawan');
     Route::post('/approval', [ManajerController::class, 'approvalmanajer']);
+    Route::post('/revisi', [ManajerController::class, 'revisirkk']);
+    Route::get('/detail/revisi/{id}', [ManajerController::class, 'detailrevisi'])->name('detail-revisi');
+    Route::get('/revisi/add/{id}', [ManajerController::class, 'revisiadd'])->name('manajer-revisi');
+    Route::post('/revisi/proses', [ManajerController::class, 'revisiproses']);
 });
 
 //manajer hrd rkk
@@ -49,6 +57,7 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::get('/it', [HrdController::class, 'listrkkit'])->name('hrd-listrkk-it');
     Route::get('/mr', [HrdController::class, 'listrkkmr'])->name('hrd-listrkk-mr');
     Route::get('/hrd', [HrdController::class, 'listrkkhrd'])->name('hrd-listrkk-hrd');
+    Route::get('/pm', [HrdController::class, 'listrkkpm'])->name('hrd-listrkk-pm');
     Route::get('/detailrkk/eng/{id}', [HrdController::class, 'detailrkkeng'])->name('detail-rkk-eng-from-hrd');
     Route::get('/detailrkk/pro/{id}', [HrdController::class, 'detailrkkpro'])->name('detail-rkk-pro-from-hrd');
     Route::get('/detailrkk/scm/{id}', [HrdController::class, 'detailrkkscm'])->name('detail-rkk-scm-from-hrd');
@@ -56,14 +65,15 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::get('/detailrkk/it/{id}', [HrdController::class, 'detailrkkit'])->name('detail-rkk-it-from-hrd');
     Route::get('/detailrkk/mr/{id}', [HrdController::class, 'detailrkkmr'])->name('detail-rkk-mr-from-hrd');
     Route::get('/detailrkk/hrd/{id}', [HrdController::class, 'detailrkkhrd'])->name('detail-rkk-hrd-from-hrd');
+    Route::get('/detailrkk/pm/{id}', [HrdController::class, 'detailrkkpm'])->name('detail-rkk-pm-from-hrd');
     Route::post('/approval', [HrdController::class, 'approvalhrd']);
-
+    Route::post('/revisi', [HrdController::class, 'revisirkk']);
 });
 
 //project manager rkk
 Route::prefix('pm')->group(function () {
     Route::get('/option', [PmController::class, 'option']);
-    Route::get('/listrkk', [PmController::class, 'listrkk']);
+    Route::get('/listrkk', [PmController::class, 'listrkk'])->name('list-rkk-pm');
     Route::get('/optiondepartment', [PmController::class, 'optiondepartment']);
     Route::get('/add-rkk', [PmController::class, 'addrkk']);
     Route::post('/addrkk/proses', [PmController::class, 'addrkkstore']);
@@ -73,6 +83,11 @@ Route::prefix('pm')->group(function () {
     Route::get('/detailrkk/eng/{id}', [PmController::class, 'detailrkkeng'])->name('detail-rkk-eng-from-pm');
     Route::get('/detailrkk/pro/{id}', [PmController::class, 'detailrkkpro'])->name('detail-rkk-pro-from-pm');
     Route::post('/approval', [PmController::class, 'approvalpm']);
+    Route::post('/revisi', [PmController::class, 'revisirkk']);
+    Route::get('/detail/revisi/karyawan/{id}', [PmController::class, 'detailrevisikaryawan'])->name('detail-revisi-karyawan-pm');
+    Route::get('/revisi/add/{id}', [PmController::class, 'revisiadd'])->name('pm-revisi');
+    Route::post('/revisi/proses', [PmController::class, 'revisiproses']);
+
 
 });
 

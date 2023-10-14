@@ -46,7 +46,7 @@
                 </select>
             </div>
             <div class="form-group ">
-                <button class="btn btn-block bg-prima text-sec">Submit</button>
+                <button class="btn btn-block bg-prima text-sec" type="submit">Submit</button>
             </div>
         </form>
     </div>

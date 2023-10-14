@@ -12,21 +12,27 @@
             <img src="{{ asset('assets/img/iconrkk.png') }}" alt="">
         @else
             @foreach ($data as $d)
-                <a href="{{ route('detail-rkk-karyawan-from-manajer', ['id' => $d->id]) }}">
-                    <div class="container-task m-2">
-                        <div class="icon-task text-warning">
-                            <ion-icon name="calendar-outline"></ion-icon>
-                        </div>
-                        <div class="text-task text-dark">
-                            <div>{{ $d->perihal }}</div>
-                            <div class="job-title">{{ $d->waktu }}</div>
-                        </div>
-                        @if ($d->status === 0)
-                            <div class="badge-status-new">Baru</div>
-                        @else
-                            <div class="badge-status-read">Dibaca</div>
-                        @endif
+                @if ($d->status === 3)
+                    <a href="{{ route('detail-revisi', ['id' => $d->id]) }}">
+                    @else
+                        <a href="{{ route('detail-rkk-karyawan-from-manajer', ['id' => $d->id]) }}">
+                @endif
+                <div class="container-task m-2">
+                    <div class="icon-task text-warning">
+                        <ion-icon name="calendar-outline"></ion-icon>
                     </div>
+                    <div class="text-task text-dark">
+                        <div>{{ $d->perihal }}</div>
+                        <div class="job-title">{{ $d->waktu }}</div>
+                    </div>
+                    @if ($d->status === 0)
+                        <div class="badge-status-new">Baru</div>
+                    @elseif($d->status === 1)
+                        <div class="badge-status-read">Dibaca</div>
+                    @else
+                        <div class="badge-status-revisi">Revisi</div>
+                    @endif
+                </div>
                 </a>
             @endforeach
         @endif

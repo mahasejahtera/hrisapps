@@ -38,9 +38,7 @@
                 <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank" class="text-danger">Klik
                         disini</a></td>
             </tr>
+        </table>
 
-    </div>
-    </table>
-    <div class="text-right"><a href="" class="btn btn-success">Proses</a></div>
     </div>
 @endsection

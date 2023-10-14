@@ -39,12 +39,28 @@
                 <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank"
                         class="text-danger">Klik disini</a></td>
             </tr>
-
+        </table>
     </div>
-    </table>
-    <div class="text-right"><a href="" class="btn btn-success">Proses</a></div>
-    </div>
-
+    @if ($data->status == 3)
+        <div class="card m-2">
+            <div class="card-body">
+                <h5 class="card-title text-danger">Revisi</h5>
+                <table>
+                    <tr>
+                        <td>Lampiran</td>
+                        <td>: <a href="{{ asset('images/rencanakerja/revisi/' . $data->lampiran_revisi) }}"
+                                target="_blank" class="text-danger">Klik disini</a></td>
+                    </tr>
+                    <tr>
+                        <td>Keterangan</td>
+                        <td>: {{ $data->ket_revisi }}</td>
+                    </tr>
+                </table>
+                <div class="text-right"><a href="{{ route('karyawan-revisi', ['id' => $data->id]) }}"
+                        class="btn btn-warning">Perbaharui</a></div>
+            </div>
+        </div>
+    @endif
 </body>
 
 @include('template.bottomNav')
