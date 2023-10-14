@@ -31,18 +31,41 @@
                     <p class="menu-item-title">Pengajuan Reimbursement</p>
                 </a>
             </div>
+            @if(session('role_id')==2)
+            <div class="col-12">
+                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+
+                    <p class="menu-item-title">Pengajuan Rekrutmen Karyawan</p>
+                </a>
+            </div>
+            @endif
             <div class="col-12">
                 <a href="{{ route('pelatihankaryawan.create') }}" class="menu-item">
                     <p class="menu-item-title">Pengajuan Pelatihan Karyawan</p>
                 </a>
             </div>
+            @if(session('role_id')==2)
+            <div class="col-12">
+                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+
+                    <p class="menu-item-title">Pengajuan Kegiatan/Acara</p>
+                </a>
+            </div>
+            @endif
             <div class="col-12">
                 <a href="{{ route('csr.create') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan CSR</p>
                 </a>
             </div>
+            @if(session('role_id')==2)
+            <div class="col-12">
+                <a href="{{ route('reimbursement.create') }}" class="menu-item">
 
+                    <p class="menu-item-title">Pengajuan Kenaikan Gaji</p>
+                </a>
+            </div>
+            @endif
         </div>
     </section>
     {{-- END : MENU --}}

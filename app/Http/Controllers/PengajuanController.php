@@ -13,19 +13,46 @@ class PengajuanController extends Controller
      */
     public function __construct()
     {
-        session(['id' => 9]);
+        session()->flush();
+        session([
+            'id' => 9,
+            'role_id' => 2
+        ]);
+        // dd(session('role_id'));
     }
 
     public function index()
     {
-        //
+        
+        // dd(session('role_id'));
+        switch (session('role_id')) {
+            case 1:
+                return $this->pribadi();
+                break;
+            case 2:
+                return $this->opsi();
+                break;
+            default:
+                return $this->pribadi();
+        }
+    }
+
+    private function opsi()
+    {
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
         ];
 
+        return view('pengajuan.opsi', $data);
+    }
 
-        // return view('pengajuan.index', $data);
-        return view('pengajuan.index',$data);
+    public function pribadi()
+    {
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+
+        return view('pengajuan.index', $data);
     }
 
     /**
