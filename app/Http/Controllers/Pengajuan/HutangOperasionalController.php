@@ -76,6 +76,7 @@ class HutangOperasionalController extends Controller
         $post->id_karyawan = session('id');
         $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
         $post->total_biaya = $request->input('total_biaya');
+        $post->id_pengajuan = $request->input('id_pengajuan');
         $post->save();
         return redirect()->route('hutangoperasional.index');
     }

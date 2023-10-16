@@ -31,4 +31,6 @@ Route::group(['prefix' => 'pengajuan'], function () {
     Route::resource('csr', CSRController::class);
 });
 Route::get('pengajuan/pribadi',[PengajuanController::class,'pribadi'])->name('pengajuan.pribadi');
+Route::get('pengajuan/list',[PengajuanController::class,'list'])->name('pengajuan.list');
+Route::get('pengajuan/departemen',[PengajuanController::class,'departemen'])->name('pengajuan.departemen');
 Route::resource('pengajuan', PengajuanController::class);

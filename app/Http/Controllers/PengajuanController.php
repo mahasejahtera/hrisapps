@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
 
 class PengajuanController extends Controller
@@ -16,14 +17,14 @@ class PengajuanController extends Controller
         session()->flush();
         session([
             'id' => 9,
-            'role_id' => 2
+            'role_id' => 4
         ]);
         // dd(session('role_id'));
     }
 
     public function index()
     {
-        
+
         // dd(session('role_id'));
         switch (session('role_id')) {
             case 1:
@@ -31,6 +32,12 @@ class PengajuanController extends Controller
                 break;
             case 2:
                 return $this->opsi();
+                break;
+            case 3:
+                return $this->departemen();
+                break;
+            case 4:
+                return $this->departemen();
                 break;
             default:
                 return $this->pribadi();
@@ -119,5 +126,27 @@ class PengajuanController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function list()
+    {
+        //
+        $pengajuan = SubmitPengajuan::where(['id_karyawan' => session('id')])->get();
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'pengajuan' => $pengajuan
+        ];
+
+        //
+        return view('pengajuan.list', $data);
+    }
+
+    public function departemen()
+    {
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+
+        return view('pengajuan.departemen', $data);
     }
 }
