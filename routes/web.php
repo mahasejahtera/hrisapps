@@ -33,4 +33,5 @@ Route::group(['prefix' => 'pengajuan'], function () {
 Route::get('pengajuan/pribadi',[PengajuanController::class,'pribadi'])->name('pengajuan.pribadi');
 Route::get('pengajuan/list',[PengajuanController::class,'list'])->name('pengajuan.list');
 Route::get('pengajuan/departemen',[PengajuanController::class,'departemen'])->name('pengajuan.departemen');
+Route::get('pengajuan/departemen/list/{kode_dept}',[PengajuanController::class,'departemen_list'])->name('pengajuan.departemen_list');
 Route::resource('pengajuan', PengajuanController::class);

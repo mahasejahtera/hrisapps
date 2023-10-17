@@ -14,43 +14,43 @@
         </div>
         <div class="row justify-content-between">
             <div class="col-12">
-                <a href="{{ route('pengajuan.pribadi') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','DU') }}" class="menu-item">
 
                     <p class="menu-item-title">DU Department</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','TK') }}" class="menu-item">
 
                     <p class="menu-item-title">Engineering Department</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','PR') }}" class="menu-item">
 
                     <p class="menu-item-title">Production Department</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','IT') }}" class="menu-item">
 
                     <p class="menu-item-title">IT Department</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','TK') }}" class="menu-item">
 
                     <p class="menu-item-title">Marketing Department</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','HR') }}" class="menu-item">
 
                     <p class="menu-item-title">HRD Department</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list','PNS') }}" class="menu-item">
 
                     <p class="menu-item-title">Finance Department</p>
                 </a>
