@@ -35,3 +35,10 @@
     3 = general manager 
     4 = direktur 
     5 = komisaris
+
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager
+    3 = Menunggu Diperiksa Oleh Manager HRD
+    4 = Disetujui Oleh Direksi
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
