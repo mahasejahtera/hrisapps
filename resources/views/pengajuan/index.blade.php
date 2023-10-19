@@ -31,7 +31,15 @@
                     <p class="menu-item-title">Pengajuan Reimbursement</p>
                 </a>
             </div>
-            @if(session('role_id')==2)
+            @if(session('role_id')==4)
+            <div class="col-12">
+                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+
+                    <p class="menu-item-title">Pengajuan Inventaris Kantor</p>
+                </a>
+            </div>
+            @endif
+            @if(session('role_id')==2 || session('role_id')==4)
             <div class="col-12">
                 <a href="{{ route('reimbursement.create') }}" class="menu-item">
 
@@ -44,7 +52,7 @@
                     <p class="menu-item-title">Pengajuan Pelatihan Karyawan</p>
                 </a>
             </div>
-            @if(session('role_id')==2)
+            @if(session('role_id')==2 || session('role_id')==4)
             <div class="col-12">
                 <a href="{{ route('reimbursement.create') }}" class="menu-item">
 
@@ -58,7 +66,15 @@
                     <p class="menu-item-title">Pengajuan CSR</p>
                 </a>
             </div>
-            @if(session('role_id')==2)
+            @if(session('role_id')==4)
+            <div class="col-12">
+                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+
+                    <p class="menu-item-title">Pengajuan Entertainment</p>
+                </a>
+            </div>
+            @endif
+            @if(session('role_id')==2 || session('role_id')==4)
             <div class="col-12">
                 <a href="{{ route('reimbursement.create') }}" class="menu-item">
 

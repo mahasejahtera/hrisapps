@@ -17,7 +17,8 @@ class PengajuanController extends Controller
         session()->flush();
         session([
             'id' => 9,
-            'role_id' => 4
+            'role_id' => 4,
+            'kode_dept' => 'DU'
         ]);
         // dd(session('role_id'));
     }
@@ -50,7 +51,8 @@ class PengajuanController extends Controller
     private function opsi()
     {
         $data = [
-            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'kodeDept'  => session('kode_dept')
         ];
 
         return view('pengajuan.opsi', $data);

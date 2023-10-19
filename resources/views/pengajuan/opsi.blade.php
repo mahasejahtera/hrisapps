@@ -20,7 +20,7 @@
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.departemen_list',$kodeDept) }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Karyawan</p>
                 </a>
