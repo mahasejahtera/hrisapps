@@ -150,9 +150,10 @@ class PengajuanController extends Controller
         return view('pengajuan.departemen', $data);
     }
 
-    public function departemen_list()
+    public function departemen_list($kodeDept)
     {
-        $pengajuan = SubmitPengajuan::where(['id_karyawan' => session('id')])->get();
+        // dd($kodeDept);
+        $pengajuan = (new SubmitPengajuan)->getSubmitPengajuanByKodeDept($kodeDept);
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
             'pengajuan' => $pengajuan
