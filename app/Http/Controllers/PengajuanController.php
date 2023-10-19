@@ -37,8 +37,11 @@ class PengajuanController extends Controller
                 return $this->departemen();
                 break;
             case 4:
-                return $this->departemen();
+                return $this->opsi();
                 break;
+            case 5:
+                return $this->opsi();
+                    break;
             default:
                 return $this->pribadi();
         }
