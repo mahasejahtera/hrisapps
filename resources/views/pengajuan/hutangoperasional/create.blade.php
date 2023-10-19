@@ -39,7 +39,7 @@
                 <input type="text" name="perihal_pekerjaan" class="form-control" value="{{ old('perihal_pekerjaan') }}" placeholder="Perihal Pekerjaan" required>
             </div>
             <!-- Input multi-baris untuk item -->
-            <table class="table" id="item-table">
+            <table class="table table-responsive" id="item-table">
                 <thead>
                     <tr>
                         <th>Item</th>
