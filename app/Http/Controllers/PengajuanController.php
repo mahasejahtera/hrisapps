@@ -18,7 +18,8 @@ class PengajuanController extends Controller
         session([
             'id' => 9,
             'role_id' => 4,
-            'kode_dept' => 'DU'
+            'kode_dept' => 'DU',
+            'inisial' => 'NF'
         ]);
         // dd(session('role_id'));
     }

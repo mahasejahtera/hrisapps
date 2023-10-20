@@ -36,9 +36,57 @@
     4 = direktur 
     5 = komisaris
 
+    KARYAWAN
     1 = Input Form Hutang Operasional
     2 = Menunggu Diperiksa Oleh Manager
     3 = Menunggu Diperiksa Oleh Manager HRD
     4 = Disetujui Oleh Direksi
     5 = Disetujui Oleh Komisaris
     6 = Pengajuan Selesai
+
+    MANAGER
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager (Tidak Perlu)
+    3 = Menunggu Diperiksa Oleh Manager HRD
+    4 = Disetujui Oleh Direksi
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    MANAGER HRD
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager (Tidak Perlu) (Dapat Notif)
+    3 = Menunggu Diperiksa Oleh Manager HRD (Tidak Perlu) (Dapat Notif)
+    4 = Disetujui Oleh Direksi
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    DIREKTUR
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager (Tidak Perlu)
+    3 = Menunggu Diperiksa Oleh Manager HRD (Tidak Perlu) (Dapat Notif Mengetahui)
+    4 = Disetujui Oleh Direksi (Tidak Perlu)
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    1 : Approve
+    2 : Reject
+    3 : Revisi
+
+    008/HO.MEPMADINA/MAHA.TK.NF/VIII/2023
+ 
+    008 : nomor (GENERATE)
+    HO : Hutang Operasional (GENERATE)
+    MEPMADINA : CSR.(MANUAL) --> CSR (KHUSUS)
+    MAHA : MAHA (GENERATE)
+    TK : DEPARTEMEN (GENERATE)
+    NF : Inisial nama (GENERATE)
+    VIII : Bulan (GENERATE)
+    2023 : Tahun (GENERATE)
+
+    Tabel diperbesar
+
+    Perdepartemen beda tipe pengajuan
+
+    Tombol remove di Tabel
+
+    Ajukan HO sesuai Form
