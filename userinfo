@@ -74,7 +74,10 @@
 
     008/HO.MEPMADINA/MAHA.TK.NF/VIII/2023
  
-    008 : nomor (GENERATE)
+    008 : nomor (GENERATE) --> reset perbulan , per jenis pengajuan, arsip perjenis pengajuan(HO, CSR, dst)
+    A 001 HO 001 CSR B 003 HO BEDA DEPT
+    B 002 HO CSR 002 BEDA DEPT 
+    C 003 HO 003 BEDA DEPT
     HO : Hutang Operasional (GENERATE)
     MEPMADINA : CSR.(MANUAL) --> CSR (KHUSUS)
     MAHA : MAHA (GENERATE)
@@ -83,10 +86,17 @@
     VIII : Bulan (GENERATE)
     2023 : Tahun (GENERATE)
 
-    Tabel diperbesar
+    Tabel diperbesar/diperlebar
 
-    Perdepartemen beda tipe pengajuan
+    Perdepartemen beda tipe pengajuan --> manager, HO,Reimbursement ada di semua karyawan
 
     Tombol remove di Tabel
 
-    Ajukan HO sesuai Form
+    Ajukan HO sesuai Form Pengajuan
+
+    1: Baru
+    2: Dilihat
+    3: Revisi
+    4: Acc
+
+    Karyawan ke revisi
