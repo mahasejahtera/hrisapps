@@ -41,6 +41,8 @@ Route::prefix('manajer')->group(function () {
     Route::get('/detail/revisi/{id}', [ManajerController::class, 'detailrevisi'])->name('detail-revisi');
     Route::get('/revisi/add/{id}', [ManajerController::class, 'revisiadd'])->name('manajer-revisi');
     Route::post('/revisi/proses', [ManajerController::class, 'revisiproses']);
+    Route::get('/track/{id}', [ManajerController::class, 'track'])->name('manajer-track');
+
 });
 
 //manajer hrd rkk
@@ -71,6 +73,7 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::post('/revisi', [HrdController::class, 'revisirkk']);
     Route::get('/revisi/add/{id}', [HrdController::class, 'revisiadd'])->name('hrd-revisi');
     Route::post('/revisi/proses', [HrdController::class, 'revisiproses']);
+    Route::get('/track/{id}', [HrdController::class, 'track'])->name('hrd-track');
 
 });
 
@@ -91,7 +94,7 @@ Route::prefix('pm')->group(function () {
     Route::get('/detail/revisi/karyawan/{id}', [PmController::class, 'detailrevisikaryawan'])->name('detail-revisi-karyawan-pm');
     Route::get('/revisi/add/{id}', [PmController::class, 'revisiadd'])->name('pm-revisi');
     Route::post('/revisi/proses', [PmController::class, 'revisiproses']);
-
+    Route::get('/track/{id}', [PmController::class, 'track'])->name('pm-track');
 
 });
 

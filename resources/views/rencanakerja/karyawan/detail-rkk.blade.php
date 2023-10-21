@@ -43,7 +43,7 @@
                 <td>
                     <h3>Status</h3>
                 </td>
-                <td>:<a href="{{ route('karyawan-track', ['id' => $data->id]) }}" class="text-dark">
+                <td>:<a href="{{ route('karyawan-track', ['id' => $data->id]) }}" class="text-danger">
                         @if ($data->manajer_approval == 0)
                             Diperiksa oleh manajer
                         @elseif($data->manajer_approval == 1 && $data->pm_approval == 0)
@@ -63,6 +63,8 @@
                                 $data->direktur_approval == 1 &&
                                 $data->komisaris_approval == 0)
                             Diperiksa oleh Komisaris
+                        @else
+                            Disetujui
                         @endif
                     </a>
                 </td>

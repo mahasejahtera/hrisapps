@@ -39,6 +39,7 @@
                 <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank"
                         class="text-danger">Klik disini</a></td>
             </tr>
+           
         </table>
     </div>
     <div class="card m-2">

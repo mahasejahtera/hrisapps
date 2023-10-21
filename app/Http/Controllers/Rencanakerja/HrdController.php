@@ -22,7 +22,7 @@ class HrdController extends Controller
 
     public function optiondepartment(Request $request)
     {
-        $departments = ['TK', 'PR', 'GM', 'IT', 'SC', 'KU', 'PN', 'HR']; 
+        $departments = ['TK', 'PR', 'GM', 'IT', 'SC', 'KU', 'PN', 'HR'];
         $counts = [];
         foreach ($departments as $dept) {
             $query = Rencanakerja::whereHas('karyawan', function ($query) use ($dept) {
@@ -300,6 +300,14 @@ class HrdController extends Controller
         return view('rencanakerja.hrd.detail-rkk-pm')->with(compact('data'));
     }
 
+    public function track(Request $request, string $id)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $data = Rencanakerja::where('id', $id)->first();
+        return view('rencanakerja.hrd.track')->with(compact('data', 'karyawan'));
+    }
+
     public function approvalhrd(Request $request){
         $id = $request->id;
         $data = Rencanakerja::where('id', $id)->first();
@@ -398,4 +406,5 @@ class HrdController extends Controller
             return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
         }
     }
+
 }

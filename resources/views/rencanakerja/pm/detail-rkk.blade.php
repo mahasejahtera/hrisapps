@@ -38,6 +38,32 @@
                 <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank" class="text-danger">Klik
                         disini</a></td>
             </tr>
+            <tr>
+                <td>
+                    <h3>Status</h3>
+                </td>
+                <td>:<a href="{{ route('pm-track', ['id' => $data->id]) }}" class="text-danger">
+                        @if($data->manajer_approval == 1 && $data->pm_approval == 1 && $data->hrd_approval == 0)
+                            Diperiksa oleh HRD
+                        @elseif(
+                            $data->manajer_approval == 1 &&
+                                $data->pm_approval == 1 &&
+                                $data->hrd_approval == 1 &&
+                                $data->direktur_approval == 0)
+                            Diperiksa oleh Direktur
+                        @elseif(
+                            $data->manajer_approval == 1 &&
+                                $data->pm_approval == 1 &&
+                                $data->hrd_approval == 1 &&
+                                $data->direktur_approval == 1 &&
+                                $data->komisaris_approval == 0)
+                            Diperiksa oleh Komisaris
+                        @else
+                            Disetujui
+                        @endif
+                    </a>
+                </td>
+            </tr>
         </table>
     </div>
     @if ($data->status == 3)

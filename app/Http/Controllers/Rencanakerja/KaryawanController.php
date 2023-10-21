@@ -88,10 +88,12 @@ class KaryawanController extends Controller
         return view('rencanakerja.karyawan.detail-rkk')->with(compact('data'));
     }
 
-    public function track(string $id)
+    public function track(Request $request, string $id)
     {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
         $data = Rencanakerja::where('id', $id)->first();
-        return view('rencanakerja.karyawan.track')->with(compact('data'));
+        return view('rencanakerja.karyawan.track')->with(compact('data', 'karyawan'));
     }
 
     public function revisi(string $id)

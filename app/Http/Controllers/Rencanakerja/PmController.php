@@ -210,4 +210,12 @@ class PmController extends Controller
         }
     }
 
+    public function track(Request $request, string $id)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $data = Rencanakerja::where('id', $id)->first();
+        return view('rencanakerja.pm.track')->with(compact('data', 'karyawan'));
+    }
+
 }

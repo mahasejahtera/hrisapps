@@ -42,6 +42,7 @@ class ManajerController extends Controller
 
     public function addrkkstore(Request $request){
         $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
         $file = $request->file('lampiran');
         if ($file->getClientOriginalExtension() === 'pdf') {
             $filename = $file->getClientOriginalName();
@@ -57,7 +58,11 @@ class ManajerController extends Controller
                 'lampiran' => $file_jadi,
                 'prioritas' => $request->prioritas,
                 'manajer_approval' => 1,
+                'pm_approval' => 1,
             ];
+            if($karyawan->kode_dept == 'TK' || $karyawan->kode_dept == 'PR'){
+                $data['pm_approval'] = 0;
+            }
             Rencanakerja::create($data);
             return redirect('/manajer/listrkk/')->with('success', 'Rencana Kerja Ditambah !');
         } else {
@@ -69,6 +74,14 @@ class ManajerController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         return view('rencanakerja.manajer.detail-rkk')->with(compact('data'));
+    }
+
+    public function track(Request $request, string $id)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $data = Rencanakerja::where('id', $id)->first();
+        return view('rencanakerja.manajer.track')->with(compact('data', 'karyawan'));
     }
 
     public function detailrkkkaryawan(string $id)

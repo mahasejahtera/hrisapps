@@ -10,35 +10,35 @@
     </header>
 
     <div class="container-add-rkk" style="margin-top: 120px;">
-        <form action="/pm/addrkk/proses" method="post" enctype="multipart/form-data">
+        <form action="/pm/addrkk/proses" method="post" enctype="multipart/form-data" required>
             @csrf
             <div class="form-group">
-                <input type="text" name="perihal" class="form-control" placeholder="Perihal">
+                <input type="text" name="perihal" class="form-control" placeholder="Perihal" required>
             </div>
             <div class="form-group">
-                <input type="text" name="lokasi" class="form-control" placeholder="Lokasi">
+                <input type="text" name="lokasi" class="form-control" placeholder="Lokasi" required>
             </div>
             <div class="form-group">
                 <input type="text" name="waktu" class="form-control" placeholder="Waktu Pelaksanaan"
-                    onfocus="(this.type='date')" onblur="(this.type='text')">
+                    onfocus="(this.type='date')" onblur="(this.type='text')" required>
             </div>
             <div class="form-group">
-                <input type="text" name="target" class="form-control" placeholder="Target Penyelesaian"
+                <input type="text" name="target" class="form-control" placeholder="Target Penyelesaian" required
                     onfocus="(this.type='date')" onblur="(this.type='text')">
             </div>
             <div class="form-group">
                 <textarea class="form-control" name="keterangan" id="exampleFormControlTextarea1" rows="5"
-                    placeholder="Keterangan"></textarea>
+                    placeholder="Keterangan" required></textarea>
             </div>
             <div class="input-group form-group">
                 <div class="custom-file form-control">
                     <input type="file" class="custom-file-input" id="inputGroupFile04"
-                        aria-describedby="inputGroupFileAddon04" name="lampiran">
+                        aria-describedby="inputGroupFileAddon04" name="lampiran" required>
                     <label class="custom-file-label" for="inputGroupFile04">Lampiran</label>
                 </div>
             </div>
             <div class="form-group">
-                <select name="prioritas" class="form-control form-select">
+                <select name="prioritas" class="form-control form-select" required>
                     <option selected>--Pilih Prioritas--</option>
                     <option value="Penting">Penting</option>
                     <option value="Normal">Normal</option>
