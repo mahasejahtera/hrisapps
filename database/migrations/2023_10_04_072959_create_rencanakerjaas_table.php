@@ -19,9 +19,16 @@ return new class extends Migration
             $table->string('keterangan');
             $table->string('lampiran');
             $table->string('prioritas');
+            $table->boolean('revisi')->default(false);
+            $table->string('lampiran_revisi')->nullable();
+            $table->string('ket_revisi')->nullable();
+            $table->boolean('status')->default(false);
+            $table->boolean('manajer_approval')->default(false);
+            $table->boolean('pm_approval')->default(false);
+            $table->boolean('hrd_approval')->default(false);
+            $table->boolean('direktur_approval')->default(false);
+            $table->boolean('komisaris_approval')->default(false);
             $table->timestamps();
-
-            $table->foreign('id_karyawan')->references('id')->on('karyawans')->onDelete('cascade');
         });
     }
 

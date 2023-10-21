@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Rencanakerja extends Model
 {
     use HasFactory;
+    protected $table = 'rencanakerjas';
     protected $fillable = [
         'id_karyawan',
         'perihal',
@@ -27,7 +28,6 @@ class Rencanakerja extends Model
         'direktur_approval',
         'komisaris_approval',
     ];
-    protected $table = 'rencanakerjas';
 
     public function karyawan()
     {

@@ -10,13 +10,13 @@
     <div class="mt-3">
         <div class="container-option">
             <a href="/pm/optiondepartment">
-                <div class="badge-option">2</div>
+                <div class="badge-option"></div>
                 <div class="text-center text-dark">Rencana Kerja Karyawan</div>
             </a>
         </div>
         <div class="container-option">
             <a href="/pm/listrkk">
-                <div class="badge-option">7</div>
+                <div class="badge-option">{{ $jmlpribadi }}</div>
                 <div class="text-center text-dark">Rencana Kerja Pribadi</div>
             </a>
         </div>

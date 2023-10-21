@@ -11,9 +11,22 @@ use Illuminate\Support\Facades\Storage;
 class ManajerController extends Controller
 {
 
-    public function option()
+    public function option(Request $request)
     {
-        return view('rencanakerja.manajer.option');
+        $idk = $request->session()->get('id_karyawan');
+        $data = Rencanakerja::where('id_karyawan', $idk)
+                    ->where('komisaris_approval', 0)
+                    ->get();
+        $datak = Karyawan::where('id', $idk)->first();
+        $datakaryawan = Rencanakerja::join('karyawans', 'rencanakerjas.id_karyawan', '=', 'karyawans.id')
+        ->where('karyawans.role_id', 1)
+        ->where('karyawans.kode_dept', $datak->kode_dept)
+        ->where('rencanakerjas.manajer_approval', 0)
+        ->select('rencanakerjas.*')
+        ->get();
+        $jmlpribadi = $data->count();
+        $jmlkaryawan = $datakaryawan->count();
+        return view('rencanakerja.manajer.option', compact('jmlpribadi', 'jmlkaryawan'));
     }
 
     public function listrkk(Request $request)
@@ -118,7 +131,6 @@ class ManajerController extends Controller
         } else {
             return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
         }
-
     }
 
     public function detailrevisi(string $id)

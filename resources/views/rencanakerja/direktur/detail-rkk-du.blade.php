@@ -38,16 +38,36 @@
                 <td>: <a href="{{ asset('images/rencanakerja/' . $data->lampiran) }}" target="_blank" class="text-danger">Klik
                         disini</a></td>
             </tr>
+        </table>
+        @if ($data->status !== 3)
+            <div class="d-flex">
+                <form method="POST" action="/direktur/approval" class="ml-auto">
+                    @csrf
+                    <input type="hidden" name="id" value="{{ $data->id }}">
+                    <button type="submit" class="btn btn-success">Terima</button>
+                </form>
+                <a href="" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Revisi</a>
+            </div>
+        @endif
     </div>
-    </table>
-    <div class="d-flex">
-        <form method="POST" action="/direktur/approval" class="ml-auto">
-            @csrf
-            <input type="hidden" name="id" value="{{ $data->id }}">
-            <button type="submit" class="btn btn-success">Terima</button>
-        </form>
-        <a href="" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Revisi</a>
-    </div>
+    @if ($data->status == 3)
+        <div class="card m-2">
+            <div class="card-body">
+                <h5 class="card-title text-danger">Revisi</h5>
+                <table>
+                    <tr>
+                        <td>Lampiran</td>
+                        <td>: <a href="{{ asset('images/rencanakerja/revisi/' . $data->lampiran_revisi) }}" target="_blank"
+                                class="text-danger">Klik disini</a></td>
+                    </tr>
+                    <tr>
+                        <td>Keterangan</td>
+                        <td>: {{ $data->ket_revisi }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    @endif
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -58,23 +78,34 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form method="post" action="/direktur/revisi" enctype="multipart/form-data">
                         @csrf
-                        <div class="input-group form-group">
-                            <div class="custom-file form-control">
-                                <input type="file">
-                            </div>
+                        <div class="input-group">
+                            div class="custom-file form-control">
+                            <input type="file" class="custom-file-input" id="inputGroupFile04"
+                                aria-describedby="inputGroupFileAddon04" name="lampiran">
+                            <label class="custom-file-label" for="inputGroupFile04">Lampiran</label>
                         </div>
                         <div class="form-group">
-                            <textarea class="form-control" id="message-text" placeholder="Keterangan" rows="5"></textarea>
+                            <textarea class="form-control" id="message-text" name="keterangan" placeholder="Keterangan" rows="5"></textarea>
+                        </div>
+                        <input type="hidden" name="id" value="{{ $data->id }}">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Kirim</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-primary">Kirim</button>
                 </div>
             </div>
         </div>
     </div>
+@endsection
+@section('scriptJS')
+    <script>
+        $('input[type="file"]').on('change', function(e) {
+            var $this = $(this);
+            var fileName = e.target.files[0].name;
+            $this.siblings().text(fileName);
+        });
+    </script>
 @endsection

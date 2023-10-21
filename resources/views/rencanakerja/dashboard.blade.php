@@ -9,7 +9,7 @@
                     <img src="{{ asset('images/ardi.jpg') }}" alt="default avatar">
                 </div>
                 <div class="header-profile-employee">
-                    <p class="profile-name">{{ $data->nama }}</p>
+                    <p class="profile-name">{{ $data->email }}</p>
                     <p class="profile-jobtitle">Software Engineer</p>
                 </div>
             </div>
@@ -131,7 +131,7 @@
                     </a>
                 </div>
                 <div class="col-4">
-                    <a href="#" class="menu-item">
+                    <a href="/arsip/option" class="menu-item">
                         <div class="menu-item-icon primary">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none " viewBox="0 0 256 256">
                                 <path

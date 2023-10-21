@@ -1,4 +1,5 @@
 @include('template.header')
+
 <body>
     <header>
         <div class="bg-prima btn-header fix-header">
@@ -22,6 +23,9 @@
                             <div>{{ $d->perihal }}</div>
                             <div class="job-title">{{ $d->waktu }}</div>
                         </div>
+                        @if ($d->status === 3)
+                            <div class="badge-status-revisi">Revisi</div>
+                        @endif
                     </div>
                 </a>
             @endforeach

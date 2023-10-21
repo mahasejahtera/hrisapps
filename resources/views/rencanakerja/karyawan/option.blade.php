@@ -18,7 +18,7 @@
         </div>
         <div class="container-option">
             <a href="/karyawan/listrkk">
-                <div class="badge-option">7</div>
+                <div class="badge-option">{{ $jml }}</div>
                 <div class="text-center text-dark">Daftar Rencana Kerja</div>
             </a>
         </div>

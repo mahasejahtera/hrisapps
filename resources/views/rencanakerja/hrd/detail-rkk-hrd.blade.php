@@ -79,7 +79,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="/manajer/hrd/revisi" enctype="multipart/form-data">
+                    <form method="post" action="/manjer/hrd/revisi" enctype="multipart/form-data">
                         @csrf
                         <div class="input-group">
                             div class="custom-file form-control">

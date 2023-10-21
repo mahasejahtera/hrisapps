@@ -8,9 +8,10 @@ use App\Http\Controllers\Rencanakerja\PmController;
 use App\Http\Controllers\Rencanakerja\HrdController;
 use App\Http\Controllers\Rencanakerja\DirekturController;
 use App\Http\Controllers\Rencanakerja\KomisarisController;
+use App\Http\Controllers\Admin\RencanaKerjaController;
+use App\Http\Controllers\Arsip\ArsipController;
 
 Route::get('/dashboard', [ExLoginController::class, 'dashboard'])->name('dashboard');
-
 //karyawan rkk
 Route::prefix('karyawan')->group(function () {
     Route::get('/option', [KaryawanController::class, 'option']);
@@ -22,7 +23,7 @@ Route::prefix('karyawan')->group(function () {
     Route::get('/detailrkk/{id}', [KaryawanController::class, 'detailrkk'])->name('detail-rkk');
     Route::get('/revisi/{id}', [KaryawanController::class, 'revisi'])->name('karyawan-revisi');
     Route::post('/revisi/proses', [KaryawanController::class, 'revisiproses']);
-
+    Route::get('/track/{id}', [KaryawanController::class, 'track'])->name('karyawan-track');
 
 });
 
@@ -68,6 +69,9 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::get('/detailrkk/pm/{id}', [HrdController::class, 'detailrkkpm'])->name('detail-rkk-pm-from-hrd');
     Route::post('/approval', [HrdController::class, 'approvalhrd']);
     Route::post('/revisi', [HrdController::class, 'revisirkk']);
+    Route::get('/revisi/add/{id}', [HrdController::class, 'revisiadd'])->name('hrd-revisi');
+    Route::post('/revisi/proses', [HrdController::class, 'revisiproses']);
+
 });
 
 //project manager rkk
@@ -112,6 +116,7 @@ Route::prefix('direktur')->group(function () {
     Route::get('/detailrkk/mr/{id}', [DirekturController::class, 'detailrkkmr'])->name('detail-rkk-mr-from-direktur');
     Route::get('/detailrkk/hrd/{id}', [DirekturController::class, 'detailrkkhrd'])->name('detail-rkk-hrd-from-direktur');
     Route::post('/approval', [DirekturController::class, 'approvaldirektur']);
+    Route::post('/revisi', [DirekturController::class, 'revisirkk']);
 
 });
 
@@ -136,8 +141,17 @@ Route::prefix('komisaris')->group(function () {
     Route::get('/detailrkk/mr/{id}', [KomisarisController::class, 'detailrkkmr'])->name('detail-rkk-mr-from-komisaris');
     Route::get('/detailrkk/hrd/{id}', [KomisarisController::class, 'detailrkkhrd'])->name('detail-rkk-hrd-from-komisaris');
     Route::post('/approval', [KomisarisController::class, 'approvalkomisaris']);
-
+    Route::post('/revisi', [KomisarisController::class, 'revisirkk']);
 });
+
+
+Route::prefix('arsip')->group(function () {
+    Route::get('/option', [ArsipController::class, 'option']);
+    Route::get('/rkk', [ArsipController::class, 'listarsiprkk']);
+    Route::get('/detailrkk/{id}', [ArsipController::class, 'detailrkk'])->name('arsip-detail-rkk');
+});
+
+
 
 //example login rkk
 Route::get('/', [ExLoginController::class, 'index'])->name('login');

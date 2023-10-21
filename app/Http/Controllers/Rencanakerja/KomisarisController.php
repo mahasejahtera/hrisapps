@@ -17,7 +17,22 @@ class KomisarisController extends Controller
 
     public function optiondepartment()
     {
-        return view('rencanakerja.komisaris.optiondepartment');
+        $departments = ['TK', 'PR', 'GM', 'IT', 'SC', 'KU', 'PN', 'HR', 'DU']; 
+
+        $counts = [];
+        foreach ($departments as $dept) {
+            $query = Rencanakerja::whereHas('karyawan', function ($query) use ($dept) {
+                $query->where('kode_dept', $dept)->whereIn('role_id', [1, 2, 3]);
+            })
+            ->where('manajer_approval', 1)
+            ->where('pm_approval', 1)
+            ->where('hrd_approval', 1)
+            ->where('direktur_approval', 1)
+            ->where('komisaris_approval', 0)
+            ->count();
+            $counts[$dept] = $query;
+        }
+        return view('rencanakerja.komisaris.optiondepartment', compact('counts'));
     }
 
     public function listrkkdu(Request $request)
@@ -242,6 +257,44 @@ class KomisarisController extends Controller
             return redirect()->route('komisaris-listrkk-hrd')->with('success', 'Rencana Kerja Disetujui !');
         }else{
             return redirect()->route('kmoption')->with('error', 'Departemen tidak ditemukan');
+        }
+    }
+
+    public function revisirkk(Request $request) {
+        $id = $request->id;
+        $datakaryawan = Rencanakerja::where('id', $id)->first();
+        $file = $request->file('lampiran');
+        if ($file->getClientOriginalExtension() === 'pdf') {
+            $filename = $file->getClientOriginalName();
+            $file_jadi = date('ymdhis') . $filename;
+            $file->move(public_path('images/rencanakerja/revisi'), $file_jadi);
+            $data = [
+                'status' => 3,
+                'lampiran_revisi' => $file_jadi,
+                'ket_revisi' => $request->keterangan,
+            ];
+            Rencanakerja::where('id', $id)->update($data);
+            if($datakaryawan->karyawan->kode_dept === 'TK'){
+                return redirect('/komisaris/eng')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'PR'){
+                return redirect('/komisaris/pro')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'SC'){
+                return redirect('/komisaris/scm')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'IT'){
+                return redirect('/komisaris/it')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'KU'){
+                return redirect('/komisaris/fin')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'PN'){
+                return redirect('/komisaris/mr')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'HR'){
+                return redirect('/komisaris/hr')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'GM'){
+                return redirect('/komisaris/pm')->with('success', 'Revisi Dikirim!');
+            }elseif($datakaryawan->karyawan->kode_dept === 'DU'){
+                return redirect('/komisaris/du')->with('success', 'Revisi Dikirim!');
+            }else {
+            return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
+            }
         }
     }
 }

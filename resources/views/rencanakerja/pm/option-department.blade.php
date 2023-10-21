@@ -10,13 +10,13 @@
     <div class="mt-3">
         <div class="container-option">
             <a href="/pm/listrkk/eng">
-                <div class="badge-option">2</div>
+                <div class="badge-option">{{ $jmleng }}</div>
                 <div class="text-center text-dark">Engineering Department</div>
             </a>
         </div>
         <div class="container-option">
             <a href="/pm/listrkk/pro">
-                <div class="badge-option">7</div>
+                <div class="badge-option">{{ $jmlpro }}</div>
                 <div class="text-center text-dark">Production Department</div>
             </a>
         </div>

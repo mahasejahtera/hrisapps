@@ -10,15 +10,49 @@ use App\Models\Rencanakerja;
 class HrdController extends Controller
 {
 
-    public function option()
+    public function option(Request $request)
     {
-        return view('rencanakerja.hrd.option');
-
+        $idk = $request->session()->get('id_karyawan');
+        $data = Rencanakerja::where('id_karyawan', $idk)
+                    ->where('komisaris_approval', 0)
+                    ->get();
+        $jml = $data->count();
+        return view('rencanakerja.hrd.option', compact('jml'));
     }
 
-    public function optiondepartment()
+    public function optiondepartment(Request $request)
     {
-        return view('rencanakerja.hrd.optiondepartment');
+        $departments = ['TK', 'PR', 'GM', 'IT', 'SC', 'KU', 'PN', 'HR']; 
+        $counts = [];
+        foreach ($departments as $dept) {
+            $query = Rencanakerja::whereHas('karyawan', function ($query) use ($dept) {
+                $query->where('kode_dept', $dept)->whereIn('role_id', [1, 2, 3]);
+            })
+            ->where('manajer_approval', 1)
+            ->where('pm_approval', 1)
+            ->where('hrd_approval', 0)
+            ->where('direktur_approval', 0)
+            ->where('komisaris_approval', 0)
+            ->count();
+
+            if ($dept === 'HR') {
+                $hrQuery = Rencanakerja::whereHas('karyawan', function ($query) {
+                    $query->where('kode_dept', 'HR')->where('role_id', 1);
+                })
+                ->where('manajer_approval', 1)
+                ->where('pm_approval', 1)
+                ->where('hrd_approval', 0)
+                ->where('direktur_approval', 0)
+                ->where('komisaris_approval', 0)
+                ->count();
+
+                $counts[$dept] = $hrQuery;
+            } else {
+                $counts[$dept] = $query;
+            }
+        }
+
+        return view('rencanakerja.hrd.optiondepartment', compact('counts'));
     }
 
     public function listrkk(Request $request)
@@ -326,6 +360,42 @@ class HrdController extends Controller
             }else {
             return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
             }
+        }
+    }
+
+    public function revisiadd(string $id)
+    {
+        $data = Rencanakerja::where('id', $id)->first();
+        return view('rencanakerja.hrd.revisi')->with(compact('data'));
+    }
+
+    public function revisiproses(Request $request)
+    {
+        $id = $request->id;
+        $file = $request->file('lampiran');
+        if ($file->getClientOriginalExtension() === 'pdf') {
+            $filename = $file->getClientOriginalName();
+            $file_jadi = date('ymdhis') . $filename;
+            $file->move(public_path('images/rencanakerja'), $file_jadi);
+        $data = [
+            'status' => 0,
+            'manajer_approval' => 1,
+            'hrd_approval' => 1,
+            'pm_approval' => 1,
+            'direktur_approval' => 0,
+            'komisaris_approval' => 0,
+            'perihal' => $request->perihal,
+            'lokasi' => $request->lokasi,
+            'waktu' => $request->waktu,
+            'target_penyelesaian' => $request->target,
+            'keterangan' => $request->keterangan,
+            'lampiran' => $file_jadi,
+            'prioritas' => $request->prioritas,
+        ];
+        Rencanakerja::where('id', $id)->update($data);
+        return redirect()->route('list-rkk-hrd')->with('success', 'Rencana Kerja Direvisi !');
+        } else {
+            return redirect()->back()->with('error', 'File yang diunggah harus berformat PDF.');
         }
     }
 }

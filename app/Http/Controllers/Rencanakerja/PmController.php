@@ -10,13 +10,41 @@ use App\Models\Rencanakerja;
 class PmController extends Controller
 {
 
-    public function option()
+    public function option(Request $request)
     {
-        return view('rencanakerja.pm.option');
+        $idk = $request->session()->get('id_karyawan');
+        $data = Rencanakerja::where('id_karyawan', $idk)
+                    ->where('komisaris_approval', 0)
+                    ->get();
+
+        $jmlpribadi = $data->count();
+        // $jmlkaryawan = $datakaryawan->count();
+        return view('rencanakerja.pm.option', compact('jmlpribadi'));
     }
-    public function optiondepartment()
+    public function optiondepartment(Request $request)
     {
-        return view('rencanakerja.pm.option-department');
+        $dataeng = Rencanakerja::whereHas('karyawan', function ($query) {
+            $query->where('kode_dept', 'TK')->whereIn('role_id', [1, 2]);
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 0)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
+        $datapro = Rencanakerja::whereHas('karyawan', function ($query) {
+            $query->where('kode_dept', 'PR')->whereIn('role_id', [1, 2]);
+        })
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 0)
+        ->where('hrd_approval', 0)
+        ->where('direktur_approval', 0)
+        ->where('komisaris_approval', 0)
+        ->get();
+        $jmleng = $dataeng->count();
+        $jmlpro = $datapro->count();
+
+        return view('rencanakerja.pm.option-department', compact('jmleng', 'jmlpro'));
     }
 
     public function listrkk(Request $request)

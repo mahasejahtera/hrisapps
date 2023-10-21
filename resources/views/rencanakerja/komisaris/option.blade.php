@@ -10,7 +10,7 @@
     <div class="mt-3">
         <div class="container-option">
             <a href="/komisaris/optiondepartment">
-                <div class="badge-option">2</div>
+                <div class="badge-option"></div>
                 <div class="text-center text-dark">Rencana Kerja Karyawan</div>
             </a>
         </div>

@@ -19,9 +19,15 @@ class KaryawanController extends Controller
 
     }
 
-    public function option()
+    public function option(Request $request)
     {
-        return view('rencanakerja.karyawan.option');
+        $idk = $request->session()->get('id_karyawan');
+        $data = Rencanakerja::where('id_karyawan', $idk)
+                    ->where('komisaris_approval', 0)
+                    ->get();
+        $jml = $data->count();
+        return view('rencanakerja.karyawan.option', compact('jml'));
+
     }
 
     public function listrkk(Request $request)
@@ -30,7 +36,6 @@ class KaryawanController extends Controller
         $data = Rencanakerja::where('id_karyawan', $idk)->get();
         return view('rencanakerja.karyawan.listrkk')->with(compact('data'));
     }
-
 
     public function addrkk()
     {
@@ -81,6 +86,12 @@ class KaryawanController extends Controller
     {
         $data = Rencanakerja::where('id', $id)->first();
         return view('rencanakerja.karyawan.detail-rkk')->with(compact('data'));
+    }
+
+    public function track(string $id)
+    {
+        $data = Rencanakerja::where('id', $id)->first();
+        return view('rencanakerja.karyawan.track')->with(compact('data'));
     }
 
     public function revisi(string $id)

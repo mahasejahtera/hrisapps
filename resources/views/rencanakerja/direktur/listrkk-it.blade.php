@@ -23,8 +23,10 @@
                         </div>
                         @if ($d->status === 0)
                             <div class="badge-status-new">Baru</div>
-                        @else
+                        @elseif($d->status === 1)
                             <div class="badge-status-read">Dibaca</div>
+                        @else
+                            <div class="badge-status-revisi">Revisi</div>
                         @endif
                     </div>
                 </a>
