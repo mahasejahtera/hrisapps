@@ -17,8 +17,8 @@ class PengajuanController extends Controller
         session()->flush();
         session([
             'id' => 9,
-            'role_id' => 2,
-            'kode_dept' => 'DU',
+            'role_id' => 1,
+            'kode_dept' => 'IT',
             'inisial' => 'NF'
         ]);
         // dd(session('role_id'));

@@ -5,6 +5,34 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<style>
+    @media screen and (max-width: 720px) {
+        .item {
+            width: 200px;
+        }
+
+        .qty {
+            width: 100px;
+        }
+
+        .satuan {
+            width: 150px;
+        }
+
+        .harga-satuan {
+            width: 120px;
+        }
+
+        .jumlah-harga {
+            width: 200px;
+        }
+
+        .keterangan {
+            width: 200px;
+        }
+    }
+</style>
 @endpush
 
 @section('content')
@@ -39,7 +67,8 @@
                 <input type="text" name="perihal_pekerjaan" class="form-control" value="{{ old('perihal_pekerjaan') }}" placeholder="Perihal Pekerjaan" required>
             </div>
             <!-- Input multi-baris untuk item -->
-            <table class="table table-responsive" id="item-table">
+
+            <table class="table table-responsive-lg" id="item-table">
                 <thead>
                     <tr>
                         <th>Item</th>
@@ -48,23 +77,25 @@
                         <th>Harga Satuan</th>
                         <th>Jumlah Harga</th>
                         <th>Keterangan</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" name="item[]" class="form-control"></td>
-                        <td><input type="number" name="qty[]" class="form-control"></td>
-                        <td><input type="text" name="satuan[]" class="form-control"></td>
-                        <td><input type="number" name="harga_satuan[]" class="form-control"></td>
-                        <td><input type="number" name="jumlah_harga[]" class="form-control"></td>
-                        <td><input type="text" name="keterangan[]" class="form-control"></td>
+                        <td><input type="text" name="item[]" class="form-control item"></td>
+                        <td><input type="number" name="qty[]" class="form-control qty"></td>
+                        <td><input type="text" name="satuan[]" class="form-control satuan"></td>
+                        <td><input type="number" name="harga_satuan[]" class="form-control harga-satuan"></td>
+                        <td><input type="number" name="jumlah_harga[]" class="form-control jumlah-harga"></td>
+                        <td><input type="text" name="keterangan[]" class="form-control keterangan"></td>
                     </tr>
                 </tbody>
             </table>
+
             <div class="form-group">
                 <button type="button" class="btn btn-primary" id="add-item">Tambah Item</button>
             </div>
-            
+
             <div class="form-group">
                 <input type="number" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required>
             </div>
@@ -95,14 +126,20 @@
     $('#add-item').click(function() {
         $('#item-table tbody').append(`
             <tr>
-                <td><input type="text" name="item[]" class="form-control"></td>
-                <td><input type="number" name="qty[]" class="form-control"></td>
-                <td><input type="text" name="satuan[]" class="form-control"></td>
-                <td><input type="number" name="harga_satuan[]" class="form-control"></td>
-                <td><input type="number" name="jumlah_harga[]" class="form-control"></td>
-                <td><input type="text" name="keterangan[]" class="form-control"></td>
+                <td><input type="text" name="item[]" class="form-control item"></td>
+                <td><input type="number" name="qty[]" class="form-control qty"></td>
+                <td><input type="text" name="satuan[]" class="form-control satuan"></td>
+                <td><input type="number" name="harga_satuan[]" class="form-control harga-satuan"></td>
+                <td><input type="number" name="jumlah_harga[]" class="form-control jumlah-harga"></td>
+                <td><input type="text" name="keterangan[]" class="form-control keterangan"></td>
+                <td><button class="btn btn-danger remove-item">Remove</button></td>
             </tr>
         `);
+    });
+
+    // Menambahkan event handler untuk menghapus baris
+    $('#item-table').on('click', '.remove-item', function() {
+        $(this).closest('tr').remove();
     });
 </script>
 @endpush
