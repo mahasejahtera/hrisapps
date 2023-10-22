@@ -24,7 +24,7 @@ class HutangOperasionalController extends Controller
     public function index()
     {
         //
-        $pengajuan = SubmitPengajuan::where(['id_karyawan'=>session('id')])->get();
+        $pengajuan = SubmitPengajuan::join('pengajuan', 'submit_pengajuan.id_pengajuan','=', 'pengajuan.id')->where(['id_karyawan'=>session('id')])->get();
         // dd($pengajuan);
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
@@ -57,7 +57,6 @@ class HutangOperasionalController extends Controller
      */
     public function store(Request $request)
     {
-        //
         // Validasi input
         $request->validate([
             'nomor' => 'required',

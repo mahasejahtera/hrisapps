@@ -52,6 +52,7 @@
         </div>
         <form action="{{ route('operasionalkantor.store') }}" method="POST">
             @csrf
+            <input type="hidden" value="31" name="id_pengajuan">
             <div class="form-group">
                 <input type="text" name="nomor" class="form-control" placeholder="Nomor" required>
             </div>
@@ -92,7 +93,7 @@
             <div class="form-group">
                 <input type="number" name="total_biaya" class="form-control" placeholder="Total Biaya" required>
             </div>
-            <button type="submit" class="btn btn-danger">Ajukan HO</button>
+            <button type="submit" class="btn btn-danger">Ajukan OPK</button>
         </form>
 
 

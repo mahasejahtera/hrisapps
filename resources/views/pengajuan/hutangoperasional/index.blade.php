@@ -21,16 +21,16 @@
                 <a href="{{ route('hutangoperasional.create') }}" class="menu-item">
 
                     <p class="menu-item-title">
-                        Hutang Operasional
+                        {{$item->nama}}
                         <br>
-                        008/HO.MEPMADINA/MAHA.TK.NF/VIII/2023
+                        {{$item->nomor}}
                         <br>
-                        05 September 2023
+                        {{ date('d F Y', strtotime($item->created_at)) }}
                     </p>
                 </a>
             </div>
             @endforeach
-            
+
 
 
         </div>

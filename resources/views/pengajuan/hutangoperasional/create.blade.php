@@ -53,7 +53,7 @@
 
         <form action="{{ route('hutangoperasional.store') }}" method="POST">
             @csrf
-            <input type="hidden" value="1" name="id_pengajuan">
+            <input type="hidden" value="15" name="id_pengajuan">
             <div class="form-group">
                 <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Nomor" required>
             </div>

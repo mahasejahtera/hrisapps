@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pengajuan;
 
 use App\Http\Controllers\Controller;
+use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
 
 class OperasionalKantorController extends Controller
@@ -15,8 +16,10 @@ class OperasionalKantorController extends Controller
     public function index()
     {
         //
+        $pengajuan = SubmitPengajuan::join('pengajuan', 'submit_pengajuan.id_pengajuan','=', 'pengajuan.id')->where(['id_karyawan'=>session('id')])->get();
         $data = [
-            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'pengajuan' => $pengajuan
         ];
         //
         return view('pengajuan.operasionalkantor.index', $data);
@@ -46,6 +49,26 @@ class OperasionalKantorController extends Controller
     public function store(Request $request)
     {
         //
+        // Validasi input
+        $request->validate([
+            'nomor' => 'required',
+            'tanggal' => 'required|date',
+            'due_date' => 'required|date',
+            'perihal_pekerjaan' => 'required',
+            'total_biaya' => 'required|numeric',
+        ]);
+
+        // Simpan data ke database
+        $post = new SubmitPengajuan();
+        $post->nomor = $request->input('nomor');
+        $post->tanggal = $request->input('tanggal');
+        $post->due_date = $request->input('due_date');
+        $post->id_karyawan = session('id');
+        $post->id_karyawan = session('id');
+        $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
+        $post->total_biaya = $request->input('total_biaya');
+        $post->id_pengajuan = $request->input('id_pengajuan');
+        $post->save();
         return redirect()->route('operasionalkantor.index');
     }
 
