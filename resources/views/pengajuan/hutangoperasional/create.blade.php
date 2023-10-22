@@ -55,7 +55,33 @@
             @csrf
             <input type="hidden" value="15" name="id_pengajuan">
             <div class="form-group">
-                <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Nomor" required>
+                <div class="row">
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??'001' }}" placeholder="Nomor">
+                    </div>
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??'HO' }}" placeholder="Nomor">
+                    </div>
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Proyek">
+                    </div>
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??'MAHA' }}" placeholder="Nomor">
+                    </div>
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??session('kode_dept') }}" placeholder="Nomor">
+                    </div>
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??session('inisial') }}" placeholder="Nomor">
+                    </div>
+                    
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??bulanKeRomawi(date('n')) }}" placeholder="Nomor">
+                    </div>
+                    <div class="col">
+                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??date('Y') }}" placeholder="Nomor">
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <input type="text" name="tanggal" class="form-control calendar" value="{{ old('tanggal')??date('Y-m-d') }}" placeholder="Tanggal" autocomplete="off" required>

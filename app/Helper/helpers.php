@@ -81,9 +81,9 @@ function bulanIndo($bulan)
         default:
             $bulanIndo = 'Januari';
             break;
-        }
-        
-        return $bulanIndo;
+    }
+
+    return $bulanIndo;
 }
 
 
@@ -113,38 +113,38 @@ function tanggalIndoText($tanggalIndo)
     $dateInt = intval($date);
     $dateTeks = '';
 
-    if($dateInt <= 11) {
-        $dateTeks = angkaTeks($dateInt); 
+    if ($dateInt <= 11) {
+        $dateTeks = angkaTeks($dateInt);
     }
 
-    if($dateInt > 11 && $dateInt < 20) {
+    if ($dateInt > 11 && $dateInt < 20) {
         $teks = substr($dateInt, -1, 1);
         $dateTeks = angkaTeks($teks) . ' belas';
     }
 
-    if($dateInt >= 20 && $dateInt < 100) {
-        $angka1 = angkaTeks(substr($dateInt,0,1));
-        $angka2 = angkaTeks(substr($dateInt,-1,1));
+    if ($dateInt >= 20 && $dateInt < 100) {
+        $angka1 = angkaTeks(substr($dateInt, 0, 1));
+        $angka2 = angkaTeks(substr($dateInt, -1, 1));
         $dateTeks = "$angka1 puluh $angka2";
     }
 
-    
+
     //  tahun teks
-    $angka1 = angkaTeks(substr($year, 0,1));
-    $angka2 = angkaTeks(substr($year, 1,1));
-    $angka3 = angkaTeks(substr($year, 2,1));
-    $angka4 = angkaTeks(substr($year, 3,1));
+    $angka1 = angkaTeks(substr($year, 0, 1));
+    $angka2 = angkaTeks(substr($year, 1, 1));
+    $angka3 = angkaTeks(substr($year, 2, 1));
+    $angka4 = angkaTeks(substr($year, 3, 1));
 
-    $yearTeks ='';
+    $yearTeks = '';
 
-    if(substr($year, 0,1) == 1) {
+    if (substr($year, 0, 1) == 1) {
         $yearTeks .= 'seribu';
     } else {
         $yearTeks .= "$angka1 ribu";
     }
 
-    if(substr($year, 1,1) != 0) $yearTeks .= " $angka2 ratus";
-    if(substr($year, 2,1) != 0) $yearTeks .= " $angka3 puluh";
+    if (substr($year, 1, 1) != 0) $yearTeks .= " $angka2 ratus";
+    if (substr($year, 2, 1) != 0) $yearTeks .= " $angka3 puluh";
 
     $yearTeks .= " $angka4";
 
@@ -200,7 +200,7 @@ function angkaTeks($angka)
         case 1000:
             $resultAngka = 'seribu';
             break;
-        default :
+        default:
             $resultAngka = '';
             break;
     }
@@ -209,120 +209,130 @@ function angkaTeks($angka)
 }
 
 // bilangan teks
-function bilanganTeks($number) {
+function bilanganTeks($number)
+{
     $resultTeks = '';
 
-    if(strlen($number) < 3) $resultTeks = bilanganTwoDigit($number);
-    if(strlen($number) == 3) $resultTeks = bilanganThreeDigit($number);
-    if(strlen($number) == 4) $resultTeks = bilanganFourDigit($number);
-    if(strlen($number) == 5) $resultTeks = bilanganFiveDigit($number);
-    if(strlen($number) == 6) $resultTeks = bilanganSixDigit($number);
-    if(strlen($number) == 7) $resultTeks = bilanganSevenDigit($number);
-    if(strlen($number) == 8) $resultTeks = bilanganEightDigit($number);
-    if(strlen($number) == 9) $resultTeks = bilanganNineDigit($number);
+    if (strlen($number) < 3) $resultTeks = bilanganTwoDigit($number);
+    if (strlen($number) == 3) $resultTeks = bilanganThreeDigit($number);
+    if (strlen($number) == 4) $resultTeks = bilanganFourDigit($number);
+    if (strlen($number) == 5) $resultTeks = bilanganFiveDigit($number);
+    if (strlen($number) == 6) $resultTeks = bilanganSixDigit($number);
+    if (strlen($number) == 7) $resultTeks = bilanganSevenDigit($number);
+    if (strlen($number) == 8) $resultTeks = bilanganEightDigit($number);
+    if (strlen($number) == 9) $resultTeks = bilanganNineDigit($number);
 
     return $resultTeks;
 }
 
-function bilanganTwoDigit($bilangan) {
+function bilanganTwoDigit($bilangan)
+{
 
     $bilanganTeks = '';
 
-    if($bilangan <= 11) {
-        $bilanganTeks = angkaTeks($bilangan); 
+    if ($bilangan <= 11) {
+        $bilanganTeks = angkaTeks($bilangan);
     }
 
-    if($bilangan > 11 && $bilangan < 20) {
+    if ($bilangan > 11 && $bilangan < 20) {
         $teks = substr($bilangan, -1, 1);
         $bilanganTeks = angkaTeks($teks) . ' belas';
     }
 
-    if($bilangan >= 20 && $bilangan < 100) {
-        $angka1 = angkaTeks(substr($bilangan,0,1));
-        $angka2 = angkaTeks(substr($bilangan,-1,1));
+    if ($bilangan >= 20 && $bilangan < 100) {
+        $angka1 = angkaTeks(substr($bilangan, 0, 1));
+        $angka2 = angkaTeks(substr($bilangan, -1, 1));
         $bilanganTeks = "$angka1 puluh $angka2";
     }
 
     return $bilanganTeks;
 }
 
-function bilanganThreeDigit($bilangan) {
-    $bilanganTeks ='';
-    $angka1 = substr($bilangan,0,1);
-    
-    if($angka1 == 1) {
+function bilanganThreeDigit($bilangan)
+{
+    $bilanganTeks = '';
+    $angka1 = substr($bilangan, 0, 1);
+
+    if ($angka1 == 1) {
         $bilanganTeks = 'seratus ';
     } else {
         $bilanganTeks = (angkaTeks($angka1)) ? angkaTeks($angka1) . ' ratus ' : '';
     }
 
-    $bilanganTeks .= bilanganTwoDigit(substr($bilangan,1));
+    $bilanganTeks .= bilanganTwoDigit(substr($bilangan, 1));
 
     return $bilanganTeks;
 }
 
-function bilanganFourDigit($bilangan) {
-    $bilanganTeks ='';
-    $angka1 = substr($bilangan,0,1);
-    
-    if($angka1 == 1) {
+function bilanganFourDigit($bilangan)
+{
+    $bilanganTeks = '';
+    $angka1 = substr($bilangan, 0, 1);
+
+    if ($angka1 == 1) {
         $bilanganTeks = 'seribu ';
     } else {
         $bilanganTeks = (angkaTeks($angka1)) ? angkaTeks($angka1) . ' ribu ' : '';
     }
 
-    $bilanganTeks .= bilanganThreeDigit(substr($bilangan,1));
+    $bilanganTeks .= bilanganThreeDigit(substr($bilangan, 1));
 
     return $bilanganTeks;
 }
 
-function bilanganFiveDigit($bilangan) {
-    $bilanganTeks ='';
+function bilanganFiveDigit($bilangan)
+{
+    $bilanganTeks = '';
 
-    $bilanganTeks = bilanganTwoDigit(substr($bilangan,0,2)) . ' ribu ' . bilanganThreeDigit(substr($bilangan,2));
-
-    return $bilanganTeks;
-}
-
-
-function bilanganSixDigit($bilangan) {
-    $bilanganTeks ='';
-
-    $bilanganTeks = (bilanganThreeDigit(substr($bilangan,0,3))) ? bilanganThreeDigit(substr($bilangan,0,3)) . ' ribu ' . bilanganThreeDigit(substr($bilangan,3)) : '';
+    $bilanganTeks = bilanganTwoDigit(substr($bilangan, 0, 2)) . ' ribu ' . bilanganThreeDigit(substr($bilangan, 2));
 
     return $bilanganTeks;
 }
 
 
-function bilanganSevenDigit($bilangan) {
-    $bilanganTeks ='';
+function bilanganSixDigit($bilangan)
+{
+    $bilanganTeks = '';
 
-    $bilanganTeks = angkaTeks(substr($bilangan,0,1)) . ' juta ' . bilanganSixDigit(substr($bilangan,1));
-
-    return $bilanganTeks;
-}
-
-
-function bilanganEightDigit($bilangan) {
-    $bilanganTeks ='';
-
-    $bilanganTeks = bilanganTwoDigit(substr($bilangan,0,2)) . ' juta ' . bilanganSixDigit(substr($bilangan,2));
+    $bilanganTeks = (bilanganThreeDigit(substr($bilangan, 0, 3))) ? bilanganThreeDigit(substr($bilangan, 0, 3)) . ' ribu ' . bilanganThreeDigit(substr($bilangan, 3)) : '';
 
     return $bilanganTeks;
 }
 
 
-function bilanganNineDigit($bilangan) {
-    $bilanganTeks ='';
+function bilanganSevenDigit($bilangan)
+{
+    $bilanganTeks = '';
 
-    $bilanganTeks = bilanganThreeDigit(substr($bilangan,0,3)) . ' juta ' . bilanganSixDigit(substr($bilangan,3));
+    $bilanganTeks = angkaTeks(substr($bilangan, 0, 1)) . ' juta ' . bilanganSixDigit(substr($bilangan, 1));
+
+    return $bilanganTeks;
+}
+
+
+function bilanganEightDigit($bilangan)
+{
+    $bilanganTeks = '';
+
+    $bilanganTeks = bilanganTwoDigit(substr($bilangan, 0, 2)) . ' juta ' . bilanganSixDigit(substr($bilangan, 2));
+
+    return $bilanganTeks;
+}
+
+
+function bilanganNineDigit($bilangan)
+{
+    $bilanganTeks = '';
+
+    $bilanganTeks = bilanganThreeDigit(substr($bilangan, 0, 3)) . ' juta ' . bilanganSixDigit(substr($bilangan, 3));
 
     return $bilanganTeks;
 }
 
 // hari indo
-function hariIndo($dayInt) {
-    $hariIndo ='';
+function hariIndo($dayInt)
+{
+    $hariIndo = '';
 
     switch ($dayInt) {
         case 1:
@@ -356,14 +366,26 @@ function hariIndo($dayInt) {
 
 
 // hitung umur
-function hitungUmur($tanggal_lahir){
-	$birthDate = new DateTime($tanggal_lahir);
-	$today = new DateTime("today");
-	if ($birthDate > $today) { 
-	    exit("0 tahun 0 bulan 0 hari");
-	}
-	$y = $today->diff($birthDate)->y;
-	// $m = $today->diff($birthDate)->m;
-	// $d = $today->diff($birthDate)->d;
-	return "$y tahun" ;
+function hitungUmur($tanggal_lahir)
+{
+    $birthDate = new DateTime($tanggal_lahir);
+    $today = new DateTime("today");
+    if ($birthDate > $today) {
+        exit("0 tahun 0 bulan 0 hari");
+    }
+    $y = $today->diff($birthDate)->y;
+    // $m = $today->diff($birthDate)->m;
+    // $d = $today->diff($birthDate)->d;
+    return "$y tahun";
+}
+
+function bulanKeRomawi($bulan)
+{
+    $romawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+
+    if ($bulan >= 1 && $bulan <= 12) {
+        return $romawi[$bulan];
+    }
+
+    return "Bulan tidak valid";
 }
