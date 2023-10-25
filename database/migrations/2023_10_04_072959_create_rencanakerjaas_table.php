@@ -29,6 +29,8 @@ return new class extends Migration
             $table->boolean('direktur_approval')->default(false);
             $table->boolean('komisaris_approval')->default(false);
             $table->timestamps();
+
+            $table->foreign('id_karyawan')->references('id')->on('karyawans');
         });
     }
 
