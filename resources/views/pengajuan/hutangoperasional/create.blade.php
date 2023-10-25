@@ -50,20 +50,31 @@
         <div class="text-center">
             <h2>Hutang Operasional</h2>
         </div>
-
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <form action="{{ route('hutangoperasional.store') }}" method="POST">
             @csrf
             <input type="hidden" value="15" name="id_pengajuan">
             <div class="form-group">
                 <div class="row" style="overflow-x: auto;">
                     <div class="col">
-                    001 / HO .
+                        001 / HO .
+                        <input type="hidden" id="depan" value="001/HO.">
+                        <input type="hidden" id="nomor" name="nomor">
                     </div>
                     <div class="col col-md">
-                        <input type="text" name="nomor" class="form-control form-control-sm" value="{{ old('nomor') }}" placeholder="Proyek">
+                        <input type="text" name="proyek" id="proyek" class="form-control form-control-sm" value="{{ old('proyek') }}" placeholder="Proyek">
                     </div>
                     <div class="col">
-                    /MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
+                        /MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
+                        <input type="hidden" id="belakang" value="/MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}">
                     </div>
                 </div>
             </div>
@@ -150,6 +161,13 @@
     // Menambahkan event handler untuk menghapus baris
     $('#item-table').on('click', '.remove-item', function() {
         $(this).closest('tr').remove();
+    });
+
+    $('#proyek').on('keyup change', function() {
+        var depan = $('#depan').val();
+        var proyek = $('#proyek').val();
+        var belakang = $('#belakang').val();
+        $('#nomor').val(depan + proyek + belakang);
     });
 </script>
 @endpush
