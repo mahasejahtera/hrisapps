@@ -65,8 +65,9 @@
             <div class="form-group">
                 <div class="row" style="overflow-x: auto;">
                     <div class="col">
-                        001 / HO .
-                        <input type="hidden" id="depan" value="001/HO.">
+                        {{$nomor}} / HO .
+                        <input type="hidden" id="depan" value="{{$nomor}}/HO.">
+                        <input type="hidden" id="nomor_terakhir" name="nomor_terakhir" value="{{$nomor}}">
                         <input type="hidden" id="nomor" name="nomor">
                     </div>
                     <div class="col col-md">
