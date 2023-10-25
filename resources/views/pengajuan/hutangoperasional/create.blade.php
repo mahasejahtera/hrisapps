@@ -55,31 +55,15 @@
             @csrf
             <input type="hidden" value="15" name="id_pengajuan">
             <div class="form-group">
-                <div class="row">
+                <div class="row" style="overflow-x: auto;">
                     <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??'001' }}" placeholder="Nomor">
+                    001 / HO .
+                    </div>
+                    <div class="col col-md">
+                        <input type="text" name="nomor" class="form-control form-control-sm" value="{{ old('nomor') }}" placeholder="Proyek">
                     </div>
                     <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??'HO' }}" placeholder="Nomor">
-                    </div>
-                    <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor') }}" placeholder="Proyek">
-                    </div>
-                    <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??'MAHA' }}" placeholder="Nomor">
-                    </div>
-                    <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??session('kode_dept') }}" placeholder="Nomor">
-                    </div>
-                    <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??session('inisial') }}" placeholder="Nomor">
-                    </div>
-                    
-                    <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??bulanKeRomawi(date('n')) }}" placeholder="Nomor">
-                    </div>
-                    <div class="col">
-                        <input type="text" name="nomor" class="form-control" value="{{ old('nomor')??date('Y') }}" placeholder="Nomor">
+                    /MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
                     </div>
                 </div>
             </div>
