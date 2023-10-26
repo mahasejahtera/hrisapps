@@ -66,6 +66,47 @@ class ManajerPController extends Controller
         return view('permintaan.manajer.keluar', compact('data'));
     }
 
+    public function listpersetujuan(Request $request)
+    {
+    $idk = $request->session()->get('id_karyawan');
+    $karyawan = Karyawan::where('id', $idk)->first();
+    $data = Permintaan::where('manajer_approval', 0)
+        ->whereHas('karyawanPengirim', function ($query) use ($karyawan) {
+            $query->where('kode_dept', $karyawan->kode_dept);
+        })
+        ->get();
+    return view('permintaan.manajer.persetujuan', compact('data'));
+    }
+
+    public function detailPersetujuan(string $id)
+    {
+    $data = Permintaan::where('id', $id)->first();
+    return view('permintaan.manajer.detail-persetujuan', compact('data'));
+    }
+
+    public function menolakPersetujuan(Request $request)
+    {
+        $id = $request->id;
+        $data = [
+            'keterangan_tolak' => $request->keterangan_tolak,
+            'status' => 3,
+        ];
+        Permintaan::where('id', $id)->update($data);
+        return redirect('/manajer/permintaan/persetujuan')->with('success', 'Permintaan Ditolak !');
+    }
+
+    public function terimaPersetujuan(Request $request)
+    {
+        $id = $request->id;
+        $data = [
+            'manajer_approval' => 1,
+        ];
+        Permintaan::where('id', $id)->update($data);
+        return redirect('/manajer/permintaan/persetujuan')->with('success', 'Permintaan Disetujui !');
+    }
+
+
+
     public function add(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');

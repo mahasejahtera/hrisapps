@@ -73,9 +73,10 @@ Route::prefix('manajer')->group(function () {
     Route::get('/permintaan/detail/{id} ', [ManajerPController::class, 'detailKeluar'])->name('detail-permintaan-keluar-manajer');
     Route::get('/permintaan/add', [ManajerPController::class, 'add']);
     Route::post('/permintaan/add/proses', [ManajerPController::class, 'addproses']);
-
-
-
+    Route::get('/permintaan/persetujuan', [ManajerPController::class, 'listpersetujuan']);
+    Route::get('/permintaan/persetujuan/detail/{id} ', [ManajerPController::class, 'detailpersetujuan'])->name('detail-persetujuan-permintaan-manajer');
+    Route::post('/permintaan/tolak/persetujuan', [ManajerPController::class, 'menolakPersetujuan']);
+    Route::post('/permintaan/terima/persetujuan', [ManajerPController::class, 'terimaPersetujuan']);
 
 });
 
@@ -119,6 +120,10 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::get('/permintaan/detail/{id} ', [HrdPController::class, 'detailKeluar'])->name('detail-permintaan-keluar-hrd');
     Route::get('/permintaan/add', [HrdPController::class, 'add']);
     Route::post('/permintaan/add/proses', [HrdPController::class, 'addproses']);
+    Route::get('/permintaan/persetujuan', [HrdPController::class, 'listpersetujuan']);
+    Route::get('/permintaan/persetujuan/detail/{id} ', [HrdPController::class, 'detailpersetujuan'])->name('detail-persetujuan-permintaan-hrd');
+    Route::post('/permintaan/tolak/persetujuan', [HrdPController::class, 'menolakPersetujuan']);
+    Route::post('/permintaan/terima/persetujuan', [HrdPController::class, 'terimaPersetujuan']);
 });
 
 //project manager rkk
@@ -150,7 +155,10 @@ Route::prefix('pm')->group(function () {
     Route::get('/permintaan/detail/{id} ', [PmPController::class, 'detailKeluar'])->name('detail-permintaan-keluar-pm');
     Route::get('/permintaan/add', [PmPController::class, 'add']);
     Route::post('/permintaan/add/proses', [PmPController::class, 'addproses']);
-
+    Route::get('/permintaan/persetujuan', [PmPController::class, 'listpersetujuan']);
+    Route::get('/permintaan/persetujuan/detail/{id} ', [PmPController::class, 'detailpersetujuan'])->name('detail-persetujuan-permintaan-pm');
+    Route::post('/permintaan/tolak/persetujuan', [PmPController::class, 'menolakPersetujuan']);
+    Route::post('/permintaan/terima/persetujuan', [PmPController::class, 'terimaPersetujuan']);
 });
 
 //Direktur
@@ -186,6 +194,10 @@ Route::prefix('direktur')->group(function () {
     Route::get('/permintaan/detail/{id} ', [DirekturPController::class, 'detailKeluar'])->name('detail-permintaan-keluar-direktur');
     Route::get('/permintaan/add', [DirekturPController::class, 'add']);
     Route::post('/permintaan/add/proses', [DirekturPController::class, 'addproses']);
+    Route::get('/permintaan/persetujuan', [DirekturPController::class, 'listpersetujuan']);
+    Route::get('/permintaan/persetujuan/detail/{id} ', [DirekturPController::class, 'detailpersetujuan'])->name('detail-persetujuan-permintaan-direktur');
+    Route::post('/permintaan/tolak/persetujuan', [DirekturPController::class, 'menolakPersetujuan']);
+    Route::post('/permintaan/terima/persetujuan', [DirekturPController::class, 'terimaPersetujuan']);
 
 });
 
@@ -227,8 +239,17 @@ Route::prefix('komisaris')->group(function () {
 
 Route::prefix('arsip')->group(function () {
     Route::get('/option', [ArsipController::class, 'option']);
+
+    //rencanakerja
     Route::get('/rkk', [ArsipController::class, 'listarsiprkk']);
     Route::get('/detailrkk/{id}', [ArsipController::class, 'detailrkk'])->name('arsip-detail-rkk');
+    Route::post('/rkk/search', [ArsipController::class, 'searchRkk']);
+
+
+    //permintaan
+    Route::get('/permintaan', [ArsipController::class, 'listarsippermintaan']);
+    Route::post('/permintaan/search', [ArsipController::class, 'searchPermintaan']);
+    Route::get('/permintaan/detail/{id}', [ArsipController::class, 'detailpermintaan'])->name('arsip-detail-permintaan');
 });
 
 

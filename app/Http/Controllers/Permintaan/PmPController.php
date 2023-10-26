@@ -18,7 +18,9 @@ class PmPController extends Controller
     public function listmasuk(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');
-        $data = Permintaan::where('id_karyawan_penerima', $idk)->get();
+        $data = Permintaan::where('id_karyawan_penerima', $idk)
+        ->where('manajer_approval', 1)
+        ->get();
         return view('permintaan.pm.masuk', compact('data'));
     }
 
@@ -63,6 +65,46 @@ class PmPController extends Controller
         $idk = $request->session()->get('id_karyawan');
         $data = Permintaan::where('id_karyawan_pengirim', $idk)->get();
         return view('permintaan.pm.keluar', compact('data'));
+    }
+
+    public function listpersetujuan(Request $request)
+    {
+    $idk = $request->session()->get('id_karyawan');
+    $karyawan = Karyawan::where('id', $idk)->first();
+    $data = Permintaan::where('pm_approval', 0)
+        ->where('manajer_approval', 1)
+        ->whereHas('karyawanPengirim', function ($query) use ($karyawan) {
+            $query->whereIn('kode_dept', ['TK', 'PR']);
+        })
+        ->get();
+    return view('permintaan.pm.persetujuan', compact('data'));
+    }
+
+    public function detailPersetujuan(string $id)
+    {
+    $data = Permintaan::where('id', $id)->first();
+    return view('permintaan.pm.detail-persetujuan', compact('data'));
+    }
+
+    public function menolakPersetujuan(Request $request)
+    {
+        $id = $request->id;
+        $data = [
+            'keterangan_tolak' => $request->keterangan_tolak,
+            'status' => 3,
+        ];
+        Permintaan::where('id', $id)->update($data);
+        return redirect('/pm/permintaan/persetujuan')->with('success', 'Permintaan Ditolak !');
+    }
+
+    public function terimaPersetujuan(Request $request)
+    {
+        $id = $request->id;
+        $data = [
+            'pm_approval' => 1,
+        ];
+        Permintaan::where('id', $id)->update($data);
+        return redirect('/pm/permintaan/persetujuan')->with('success', 'Permintaan Disetujui !');
     }
 
     public function add(Request $request)

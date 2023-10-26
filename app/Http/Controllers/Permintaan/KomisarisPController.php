@@ -17,7 +17,9 @@ class KomisarisPController extends Controller
     public function listmasuk(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');
-        $data = Permintaan::where('id_karyawan_penerima', $idk)->get();
+        $data = Permintaan::where('id_karyawan_penerima', $idk)
+        ->where('direktur_approval', 1)
+        ->get();
         return view('permintaan.komisaris.masuk', compact('data'));
     }
 

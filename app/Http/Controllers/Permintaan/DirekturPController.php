@@ -65,6 +65,45 @@ class DirekturPController extends Controller
         return view('permintaan.direktur.keluar', compact('data'));
     }
 
+    public function listpersetujuan(Request $request)
+    {
+    $idk = $request->session()->get('id_karyawan');
+    $karyawan = Karyawan::where('id', $idk)->first();
+    $data = Permintaan::where('hrd_approval', 1)
+        ->where('manajer_approval', 1)
+        ->where('pm_approval', 1)
+        ->where('direktur_approval', 0)
+        ->get();
+    return view('permintaan.direktur.persetujuan', compact('data'));
+    }
+
+    public function detailPersetujuan(string $id)
+    {
+    $data = Permintaan::where('id', $id)->first();
+    return view('permintaan.direktur.detail-persetujuan', compact('data'));
+    }
+
+    public function menolakPersetujuan(Request $request)
+    {
+        $id = $request->id;
+        $data = [
+            'keterangan_tolak' => $request->keterangan_tolak,
+            'status' => 3,
+        ];
+        Permintaan::where('id', $id)->update($data);
+        return redirect('/direktur/permintaan/persetujuan')->with('success', 'Permintaan Ditolak !');
+    }
+
+    public function terimaPersetujuan(Request $request)
+    {
+        $id = $request->id;
+        $data = [
+            'direktur_approval' => 1,
+        ];
+        Permintaan::where('id', $id)->update($data);
+        return redirect('/direktur/permintaan/persetujuan')->with('success', 'Permintaan Disetujui !');
+    }
+
     public function add(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');

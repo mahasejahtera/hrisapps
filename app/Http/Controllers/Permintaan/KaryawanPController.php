@@ -32,13 +32,22 @@ class KaryawanPController extends Controller
     {
         $idk = $request->session()->get('id_karyawan');
         $karyawan = Karyawan::where('id', $idk)->first();
+        $dept_karyawan = $karyawan->kode_dept;
         $kode_dept = $karyawan->kode_dept;
-        $Allkaryawan = Karyawan::whereIn('role_id', [1, 3, 4, 5])
-        ->orWhere(function($query) use ($kode_dept) {
-        $query->where('role_id', 2)->where('kode_dept', $kode_dept);
-        })->get();
-        return view('permintaan.karyawan.add', compact('Allkaryawan', 'idk'));
+        if($dept_karyawan == 'PR' || $dept_karyawan == 'TK'){
+            $Allkaryawan = Karyawan::whereIn('role_id', [1, 3, 4, 5])
+            ->orWhere(function($query) use ($kode_dept) {
+                $query->where('role_id', 2)->whereIn('kode_dept', [$kode_dept, 'HR']);
+            })->get();
+        }else{
+            $Allkaryawan = Karyawan::whereIn('role_id', [1, 4, 5])
+            ->orWhere(function($query) use ($kode_dept) {
+                $query->where('role_id', 2)->whereIn('kode_dept', [$kode_dept, 'HR']);
+            })->get();
+        }
+        return view('permintaan.karyawan.add', compact('Allkaryawan', 'idk', 'kode_dept'));
     }
+
     public function detail(string $id)
     {
         $data = Permintaan::where('id', $id)->first();
@@ -55,6 +64,7 @@ class KaryawanPController extends Controller
     {
         $idk = $request->session()->get('id_karyawan');
         $karyawan = Karyawan::where('id', $request->penerima)->first();
+        $karyawanPengirim = Karyawan::where('id', $idk)->first();
         $file = $request->file('lampiran_pengirim');
         if ($file->getClientOriginalExtension() === 'pdf') {
             $filename = $file->getClientOriginalName();
@@ -71,11 +81,54 @@ class KaryawanPController extends Controller
                 'prioritas' => $request->prioritas,
                 'id_karyawan_penerima' => $request->penerima,
             ];
-            if($karyawan->role_id == 1 || $karyawan->role_id == 2){
+            if($karyawan->role_id == 2 && $karyawan->kode_dept == 'HR' && $karyawanPengirim->kode_dept == 'HR'){
                 $data['manajer_approval'] = 1;
                 $data['pm_approval'] = 1;
                 $data['hrd_approval'] = 1;
                 $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif ($karyawan->role_id == 2 && $karyawan->kode_dept == 'HR' && ($karyawanPengirim->kode_dept != 'TK' || $karyawanPengirim->kode_dept != 'PR')) {
+                $data['manajer_approval'] = 0;
+                $data['pm_approval'] = 0;
+                $data['hrd_approval'] = 1;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            
+            }elseif($karyawan->role_id == 2 && $karyawan->kode_dept == 'HR' ){
+                $data['manajer_approval'] = 0;
+                $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 0;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 1 || $karyawan->role_id == 2){
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 1;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 3){
+                $data['manajer_approval'] = 0;
+                $data['pm_approval'] = 0;
+                $data['hrd_approval'] = 1;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 4){
+                $data['manajer_approval'] = 0;
+                $data['pm_approval'] = 0;
+                $data['hrd_approval'] = 0;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 5){
+                $data['manajer_approval'] = 0;
+                $data['pm_approval'] = 0;
+                $data['hrd_approval'] = 0;
+                $data['direktur_approval'] = 0;
                 $data['komisaris_approval'] = 1;
                 $data['status'] = 1;
             }else{
