@@ -123,4 +123,16 @@ class KaryawanPController extends Controller
         }
     }
 
+    public function revisi(Request $request)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $kode_dept = $karyawan->kode_dept;
+        $Allkaryawan = Karyawan::whereIn('role_id', [1, 3, 4, 5])
+        ->orWhere(function($query) use ($kode_dept) {
+        $query->where('role_id', 2)->where('kode_dept', $kode_dept);
+        })->get();
+        return view('permintaan.karyawan.revisi', compact('Allkaryawan', 'idk'));
+    }
+
 }

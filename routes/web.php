@@ -41,6 +41,9 @@ Route::prefix('karyawan')->group(function () {
     Route::get('/permintaan/masuk/detail/{id} ', [KaryawanPController::class, 'detailMasuk'])->name('detail-permintaan-masuk-karyawan');
     Route::post('/permintaan/tolak', [KaryawanPController::class, 'menolak']);
     Route::post('/permintaan/terima', [KaryawanPController::class, 'terima']);
+    Route::get('/permintaan/revisi/{id}  ', [KaryawanPController::class, 'revisi'])->name('karyawan-permintaan-revisi');
+    Route::post('/permintaan/revisi/proses', [KaryawanPController::class, 'revisiproses']);
+
 
 });
 
