@@ -122,4 +122,14 @@ class KomisarisPController extends Controller
         $data = Permintaan::where('id', $id)->first();
         return view('permintaan.komisaris.detail-keluar', compact('data'));
     }
+
+    public function track(Request $request, string $id)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $data = Permintaan::where('id', $id)->first();
+        $penerima = Karyawan::where('id', $data->karyawanPenerima->id)->first();
+
+        return view('permintaan.komisaris.track')->with(compact('data', 'karyawan','penerima'));
+    }
 }

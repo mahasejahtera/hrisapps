@@ -47,7 +47,9 @@
                 <td>
                     <h3>Status</h3>
                 </td>
-                <td>:</td>
+                <td>:<a href="{{ route('hrd-track-permintaan', ['id' => $data->id]) }}" class="text-danger">
+                    Lihat Status Permintaan
+                </a></td>
             </tr>
         </table>
     </div>
@@ -61,8 +63,6 @@
                         <td>: {{ $data->keterangan_tolak }}</td>
                     </tr>
                 </table>
-                {{-- <div class="text-right"><a href="{{ route('hrd-revisi', ['id' => $data->id]) }}"
-                        class="btn btn-warning">Perbaharui</a></div> --}}
             </div>
         </div>
     @endif

@@ -47,7 +47,9 @@
                 <td>
                     <h3>Status</h3>
                 </td>
-                <td>:</td>
+                <td>:<a href="{{ route('manajer-track-permintaan', ['id' => $data->id]) }}" class="text-danger">
+                    Lihat Status Permintaan
+                </a></td>
             </tr>
         </table>
     </div>

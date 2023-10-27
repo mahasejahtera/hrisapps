@@ -158,6 +158,15 @@ class HrdPController extends Controller
     public function detailKeluar(string $id)
     {
         $data = Permintaan::where('id', $id)->first();
-        return view('permintaan.manajer.detail-keluar', compact('data'));
+        return view('permintaan.hrd.detail-keluar', compact('data'));
+    }
+
+    public function track(Request $request, string $id)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $data = Permintaan::where('id', $id)->first();
+        $penerima = Karyawan::where('id', $data->karyawanPenerima->id)->first();
+        return view('permintaan.hrd.track')->with(compact('data', 'karyawan','penerima'));
     }
 }

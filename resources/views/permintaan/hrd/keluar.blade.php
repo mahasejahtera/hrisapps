@@ -12,7 +12,7 @@
             <img src="{{ asset('images/per.png') }}" alt="">
         @else
             @foreach ($data as $d)
-                <a href="{{ route('detail-permintaan-keluar-hrd', ['id' => $d->id]) }}">
+                <a href="{{ route('detail-permintaan-keluar-hrdp', ['id' => $d->id]) }}">
                     <div class="container-task m-2">
                         <div class="icon-task text-warning">
                             <ion-icon name="calendar-outline"></ion-icon>

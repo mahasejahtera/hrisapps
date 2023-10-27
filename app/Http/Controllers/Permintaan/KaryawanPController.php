@@ -192,7 +192,7 @@ class KaryawanPController extends Controller
                 $data['pm_approval'] = 1;
                 $data['hrd_approval'] = 0;
                 $data['direktur_approval'] = 1;
-                $data['komisaris_approval'] = 0;
+                $data['komisaris_approval'] = 1;
                 $data['status'] = 1;
 
             }elseif($karyawan->role_id == 5){
@@ -259,5 +259,16 @@ class KaryawanPController extends Controller
         })->get();
         return view('permintaan.karyawan.revisi', compact('Allkaryawan', 'idk'));
     }
+
+    public function track(Request $request, string $id)
+    {
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
+        $data = Permintaan::where('id', $id)->first();
+        $penerima = Karyawan::where('id', $data->karyawanPenerima->id)->first();
+
+        return view('permintaan.karyawan.track')->with(compact('data', 'karyawan','penerima'));
+    }
+
 
 }
