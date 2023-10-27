@@ -3,7 +3,7 @@
     <header>
         <div class="bg-prima btn-header fix-header">
             <h2 class="text-sec pt-2 p-1">
-                Detail Permintaan Masuk
+                Detail Persetujuan
             </h2>
         </div>
     </header>

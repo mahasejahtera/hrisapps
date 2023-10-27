@@ -110,7 +110,7 @@ class HrdPController extends Controller
     {
         $idk = $request->session()->get('id_karyawan');
         $karyawan = Karyawan::where('id', $idk)->first();
-        $Allkaryawan = Karyawan::whereIn('role_id', [2, 4, 5])->get();
+        $Allkaryawan = Karyawan::whereIn('role_id', [2,3, 4, 5])->get();
         return view('permintaan.hrd.add', compact('Allkaryawan', 'idk'));
     }
 
@@ -134,7 +134,7 @@ class HrdPController extends Controller
                 'prioritas' => $request->prioritas,
                 'id_karyawan_penerima' => $request->penerima,
             ];
-           if ($karyawan->role_id ==  2 || $karyawan->role_id ==  3) {
+           if ($karyawan->role_id ==  2 || $karyawan->role_id ==  3 || $karyawan->role_id == 4) {
                 $data['manajer_approval'] = 1;
                 $data['hrd_approval'] = 1;
                 $data['pm_approval'] = 1;
@@ -142,11 +142,12 @@ class HrdPController extends Controller
                 $data['komisaris_approval'] = 1;
                 $data['status'] = 1;
             }else{
-                $data['manajer_approval'] = 0;
-                $data['hrd_approval'] = 0;
-                $data['pm_approval'] = 0;
+                $data['manajer_approval'] = 1;
+                $data['hrd_approval'] = 1;
+                $data['pm_approval'] = 1;
                 $data['direktur_approval'] = 0;
-                $data['komisaris_approval'] = 0;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
             }
             Permintaan::create($data);
             return redirect('/manajer/hrd/permintaan/keluar')->with('success', 'Permintaan Ditambah !');

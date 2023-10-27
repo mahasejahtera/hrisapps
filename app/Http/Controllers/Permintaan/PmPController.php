@@ -112,11 +112,8 @@ class PmPController extends Controller
         $idk = $request->session()->get('id_karyawan');
         $karyawan = Karyawan::where('id', $idk)->first();
         $kode_dept = $karyawan->kode_dept;
-        $Allkaryawan = Karyawan::whereIn('role_id', [3, 4, 5])
-        ->orWhere(function($query) use ($kode_dept) {
-        $query->where('role_id', 2)->where('kode_dept', 'HR');
-        })->get();
-        return view('permintaan.PM.add', compact('Allkaryawan', 'idk'));
+        $Allkaryawan = Karyawan::whereIn('role_id', [2,3, 4, 5])->get();
+        return view('permintaan.pm.add', compact('Allkaryawan', 'idk'));
     }
 
     public function addproses(Request $request)
@@ -146,12 +143,27 @@ class PmPController extends Controller
                 $data['direktur_approval'] = 1;
                 $data['komisaris_approval'] = 1;
                 $data['status'] = 1;
-            }else{
-                $data['manajer_approval'] = 0;
+            }elseif($karyawan->role_id ==  4 ){
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
                 $data['hrd_approval'] = 0;
-                $data['pm_approval'] = 0;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 5){
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 0;
                 $data['direktur_approval'] = 0;
-                $data['komisaris_approval'] = 0;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }else{
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 1;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
             }
             Permintaan::create($data);
             return redirect('/pm/permintaan/keluar')->with('success', 'Permintaan Ditambah !');

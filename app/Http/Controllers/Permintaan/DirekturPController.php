@@ -17,7 +17,9 @@ class DirekturPController extends Controller
     public function listmasuk(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');
-        $data = Permintaan::where('id_karyawan_penerima', $idk)->get();
+        $data = Permintaan::where('id_karyawan_penerima', $idk)
+        ->where('hrd_approval', 1)
+        ->get();
         return view('permintaan.direktur.masuk', compact('data'));
     }
 

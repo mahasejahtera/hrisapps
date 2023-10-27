@@ -98,20 +98,32 @@ class ManajerPController extends Controller
     public function terimaPersetujuan(Request $request)
     {
         $id = $request->id;
+        $idk = $request->session()->get('id_karyawan');
+        $karyawan = Karyawan::where('id', $idk)->first();
         $data = [
             'manajer_approval' => 1,
+            'status' => 1,
         ];
+        if($karyawan->kode_dept == 'TK' || $karyawan->kode_dept == 'PR'){
+            $data['pm_approval'] = 0;
+            $data['status'] = 1;
+        }else{
+            $data['pm_approval'] = 1;
+            $data['status' ] = 1;
+        }
         Permintaan::where('id', $id)->update($data);
         return redirect('/manajer/permintaan/persetujuan')->with('success', 'Permintaan Disetujui !');
     }
-
-
 
     public function add(Request $request)
     {
         $idk = $request->session()->get('id_karyawan');
         $karyawan = Karyawan::where('id', $idk)->first();
-        $Allkaryawan = Karyawan::whereIn('role_id', [2, 3, 4, 5])->get();
+        if($karyawan->kode_dept == 'TK' || $karyawan->kode_dept == 'PR'){
+            $Allkaryawan = Karyawan::whereIn('role_id', [2, 3, 4, 5])->get();
+        }else{
+        $Allkaryawan = Karyawan::whereIn('role_id', [2, 4, 5])->get();
+        }
         return view('permintaan.manajer.add', compact('Allkaryawan', 'idk'));
     }
 
@@ -119,6 +131,7 @@ class ManajerPController extends Controller
     {
         $idk = $request->session()->get('id_karyawan');
         $karyawan = Karyawan::where('id', $request->penerima)->first();
+        $karyawanPengirim = Karyawan::where('id', $idk)->first();
         $file = $request->file('lampiran_pengirim');
         if ($file->getClientOriginalExtension() === 'pdf') {
             $filename = $file->getClientOriginalName();
@@ -135,21 +148,78 @@ class ManajerPController extends Controller
                 'prioritas' => $request->prioritas,
                 'id_karyawan_penerima' => $request->penerima,
             ];
-           if ($karyawan->role_id ==  2 || $karyawan->role_id ==  3) {
+           if ($karyawanPengirim->kode_dept == 'TK' ||$karyawanPengirim->kode_dept == 'PR') {
+                if($karyawan->role_id == 2 && $karyawan->kode_dept != 'HR'){
+                    $data['manajer_approval'] = 1;
+                    $data['hrd_approval'] = 1;
+                    $data['pm_approval'] = 1;
+                    $data['direktur_approval'] = 1;
+                    $data['komisaris_approval'] = 1;
+                    $data['status'] = 1;
+                }elseif($karyawan->role_id == 2 && $karyawan->kode_dept == 'HR'){
+                    $data['manajer_approval'] = 1;
+                    $data['pm_approval'] = 0;
+                    $data['hrd_approval'] = 1;
+                    $data['direktur_approval'] = 1;
+                    $data['komisaris_approval'] = 1;
+                    $data['status'] = 1;
+                }elseif($karyawan->role_id == 3){
+                    $data['manajer_approval'] = 1;
+                    $data['pm_approval'] = 1;
+                    $data['hrd_approval'] = 1;
+                    $data['direktur_approval'] = 1;
+                    $data['komisaris_approval'] = 1;
+                    $data['status'] = 1;
+                }elseif($karyawan->role_id == 4){
+                    $data['manajer_approval'] = 1;
+                    $data['pm_approval'] = 0;
+                    $data['hrd_approval'] = 0;
+                    $data['direktur_approval'] = 1;
+                    $data['komisaris_approval'] = 1;
+                    $data['status'] = 1;
+                }elseif($karyawan->role_id == 5){
+                    $data['manajer_approval'] = 1;
+                    $data['pm_approval'] = 0;
+                    $data['hrd_approval'] = 0;
+                    $data['direktur_approval'] = 0;
+                    $data['komisaris_approval'] = 1;
+                    $data['status'] = 1;
+                }else{
+                    $data['manajer_approval'] = 1;
+                    $data['pm_approval'] = 1;
+                    $data['hrd_approval'] = 1;
+                    $data['direktur_approval'] = 1;
+                    $data['komisaris_approval'] = 1;
+                    $data['status'] = 1;
+                }
+            }elseif($karyawan->role_id == 2){
                 $data['manajer_approval'] = 1;
                 $data['hrd_approval'] = 1;
                 $data['pm_approval'] = 1;
                 $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 4){
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 0;
+                $data['direktur_approval'] = 1;
+                $data['komisaris_approval'] = 1;
+                $data['status'] = 1;
+            }elseif($karyawan->role_id == 5){
+                $data['manajer_approval'] = 1;
+                $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 0;
+                $data['direktur_approval'] = 0;
                 $data['komisaris_approval'] = 1;
                 $data['status'] = 1;
             }else{
                 $data['manajer_approval'] = 1;
-                $data['hrd_approval'] = 1;
                 $data['pm_approval'] = 1;
+                $data['hrd_approval'] = 1;
                 $data['direktur_approval'] = 1;
                 $data['komisaris_approval'] = 1;
                 $data['status'] = 1;
-
             }
             Permintaan::create($data);
             return redirect('/manajer/permintaan/keluar')->with('success', 'Permintaan Ditambah !');
