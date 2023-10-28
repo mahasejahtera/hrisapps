@@ -10,4 +10,6 @@ class NomorPengajuan extends Model
     use HasFactory;
 
     protected $table = 'nomor_pengajuan';
+
+    public $timestamps = true;
 }

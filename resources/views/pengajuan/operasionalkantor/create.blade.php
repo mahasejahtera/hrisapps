@@ -50,11 +50,34 @@
         <div class="text-center">
             <h2>Operasional Kantor</h2>
         </div>
+        @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <form action="{{ route('operasionalkantor.store') }}" method="POST">
             @csrf
             <input type="hidden" value="31" name="id_pengajuan">
             <div class="form-group">
-                <input type="text" name="nomor" class="form-control" placeholder="Nomor" required>
+            <div class="row" style="overflow-x: auto;">
+                    <div class="col">
+                        {{$nomor}} / OPK .
+                        <input type="hidden" id="depan" value="{{$nomor}}/OPK.">
+                        <input type="hidden" id="nomor_terakhir" name="nomor_terakhir" value="{{$nomor}}">
+                        <input type="hidden" id="nomor" name="nomor">
+                    </div>
+                    <div class="col col-md">
+                        <input type="text" name="proyek" id="proyek" class="form-control form-control-sm" value="{{ old('proyek') }}" placeholder="Proyek">
+                    </div>
+                    <div class="col">
+                        /MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
+                        <input type="hidden" id="belakang" value="/MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}">
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <input type="text" name="tanggal" class="form-control calendar" value="{{ old('tanggal')??date('Y-m-d') }}" placeholder="Tanggal" required>
@@ -134,6 +157,13 @@
     // Menambahkan event handler untuk menghapus baris
     $('#item-table').on('click', '.remove-item', function() {
         $(this).closest('tr').remove();
+    });
+
+    $('#proyek').on('keyup change', function() {
+        var depan = $('#depan').val();
+        var proyek = $('#proyek').val();
+        var belakang = $('#belakang').val();
+        $('#nomor').val(depan + proyek + belakang);
     });
 </script>
 @endpush

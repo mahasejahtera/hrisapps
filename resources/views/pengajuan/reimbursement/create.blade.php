@@ -17,6 +17,7 @@
         </div>
         <form action="{{ route('reimbursement.store') }}" method="POST">
             @csrf
+            <input type="hidden" value="31" name="id_pengajuan">
             <div class="form-group">
                 <input type="text" name="nomor" class="form-control" placeholder="Nomor" required>
             </div>

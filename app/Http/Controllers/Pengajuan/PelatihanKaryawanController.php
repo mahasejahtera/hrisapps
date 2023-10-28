@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Pengajuan;
 
 use App\Http\Controllers\Controller;
+use App\Models\NomorPengajuan;
+use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
 
 class PelatihanKaryawanController extends Controller
@@ -30,8 +32,15 @@ class PelatihanKaryawanController extends Controller
     public function create()
     {
         //
+        $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
+        if (empty($nomor)) {
+            $nomor = 1;
+        } else {
+            $nomor = $nomor + 1;
+        }
         $data = [
-            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'nomor'     => str_pad($nomor, 3, '0', STR_PAD_LEFT)
         ];
         //
         return view('pengajuan.pelatihankaryawan.create', $data);
@@ -46,6 +55,31 @@ class PelatihanKaryawanController extends Controller
     public function store(Request $request)
     {
         //
+        // Validasi input
+        $request->validate([
+            'nomor' => 'required',
+            'tanggal' => 'required|date',
+            'due_date' => 'required|date',
+            'perihal_pekerjaan' => 'required',
+            'total_biaya' => 'required|numeric',
+        ]);
+
+        // Simpan data ke database
+        $post = new SubmitPengajuan();
+        $post->nomor = $request->input('nomor');
+        $post->tanggal = $request->input('tanggal');
+        $post->due_date = $request->input('due_date');
+        $post->id_karyawan = session('id');
+        $post->id_karyawan = session('id');
+        $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
+        $post->total_biaya = $request->input('total_biaya');
+        $post->id_pengajuan = $request->input('id_pengajuan');
+        $post->save();
+
+        NomorPengajuan::updateOrInsert(
+            ['id_pengajuan' => $request->input('id_pengajuan'), 'tahun' => date('Y')],
+            ['nomor_terakhir' => $request->input('nomor_terakhir')]
+        );
         return redirect()->route('pelatihankaryawan.index');
     }
 
