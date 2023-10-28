@@ -15,9 +15,9 @@
             </a>
         </div>
         <div class="container-option">
-            <a href="">
+            <a href="/direktur/tugas/option">
                 <div class="badge-option">7</div>
-                <div class="text-center text-dark">Daftar Permintaan</div>
+                <div class="text-center text-dark">Daftar Tugas</div>
             </a>
         </div>
     </div>

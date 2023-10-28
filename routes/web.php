@@ -4,16 +4,21 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\ExLoginController;
 use App\Http\Controllers\Rencanakerja\KaryawanController;
 use App\Http\Controllers\Permintaan\KaryawanPController;
+use App\Http\Controllers\Tugas\KaryawanTController;
 use App\Http\Controllers\Rencanakerja\ManajerController;
 use App\Http\Controllers\Permintaan\ManajerPController;
+use App\Http\Controllers\Tugas\ManajerTController;
 use App\Http\Controllers\Rencanakerja\PmController;
 use App\Http\Controllers\Permintaan\PmPController;
+use App\Http\Controllers\Tugas\PmTController;
 use App\Http\Controllers\Permintaan\HrdPController;
 use App\Http\Controllers\Rencanakerja\HrdController;
 use App\Http\Controllers\Rencanakerja\DirekturController;
 use App\Http\Controllers\Permintaan\DirekturPController;
+use App\Http\Controllers\Tugas\DirekturTController;
 use App\Http\Controllers\Rencanakerja\KomisarisController;
 use App\Http\Controllers\Permintaan\KomisarisPController;
+use App\Http\Controllers\Tugas\KomisarisTController;
 use App\Http\Controllers\Admin\RencanaKerjaController;
 use App\Http\Controllers\Arsip\ArsipController;
 
@@ -45,6 +50,9 @@ Route::prefix('karyawan')->group(function () {
     Route::post('/permintaan/revisi/proses', [KaryawanPController::class, 'revisiproses']);
     Route::get('/track/permintaan/{id}', [KaryawanPController::class, 'track'])->name('karyawan-track-permintaan');
 
+    //Tugas
+    Route::get('/tugas/list', [KaryawanTController::class, 'listtugas']);
+    Route::get('/tugas/detail/{id} 1', [KaryawanTController::class, 'detailtugas'])->name('detail-tugas-karyawan');
 
 
 });
@@ -81,6 +89,14 @@ Route::prefix('manajer')->group(function () {
     Route::post('/permintaan/terima/persetujuan', [ManajerPController::class, 'terimaPersetujuan']);
     Route::get('/track/permintaan/{id}', [ManajerPController::class, 'track'])->name('manajer-track-permintaan');
 
+    //tugas include hrd
+    Route::get('/tugas/option', [ManajerTController::class, 'option']);
+    Route::get('/tugas/masuk', [ManajerTController::class, 'listmasuk']);
+    Route::get('/tugas/keluar', [ManajerTController::class, 'listkeluar']);
+    Route::get('/tugas/add', [ManajerTController::class, 'add']);
+    Route::post('/tugas/add/proses', [ManajerTController::class, 'addproses']);
+    Route::get('/tugas/detail/keluar/{id} ', [ManajerTController::class, 'detailKeluar'])->name('detail-tugas-keluar-manajer');
+    Route::get('/tugas/detail/masuk/{id} ', [ManajerTController::class, 'detailMasuk'])->name('detail-tugas-masuk-manajer');
 });
 
 //manajer hrd rkk
@@ -128,8 +144,6 @@ Route::prefix('manajer/hrd')->group(function () {
     Route::post('/permintaan/tolak/persetujuan', [HrdPController::class, 'menolakPersetujuan']);
     Route::post('/permintaan/terima/persetujuan', [HrdPController::class, 'terimaPersetujuan']);
     Route::get('/track/permintaan/{id}', [HrdPController::class, 'track'])->name('hrd-track-permintaan');
-
-
 });
 
 //project manager rkk
@@ -167,6 +181,14 @@ Route::prefix('pm')->group(function () {
     Route::post('/permintaan/terima/persetujuan', [PmPController::class, 'terimaPersetujuan']);
     Route::get('/track/permintaan/{id}', [PmPController::class, 'track'])->name('pm-track-permintaan');
 
+    //pm tugas
+    Route::get('/tugas/option', [PmTController::class, 'option']);
+    Route::get('/tugas/masuk', [PmTController::class, 'listmasuk']);
+    Route::get('/tugas/keluar', [PmTController::class, 'listkeluar']);
+    Route::get('/tugas/add', [PmTController::class, 'add']);
+    Route::post('/tugas/add/proses', [PmTController::class, 'addproses']);
+    Route::get('/tugas/detail/keluar/{id} ', [PmTController::class, 'detailKeluar'])->name('detail-tugas-keluar-pm');
+    Route::get('/tugas/detail/masuk/{id} ', [PmTController::class, 'detailMasuk'])->name('detail-tugas-masuk-pm');
 });
 
 //Direktur
@@ -208,7 +230,14 @@ Route::prefix('direktur')->group(function () {
     Route::post('/permintaan/terima/persetujuan', [DirekturPController::class, 'terimaPersetujuan']);
     Route::get('/track/permintaan/{id}', [DirekturPController::class, 'track'])->name('direktur-track-permintaan');
 
-
+    //tugas direktur
+    Route::get('/tugas/option', [DirekturTController::class, 'option']);
+    Route::get('/tugas/masuk', [DirekturTController::class, 'listmasuk']);
+    Route::get('/tugas/keluar', [DirekturTController::class, 'listkeluar']);
+    Route::get('/tugas/add', [DirekturTController::class, 'add']);
+    Route::post('/tugas/add/proses', [DirekturTController::class, 'addproses']);
+    Route::get('/tugas/detail/keluar/{id} ', [DirekturTController::class, 'detailKeluar'])->name('detail-tugas-keluar-direktur');
+    Route::get('/tugas/detail/masuk/{id} ', [DirekturTController::class, 'detailMasuk'])->name('detail-tugas-masuk-direktur');
 });
 
 //komisaris rkk
@@ -246,6 +275,11 @@ Route::prefix('komisaris')->group(function () {
     Route::post('/permintaan/add/proses', [KomisarisPController::class, 'addproses']);
     Route::get('/track/permintaan/{id}', [KomisarisPController::class, 'track'])->name('komisaris-track-permintaan');
 
+    //tugas
+    Route::get('/tugas/list', [KomisarisTController::class, 'list']);
+    Route::get('/tugas/add', [KomisarisTController::class, 'add']);
+    Route::post('/tugas/add/proses', [KomisarisTController::class, 'addproses']);
+    Route::get('/tugas/detail/{id} ', [KomisarisTController::class, 'detail'])->name('detail-tugas-komisaris');
 });
 
 

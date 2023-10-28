@@ -21,15 +21,9 @@
             </a>
         </div>
         <div class="container-option">
-            <a href="">
+            <a href="/manajer/tugas/option">
                 <div class="badge-option">7</div>
                 <div class="text-center text-dark">Daftar Tugas</div>
-            </a>
-        </div>
-        <div class="container-option">
-            <a href="">
-                <div class="badge-option">7</div>
-                <div class="text-center text-dark">Daftar Permintaan</div>
             </a>
         </div>
     </div>

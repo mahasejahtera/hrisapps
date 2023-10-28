@@ -63,8 +63,7 @@
                         <td>: {{ $data->keterangan_tolak }}</td>
                     </tr>
                 </table>
-                {{-- <div class="text-right"><a href="{{ route('hrd-revisi', ['id' => $data->id]) }}"
-                        class="btn btn-warning">Perbaharui</a></div> --}}
+
             </div>
         </div>
     @endif

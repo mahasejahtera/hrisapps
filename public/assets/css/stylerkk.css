@@ -59,6 +59,17 @@ img {
     box-shadow: 0 6px 4px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     margin-top: 110px;
+}
+.container-detail-tugas{
+    margin-bottom: 56px;
+
+}
+.container-tugas-proses {
+    min-height: auto;
+    padding: 7px;
+    background-color: #fff;
+    box-shadow: 0 6px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
 
 }
 
@@ -145,6 +156,15 @@ img {
     top: 0;
     right: 0;
     background-color: red;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 10px;
+}
+.badge-status-proses {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: yellow;
     color: white;
     padding: 4px 10px;
     border-radius: 10px;

@@ -27,7 +27,6 @@ class KaryawanController extends Controller
                     ->get();
         $jml = $data->count();
         return view('rencanakerja.karyawan.option', compact('jml'));
-
     }
 
     public function listrkk(Request $request)
