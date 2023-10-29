@@ -107,9 +107,10 @@
             <div class="form-group">
                 <button type="button" class="btn btn-primary" id="add-item">Tambah Item</button>
             </div>
+            <div class="form-group">
                 <input type="number" name="total_biaya" class="form-control" placeholder="Total Biaya" required>
             </div>
-            <button type="submit" class="btn btn-danger">Ajukan HO</button>
+            <button type="submit" class="btn btn-danger">Ajukan PPK</button>
         </form>
 
 

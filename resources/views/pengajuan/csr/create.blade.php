@@ -1,5 +1,40 @@
 @extends('layouts.pengajuan')
 
+@push('styles')
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+
+<style>
+    @media screen and (max-width: 720px) {
+        .item {
+            width: 200px;
+        }
+
+        .qty {
+            width: 100px;
+        }
+
+        .satuan {
+            width: 150px;
+        }
+
+        .harga-satuan {
+            width: 120px;
+        }
+
+        .jumlah-harga {
+            width: 200px;
+        }
+
+        .keterangan {
+            width: 200px;
+        }
+    }
+</style>
+@endpush
+
 @section('content')
 
 {{-- START : MAIN --}}
@@ -17,8 +52,23 @@
         </div>
         <form action="{{ route('csr.store') }}" method="POST">
             @csrf
+            <input type="hidden" value="15" name="id_pengajuan">
             <div class="form-group">
-                <input type="text" name="nomor" class="form-control" placeholder="Nomor" required>
+            <div class="row" style="overflow-x: auto;">
+                    <div class="col">
+                        {{$nomor}} / CSR .
+                        <input type="hidden" id="depan" value="{{$nomor}}/HO.">
+                        <input type="hidden" id="nomor_terakhir" name="nomor_terakhir" value="{{$nomor}}">
+                        <input type="hidden" id="nomor" name="nomor">
+                    </div>
+                    <div class="col col-md">
+                        <input type="text" name="proyek" id="proyek" class="form-control form-control-sm" value="{{ old('proyek') }}" placeholder="Proyek">
+                    </div>
+                    <div class="col">
+                        /MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
+                        <input type="hidden" id="belakang" value="/MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}">
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <input type="text" name="tanggal" class="form-control" placeholder="Tanggal" required>

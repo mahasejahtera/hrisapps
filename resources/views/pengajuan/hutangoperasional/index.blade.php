@@ -1,5 +1,10 @@
 @extends('layouts.pengajuan')
 
+@push('styles')
+<!-- Bootstrap CSS -->
+<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+@endpush
+
 @section('content')
 
 {{-- START : MAIN --}}
@@ -19,15 +24,20 @@
             @foreach ($pengajuan as $item)
             <div class="col-12">
                 <a href="{{ route('hutangoperasional.create') }}" class="menu-item">
-
+                    <div>
                     <p class="menu-item-title">
                         {{$item->nama}}
                         <br>
                         {{$item->nomor}}
                         <br>
                         {{ date('d F Y', strtotime($item->created_at)) }}
+                        
                     </p>
+                    </div>
+                    <span class="badge badge-success">Baru</span>
+                    <button class="btn btn-primary">View Tracking</button>
                 </a>
+                
             </div>
             @endforeach
 

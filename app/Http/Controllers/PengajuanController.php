@@ -43,7 +43,7 @@ class PengajuanController extends Controller
                 break;
             case 5:
                 return $this->opsi();
-                    break;
+                break;
             default:
                 return $this->pribadi();
         }
@@ -166,5 +166,13 @@ class PengajuanController extends Controller
         ];
 
         return view('pengajuan.departemenlist', $data);
+    }
+
+    public function tracking()
+    {
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+        return view('pengajuan.tracking', $data);
     }
 }

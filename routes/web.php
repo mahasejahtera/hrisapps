@@ -38,6 +38,7 @@ Route::get('pengajuan/pribadi',[PengajuanController::class,'pribadi'])->name('pe
 Route::get('pengajuan/list',[PengajuanController::class,'list'])->name('pengajuan.list');
 Route::get('pengajuan/departemen',[PengajuanController::class,'departemen'])->name('pengajuan.departemen');
 Route::get('pengajuan/departemen/list/{kode_dept}',[PengajuanController::class,'departemen_list'])->name('pengajuan.departemen_list');
+Route::get('pengajuan/tracking',[PengajuanController::class,'tracking'])->name('pengajuan.tracking');
 Route::resource('pengajuan', PengajuanController::class);
 
 
