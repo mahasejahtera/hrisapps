@@ -53,9 +53,9 @@ class KomisarisTController extends Controller
         }
     }
 
-    public function detailKeluar(string $id)
+    public function detail(string $id)
     {
         $data = Tugas::where('id', $id)->first();
-        return view('tugas.komisaris.detail-keluar', compact('data'));
+        return view('tugas.komisaris.detail', compact('data'));
     }
 }

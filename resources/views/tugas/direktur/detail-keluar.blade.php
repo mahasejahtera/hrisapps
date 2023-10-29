@@ -1,4 +1,5 @@
 @include('template.header')
+
 <body>
     <header>
         <div class="bg-prima btn-header fix-header">
@@ -50,23 +51,58 @@
             <table>
                 <tr>
                     <td>Lampiran 1</td>
-                    <td>: </td>
+                    <td>:
+                        @if ($data->progress1 != null)
+                            <a href="{{ asset('images/tugas/' . $data->progress1) }}" target="_blank"
+                                class="text-danger">Klik disini</a>
+                        @else
+                            <span class="text-warning">Tugas belum di update</span>
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Lampiran 2</td>
-                    <td>: </td>
+                    <td>: @if ($data->progress2 != null)
+                            <a href="{{ asset('images/tugas/' . $data->progress2) }}" target="_blank"
+                                class="text-danger">Klik disini</a>
+                        @else
+                            <span class="text-warning">Tugas belum di update</span>
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Lampiran 3</td>
-                    <td>: </td>
+                    <td>: @if ($data->progress3 != null)
+                            <a href="{{ asset('images/tugas/' . $data->progress3) }}" target="_blank"
+                                class="text-danger">Klik disini</a>
+                        @else
+                            <span class="text-warning">Tugas belum di update</span>
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Lampiran 4</td>
-                    <td>: </td>
+                    <td>: @if ($data->progress4 != null)
+                            <a href="{{ asset('images/tugas/' . $data->progress4) }}" target="_blank"
+                                class="text-danger">Klik disini</a>
+                        @else
+                            <span class="text-warning">Tugas belum di update</span>
+                        @endif
+                    </td>
                 </tr>
                 <tr>
                     <td>Lampiran 5</td>
-                    <td>: </td>
+                    <td>: @if ($data->progress5 != null)
+                            <a href="{{ asset('images/tugas/' . $data->progress5) }}" target="_blank"
+                                class="text-danger">Klik disini</a>
+                        @else
+                            <span class="text-warning">Tugas belum di update</span>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>: {{ $data->keterangan_progress }}</td>
                 </tr>
             </table>
         </div>
@@ -74,4 +110,5 @@
 </body>
 @include('template.bottomNav')
 @include('template.footer')
+
 </html>

@@ -53,6 +53,7 @@ Route::prefix('karyawan')->group(function () {
     //Tugas
     Route::get('/tugas/list', [KaryawanTController::class, 'listtugas']);
     Route::get('/tugas/detail/{id} 1', [KaryawanTController::class, 'detailtugas'])->name('detail-tugas-karyawan');
+    Route::post('/tugas/update', [KaryawanTController::class, 'updateTugas']);
 
 
 });
@@ -97,6 +98,8 @@ Route::prefix('manajer')->group(function () {
     Route::post('/tugas/add/proses', [ManajerTController::class, 'addproses']);
     Route::get('/tugas/detail/keluar/{id} ', [ManajerTController::class, 'detailKeluar'])->name('detail-tugas-keluar-manajer');
     Route::get('/tugas/detail/masuk/{id} ', [ManajerTController::class, 'detailMasuk'])->name('detail-tugas-masuk-manajer');
+    Route::post('/tugas/update', [ManajerTController::class, 'updateTugas']);
+
 });
 
 //manajer hrd rkk
@@ -189,6 +192,8 @@ Route::prefix('pm')->group(function () {
     Route::post('/tugas/add/proses', [PmTController::class, 'addproses']);
     Route::get('/tugas/detail/keluar/{id} ', [PmTController::class, 'detailKeluar'])->name('detail-tugas-keluar-pm');
     Route::get('/tugas/detail/masuk/{id} ', [PmTController::class, 'detailMasuk'])->name('detail-tugas-masuk-pm');
+    Route::post('/tugas/update', [PmTController::class, 'updateTugas']);
+
 });
 
 //Direktur
@@ -238,6 +243,8 @@ Route::prefix('direktur')->group(function () {
     Route::post('/tugas/add/proses', [DirekturTController::class, 'addproses']);
     Route::get('/tugas/detail/keluar/{id} ', [DirekturTController::class, 'detailKeluar'])->name('detail-tugas-keluar-direktur');
     Route::get('/tugas/detail/masuk/{id} ', [DirekturTController::class, 'detailMasuk'])->name('detail-tugas-masuk-direktur');
+    Route::post('/tugas/update', [DirekturTController::class, 'updateTugas']);
+
 });
 
 //komisaris rkk

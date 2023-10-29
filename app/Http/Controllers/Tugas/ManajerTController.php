@@ -81,4 +81,50 @@ class ManajerTController extends Controller
         $data = Tugas::where('id', $id)->first();
         return view('tugas.manajer.detail-masuk', compact('data'));
     }
+
+    public function updateTugas(Request $request){
+        $id = $request->id;
+        $data = Tugas::find($id);
+        if (!$data) {
+            return abort(404);
+        }
+        $rules = [];
+        $deleteOldImages = false;
+        for ($i = 1; $i <= 5; $i++) {
+            $inputName = 'lampiran' . $i;
+            if ($request->hasFile($inputName)) {
+                $rules[$inputName] = 'image|mimes:jpeg,jpg,png|max:2048';
+                $deleteOldImages = true;
+            }
+        }
+        $request->validate($rules);
+
+        if ($deleteOldImages) {
+            for ($i = 1; $i <= 5; $i++) {
+                $inputName = 'lampiran' . $i;
+                $oldAttachment = $data->{'progress' . $i};
+                if ($request->hasFile($inputName) && $oldAttachment) {
+                    if (file_exists(public_path('images/tugas/' . $oldAttachment))) {
+                        unlink(public_path('images/tugas/' . $oldAttachment));
+                    }
+                    $data->setAttribute('progress' . $i, null);
+                }
+            }
+        }
+
+        for ($i = 1; $i <= 5; $i++) {
+            $inputName = 'lampiran' . $i;
+            if ($request->hasFile($inputName)) {
+                $file = $request->file($inputName);
+                $filename = $file->getClientOriginalName();
+                $file_jadi = date('ymdhis') . $filename;
+                $file->move(public_path('images/tugas'), $file_jadi);
+                $data->setAttribute('progress' . $i, $file_jadi);
+            }
+        }
+        $keterangan = $request->keterangan;
+        $data->keterangan_progress = $keterangan;
+        $data->save();
+        return redirect()->route('detail-tugas-masuk-manajer', ['id' => $data->id])->with('success', 'Proses Diupdate !');
+    }
 }
