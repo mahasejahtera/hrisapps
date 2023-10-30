@@ -80,7 +80,6 @@ class HutangOperasionalController extends Controller
         $post->tanggal = $request->input('tanggal');
         $post->due_date = $request->input('due_date');
         $post->id_karyawan = session('id');
-        $post->id_karyawan = session('id');
         $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
         $post->total_biaya = $request->input('total_biaya');
         $post->id_pengajuan = $request->input('id_pengajuan');

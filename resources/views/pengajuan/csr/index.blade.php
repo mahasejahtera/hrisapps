@@ -16,30 +16,25 @@
             <input type="text" class="form-control" placeholder="Cari">
         </div>
         <div class="row justify-content-between">
+        @foreach ($pengajuan as $item)
             <div class="col-12">
                 <a href="{{ route('hutangoperasional.create') }}" class="menu-item">
-
+                    <div>
                     <p class="menu-item-title">
-                        Hutang Operasional
+                        {{$item->nama}}
                         <br>
-                        008/HO.MEPMADINA/MAHA.TK.NF/VIII/2023
+                        {{$item->nomor}}
                         <br>
-                        05 September 2023
+                        {{ date('d F Y', strtotime($item->created_at)) }}
+                        
                     </p>
+                    </div>
+                    <span class="badge badge-success">Baru</span>
+                    <button class="btn btn-primary">View Tracking</button>
                 </a>
+                
             </div>
-            <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
-
-                    <p class="menu-item-title">
-                        Hutang Operasional
-                        <br>
-                        008/HO.MEPMADINA/MAHA.TK.NF/VIII/2023
-                        <br>
-                        05 September 2023
-                    </p>
-                </a>
-            </div>
+            @endforeach
 
 
         </div>
