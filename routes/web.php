@@ -10,7 +10,8 @@ use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KaryawanController;
-use App\Http\Controllers\Panel\PanalPengajuanController;
+use App\Http\Controllers\Panel\PanelPengajuanController;
+use App\Http\Controllers\Panel\PanelRencanaKerjaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,7 +77,8 @@ Route::middleware(['auth:user'])->group(function () {
     Route::get('/presensi/{id}/batalkanizinsakit', [PresensiController::class, 'batalkanizinsakit']);
 
     //
-    Route::get('/panel/pengajuan', [PanalPengajuanController::class, 'index']);
+    Route::get('/panel/pengajuan', [PanelPengajuanController::class, 'index']);
+    Route::get('/panel/rencanakerja', [PanelRencanaKerjaController::class, 'index']);
 
 
     //Cabang

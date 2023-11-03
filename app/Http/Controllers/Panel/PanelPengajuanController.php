@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
-class PanalPengajuanController extends Controller
+class PanelPengajuanController extends Controller
 {
     public function index(Request $request)
     {
