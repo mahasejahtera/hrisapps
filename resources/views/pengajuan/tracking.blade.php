@@ -176,9 +176,9 @@
 
     {{-- START : MENU --}}
     <section id="menu-wrapper">
-        <div class="col-sm-12 col-lg-3">
+        <div class="col-sm-12 col-lg-4">
             <div style="width: 100%; height: 100%; background: #FF0000; border-top-right-radius: 10px" class="p-2 mb-3">
-                <div style="width: 100%; height: 100%; color: white; font-size: 28px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Tracking Pengajuan</div>
+                <div style="width: 100%; height: 100%; color: white; font-size: 24px; font-family: Poppins; font-weight: 700; word-wrap: break-word">Tracking Pengajuan</div>
             </div>
         </div>
         <div class="row justify-content-between">
@@ -195,21 +195,31 @@
                             <div class="line"></div>
                             <div class="dots"></div>
                             <div class="line"></div>
+                            <div class="dots"></div>
+                            <div class="line"></div>
+                            <div class="dots"></div>
+                            
                         </div>
 
                         <div class="cards">
                             <div class="card">
 
-                                <h4>16:30</h4>
-                                <p>Believing Is The Absence Of Doubt</p>
+                                <h4>Input Form Hutang Operasional</h4>
                             </div>
                             <div class="card">
-                                <h4>15:22</h4>
-                                <p>Start With A Baseline</p>
+                                <h4>Menunggu diperiksa oleh Manager</h4>
                             </div>
                             <div class="card">
-                                <h4>14:15</h4>
-                                <p>Break Through Self Doubt And Fear</p>
+                                <h4>Menunggu diperiksa oleh Manager HRD</h4>
+                            </div>
+                            <div class="card">
+                                <h4>Disetujui oleh Direksi</h4>
+                            </div>
+                            <div class="card">
+                                <h4>Disetujui oleh Komisaris</h4>
+                            </div>
+                            <div class="card">
+                                <h4>Pengajuan Selesai</h4>
                             </div>
                         </div>
 
