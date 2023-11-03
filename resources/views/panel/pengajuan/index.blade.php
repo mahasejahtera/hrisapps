@@ -51,12 +51,22 @@
                             <div class="col-12">
                                 <form action="/karyawan" method="GET">
                                     <div class="row">
-                                        <div class="col-6">
+                                        <div class="col-3">
                                             <div class="form-group">
                                                 <input type="text" name="nama_karyawan" id="nama_karyawan" class="form-control" placeholder="Nama Karyawan" value="{{ Request('nama_karyawan') }}">
                                             </div>
                                         </div>
                                         <div class="col-4">
+                                            <div class="form-group">
+                                                <select name="kode_dept" id="kode_dept" class="form-select">
+                                                    <option value="">Jenis Pengajuan</option>
+                                                    @foreach ($pengajuan as $p)
+                                                    <option {{ Request('kode_dept')==$p->id ? 'selected' : '' }} value="{{ $p->id }}">{{ $p->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
                                             <div class="form-group">
                                                 <select name="kode_dept" id="kode_dept" class="form-select">
                                                     <option value="">Departemen</option>
@@ -89,6 +99,8 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Nomor</th>
+                                            <th>Karyawan</th>
+                                            <th>Departemen</th>
                                             <th>Tanggal</th>
                                             <th>Due Date</th>
                                             
@@ -99,6 +111,8 @@
                                         <tr>
                                             <td>{{ $loop->iteration}}</td>
                                             <td>{{ $d->nomor }}</td>
+                                            <td></td>
+                                            <td></td>
                                             <td>{{ $d->tanggal }}</td>
                                             <td>{{ $d->due_date }}</td>
                                             
