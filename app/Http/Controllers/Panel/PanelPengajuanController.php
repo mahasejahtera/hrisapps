@@ -16,21 +16,21 @@ class PanelPengajuanController extends Controller
     public function index(Request $request)
     {
 
-        $query = Karyawan::query();
-        $query->select('karyawan.*', 'nama_dept', 'nama_jabatan');
-        $query->join('departemen', 'karyawan.kode_dept', '=', 'departemen.id');
-        $query->join('jabatan', 'karyawan.jabatan', '=', 'jabatan.id');
-        $query->orderBy('nama_lengkap');
+        $query = SubmitPengajuan::join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept');
+
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_lengkap', 'like', '%' . $request->nama_karyawan . '%');
+        }
+
+        if (!empty($request->kode_pengajuan)) {
+            $query->where('submit_pengajuan.id_pengajuan', $request->kode_pengajuan);
         }
 
         if (!empty($request->kode_dept)) {
             $query->where('karyawan.kode_dept', $request->kode_dept);
         }
-        $karyawan = $query->paginate(10);
 
-        $submit_pengajuan = SubmitPengajuan::paginate(10);
+        $submit_pengajuan = $query->paginate(10);
 
         $departemen = DB::table('departemen')->get();
         $pengajuan = DB::table('pengajuan')->get();

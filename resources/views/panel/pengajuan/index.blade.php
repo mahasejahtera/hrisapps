@@ -49,7 +49,7 @@
                         </div> -->
                         <div class="row mt-2">
                             <div class="col-12">
-                                <form action="/karyawan" method="GET">
+                                <form action="/panel/pengajuan" method="GET">
                                     <div class="row">
                                         <div class="col-3">
                                             <div class="form-group">
@@ -58,10 +58,10 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <select name="kode_dept" id="kode_dept" class="form-select">
+                                                <select name="kode_pengajuan" id="kode_pengajuan" class="form-select">
                                                     <option value="">Jenis Pengajuan</option>
                                                     @foreach ($pengajuan as $p)
-                                                    <option {{ Request('kode_dept')==$p->id ? 'selected' : '' }} value="{{ $p->id }}">{{ $p->nama }}</option>
+                                                    <option {{ Request('kode_pengajuan')==$p->id ? 'selected' : '' }} value="{{ $p->id }}">{{ $p->nama }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -71,7 +71,7 @@
                                                 <select name="kode_dept" id="kode_dept" class="form-select">
                                                     <option value="">Departemen</option>
                                                     @foreach ($departemen as $d)
-                                                    <option {{ Request('kode_dept')==$d->kode_dept ? 'selected' : '' }} value="{{ $d->kode_dept }}">{{ $d->nama_dept }}</option>
+                                                    <option {{ Request('kode_dept')==$d->id ? 'selected' : '' }} value="{{ $d->id }}">{{ $d->nama_dept }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -111,8 +111,8 @@
                                         <tr>
                                             <td>{{ $loop->iteration}}</td>
                                             <td>{{ $d->nomor }}</td>
-                                            <td></td>
-                                            <td></td>
+                                            <td>{{ $d->nama_lengkap }}</td>
+                                            <td>{{ $d->nama_dept }}</td>
                                             <td>{{ $d->tanggal }}</td>
                                             <td>{{ $d->due_date }}</td>
                                             

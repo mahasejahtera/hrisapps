@@ -21,4 +21,6 @@ class SubmitPengajuan extends Model
             ->where('departemen.kode_dept', $kodeDept)
             ->get();
     }
+
+
 }
