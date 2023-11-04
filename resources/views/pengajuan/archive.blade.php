@@ -25,10 +25,16 @@
                         <th>No</th>
                         <th>Nomor Surat</th>
                         <th>Perihal</th>
+                        <th>Pengirim</th>
+                        <th>Penerima</th>
+                        <th>Tanggal Upload</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
