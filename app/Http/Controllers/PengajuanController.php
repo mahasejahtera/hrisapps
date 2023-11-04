@@ -175,4 +175,11 @@ class PengajuanController extends Controller
         ];
         return view('pengajuan.tracking', $data);
     }
+
+    public function archive(){
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+        ];
+        return view('pengajuan.archive', $data);
+    }
 }

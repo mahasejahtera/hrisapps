@@ -40,6 +40,7 @@ Route::get('pengajuan/list',[PengajuanController::class,'list'])->name('pengajua
 Route::get('pengajuan/departemen',[PengajuanController::class,'departemen'])->name('pengajuan.departemen');
 Route::get('pengajuan/departemen/list/{kode_dept}',[PengajuanController::class,'departemen_list'])->name('pengajuan.departemen_list');
 Route::get('pengajuan/tracking',[PengajuanController::class,'tracking'])->name('pengajuan.tracking');
+Route::get('pengajuan/archive',[PengajuanController::class,'archive'])->name('pengajuan.archive');
 Route::resource('pengajuan', PengajuanController::class);
 
 
