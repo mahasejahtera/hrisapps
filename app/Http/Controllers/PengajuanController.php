@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\NomorPengajuan;
 use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
 
@@ -181,5 +182,47 @@ class PengajuanController extends Controller
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
         ];
         return view('pengajuan.archive', $data);
+    }
+
+    public function preview(){
+        $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
+        if (empty($nomor)) {
+            $nomor = 1;
+        } else {
+            $nomor = $nomor + 1;
+        }
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'nomor'     => str_pad($nomor, 3, '0', STR_PAD_LEFT)
+        ];
+        return view('pengajuan.preview', $data);
+    }
+
+    public function approval(){
+        $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
+        if (empty($nomor)) {
+            $nomor = 1;
+        } else {
+            $nomor = $nomor + 1;
+        }
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'nomor'     => str_pad($nomor, 3, '0', STR_PAD_LEFT)
+        ];
+        return view('pengajuan.approval', $data);
+    }
+
+    public function revisi(){
+        $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
+        if (empty($nomor)) {
+            $nomor = 1;
+        } else {
+            $nomor = $nomor + 1;
+        }
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'nomor'     => str_pad($nomor, 3, '0', STR_PAD_LEFT)
+        ];
+        return view('pengajuan.approval', $data);
     }
 }

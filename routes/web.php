@@ -41,6 +41,9 @@ Route::get('pengajuan/departemen',[PengajuanController::class,'departemen'])->na
 Route::get('pengajuan/departemen/list/{kode_dept}',[PengajuanController::class,'departemen_list'])->name('pengajuan.departemen_list');
 Route::get('pengajuan/tracking',[PengajuanController::class,'tracking'])->name('pengajuan.tracking');
 Route::get('pengajuan/archive',[PengajuanController::class,'archive'])->name('pengajuan.archive');
+Route::get('pengajuan/preview',[PengajuanController::class,'preview'])->name('pengajuan.preview');
+Route::get('pengajuan/approval',[PengajuanController::class,'approval'])->name('pengajuan.approval');
+Route::get('pengajuan/revisi',[PengajuanController::class,'revisi'])->name('pengajuan.revisi');
 Route::resource('pengajuan', PengajuanController::class);
 
 
