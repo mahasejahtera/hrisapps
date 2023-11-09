@@ -103,7 +103,7 @@
                                             <th>Departemen</th>
                                             <th>Tanggal</th>
                                             <th>Due Date</th>
-                                            
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -115,40 +115,27 @@
                                             <td>{{ $d->nama_dept }}</td>
                                             <td>{{ $d->tanggal }}</td>
                                             <td>{{ $d->due_date }}</td>
-                                            
-                                            <!-- <td>
+
+                                            <td>
                                                 <span class="dropdown">
                                                     <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                                     <div class="dropdown-menu dropdown-menu-end">
-                                                        @php
-                                                            $statusAction = '';
-                                                            
-                                                            if($d->status == 0) $statusAction =  "<a class='dropdown-item btn-verification' data-status='register' data-karyawan='$d->id' href='#'>
-                                                                                                    Verifikasi Register
-                                                                                                </a>";
-                                                            if($d->status == 2) $statusAction =  "<a class='dropdown-item btn-verification' data-status='data' data-karyawan='$d->id' href='#'>
-                                                                                                    VVerifikasi Data
-                                                                                                </a>";
-                                                            if($d->status == 3) $statusAction =  "<a class='dropdown-item btn-verification' data-status='aktif' data-karyawan='$d->id' href='#'>
-                                                                                                    Nonaktifkan
-                                                                                                </a>";
-                                                        @endphp
-                                                        {!! $statusAction !!}
+
+
                                                         <a class="dropdown-item" href="#">
-                                                        Detail
+                                                            Edit
                                                         </a>
-                                                        <a class="dropdown-item" href="#">
-                                                        Edit
+
+                                                        <a class="dropdown-item" href="{{ route('panelpengajuan.destroy', $d->id) }}" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $d->id }}').submit();">
+                                                            Hapus
                                                         </a>
-                                                        <a class="dropdown-item" href="#">
-                                                        Set Jam Kerja
-                                                        </a>
-                                                        <a class="dropdown-item" href="#">
-                                                        Hapus
-                                                        </a>
+                                                        <form id="delete-form-{{ $d->id }}" action="{{ route('panelpengajuan.destroy', $d->id) }}" method="POST" style="display: none;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                        </form>
                                                     </div>
                                                 </span>
-                                            </td> -->
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -297,7 +284,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="loadeditform">
-        
+
             </div>
 
         </div>
@@ -340,9 +327,9 @@
                                     <td>
                                         <input type="text" class="form-control @error('nik') is-invalid @enderror" name="nik" id="nik" placeholder="NIK">
                                         @error('nik')
-                                            <div class="is-invalid-feedback">
-                                                <small class="text-danger">{{ $message }}</small>
-                                            </div>
+                                        <div class="is-invalid-feedback">
+                                            <small class="text-danger">{{ $message }}</small>
+                                        </div>
                                         @enderror
                                     </td>
                                 </tr>
@@ -358,21 +345,21 @@
                                             <option value="harian">Karyawan Harian</option>
                                         </select>
                                         @error('status_karyawan')
-                                            <div class="is-invalid-feedback">
-                                                <small class="text-danger">{{ $message }}</small>
-                                            </div>
+                                        <div class="is-invalid-feedback">
+                                            <small class="text-danger">{{ $message }}</small>
+                                        </div>
                                         @enderror
                                     </td>
                                 </tr>
-                                
+
                                 <tr class="project">
                                     <th style="vertical-align: middle">Project</th>
                                     <td>
                                         <input type="text" class="form-control @error('project') is-invalid @enderror" name="project" id="project" placeholder="cth : Mekanikal Elektrikal Pada Bandara Kualanamu">
                                         @error('project')
-                                            <div class="is-invalid-feedback">
-                                                <small class="text-danger">{{ $message }}</small>
-                                            </div>
+                                        <div class="is-invalid-feedback">
+                                            <small class="text-danger">{{ $message }}</small>
+                                        </div>
                                         @enderror
                                     </td>
                                 </tr>
@@ -381,9 +368,9 @@
                                     <td>
                                         <input type="number" class="form-control @error('salary') is-invalid @enderror" name="salary" id="salary" max="999999999">
                                         @error('salary')
-                                            <div class="is-invalid-feedback">
-                                                <small class="text-danger">{{ $message }}</small>
-                                            </div>
+                                        <div class="is-invalid-feedback">
+                                            <small class="text-danger">{{ $message }}</small>
+                                        </div>
                                         @enderror
                                     </td>
                                 </tr>
@@ -394,9 +381,9 @@
                                             <div>
                                                 <input type="number" class="form-control @error('lama_kontrak_num') is-invalid @enderror" name="lama_kontrak_num" id="lama_kontrak_num" placeholder="Angka">
                                                 @error('lama_kontrak_num')
-                                                    <div class="is-invalid-feedback">
-                                                        <small class="text-danger">{{ $message }}</small>
-                                                    </div>
+                                                <div class="is-invalid-feedback">
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                </div>
                                                 @enderror
                                             </div>
                                             <div>
@@ -408,9 +395,9 @@
                                                     <option value="tahun">Tahun</option>
                                                 </select>
                                                 @error('lama_kontrak_waktu')
-                                                    <div class="is-invalid-feedback">
-                                                        <small class="text-danger">{{ $message }}</small>
-                                                    </div>
+                                                <div class="is-invalid-feedback">
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                </div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -421,9 +408,9 @@
                                     <td>
                                         <input type="date" class="form-control @error('mulai_kontrak') is-invalid @enderror" name="mulai_kontrak" id="mulai_kontrak">
                                         @error('mulai_kontrak')
-                                            <div class="is-invalid-feedback">
-                                                <small class="text-danger">{{ $message }}</small>
-                                            </div>
+                                        <div class="is-invalid-feedback">
+                                            <small class="text-danger">{{ $message }}</small>
+                                        </div>
                                         @enderror
                                     </td>
                                 </tr>
@@ -432,16 +419,16 @@
                                     <td>
                                         <input type="date" class="form-control @error('akhir_kontrak') is-invalid @enderror" name="akhir_kontrak" id="akhir_kontrak">
                                         @error('akhir_kontrak')
-                                            <div class="is-invalid-feedback">
-                                                <small class="text-danger">{{ $message }}</small>
-                                            </div>
+                                        <div class="is-invalid-feedback">
+                                            <small class="text-danger">{{ $message }}</small>
+                                        </div>
                                         @enderror
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
-                    
+
                     <div class="row mt-2">
                         <div class="col-12">
                             <div class="form-group">
@@ -468,10 +455,10 @@
 @push('myscript')
 <script>
     ClassicEditor
-        .create( document.querySelector( '#editor' ) )
-        .catch( error => {
-            console.error( error );
-        } );
+        .create(document.querySelector('#editor'))
+        .catch(error => {
+            console.error(error);
+        });
 
     var employeeId = '';
     // verifikasi modal
@@ -485,45 +472,45 @@
     // set verifikasi modal content
     $('#verificationRegisterModal').on('show.bs.modal', function(e) {
         $.ajax({
-                type: 'POST'
-                , url: "{{ route('karyawan.data') }}"
-                , data: {
-                    _token: "{{ csrf_token() }}",
-                    id: employeeId
-                }
-                , success: function(respond) {
-                    $('#employeeName').text(respond.nama);
-                    $('#employeeEmail').text(respond.email);
-                    $('#employeeJabatan').text(respond.jabatan);
-                    $('#employeeDepartemen').text(respond.departemen);
-                    $('#employeeId').val(respond.id);
+            type: 'POST',
+            url: "{{ route('karyawan.data') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: employeeId
+            },
+            success: function(respond) {
+                $('#employeeName').text(respond.nama);
+                $('#employeeEmail').text(respond.email);
+                $('#employeeJabatan').text(respond.jabatan);
+                $('#employeeDepartemen').text(respond.departemen);
+                $('#employeeId').val(respond.id);
 
-                    $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').hide();
-                }
-            });
+                $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').hide();
+            }
+        });
     });
 
 
     // status karyawan change
     $('#status_karyawan').on('change', function(e) {
         const value = $(this).val();
-        if(value == 'tetap' || value == '') {
+        if (value == 'tetap' || value == '') {
             $('.project, .lama-kontrak, .mulai-kontrak, .akhir-kontrak').hide();
         }
-        
-        if(value == 'project') {
+
+        if (value == 'project') {
             $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').hide();
             $('.project, .mulai-kontrak').show();
         }
-        
-        if(value == 'pkwt' || value == 'percobaan') {
+
+        if (value == 'pkwt' || value == 'percobaan') {
             $('.project, .lama-kontrak, .mulai-kontrak, .akhir-kontrak').hide();
-            $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').show();    
+            $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').show();
         }
-        
-        if(value == 'harian') {
+
+        if (value == 'harian') {
             $('.project, .lama-kontrak, .mulai-kontrak, .akhir-kontrak').hide();
-            $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').show();    
+            $('.lama-kontrak, .mulai-kontrak, .akhir-kontrak').show();
         }
     });
 
@@ -538,14 +525,14 @@
         $(".edit").click(function() {
             var nik = $(this).attr('nik');
             $.ajax({
-                type: 'POST'
-                , url: '/karyawan/edit'
-                , cache: false
-                , data: {
-                    _token: "{{ csrf_token() }}"
-                    , nik: nik
-                }
-                , success: function(respond) {
+                type: 'POST',
+                url: '/karyawan/edit',
+                cache: false,
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    nik: nik
+                },
+                success: function(respond) {
                     $("#loadeditform").html(respond);
                 }
             });
@@ -556,20 +543,18 @@
             var form = $(this).closest('form');
             e.preventDefault();
             Swal.fire({
-                title: 'Apakah Anda Yakin Data Ini Mau Di Hapus ?'
-                , text: "Jika Ya Maka Data Akan Terhapus Permanent"
-                , icon: 'warning'
-                , showCancelButton: true
-                , confirmButtonColor: '#3085d6'
-                , cancelButtonColor: '#d33'
-                , confirmButtonText: 'Ya, Hapus Saja!'
+                title: 'Apakah Anda Yakin Data Ini Mau Di Hapus ?',
+                text: "Jika Ya Maka Data Akan Terhapus Permanent",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Hapus Saja!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     form.submit();
                     Swal.fire(
-                        'Deleted!'
-                        , 'Data Berhasil Di Hapus'
-                        , 'success'
+                        'Deleted!', 'Data Berhasil Di Hapus', 'success'
                     )
                 }
             })
@@ -584,10 +569,10 @@
             if (nik == "") {
                 // alert('Nik Harus Diisi');
                 Swal.fire({
-                    title: 'Warning!'
-                    , text: 'Nik Harus Diisi !'
-                    , icon: 'warning'
-                    , confirmButtonText: 'Ok'
+                    title: 'Warning!',
+                    text: 'Nik Harus Diisi !',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
                 }).then((result) => {
                     $("#nik").focus();
                 });
@@ -595,10 +580,10 @@
                 return false;
             } else if (nama_lengkap == "") {
                 Swal.fire({
-                    title: 'Warning!'
-                    , text: 'Nama Harus Diisi !'
-                    , icon: 'warning'
-                    , confirmButtonText: 'Ok'
+                    title: 'Warning!',
+                    text: 'Nama Harus Diisi !',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
                 }).then((result) => {
                     $("#nama_lengkap").focus();
                 });
@@ -606,10 +591,10 @@
                 return false;
             } else if (jabatan == "") {
                 Swal.fire({
-                    title: 'Warning!'
-                    , text: 'Jabatan Harus Diisi !'
-                    , icon: 'warning'
-                    , confirmButtonText: 'Ok'
+                    title: 'Warning!',
+                    text: 'Jabatan Harus Diisi !',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
                 }).then((result) => {
                     $("#jabatan").focus();
                 });
@@ -617,10 +602,10 @@
                 return false;
             } else if (no_hp == "") {
                 Swal.fire({
-                    title: 'Warning!'
-                    , text: 'No. HP Harus Diisi !'
-                    , icon: 'warning'
-                    , confirmButtonText: 'Ok'
+                    title: 'Warning!',
+                    text: 'No. HP Harus Diisi !',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
                 }).then((result) => {
                     $("#no_hp").focus();
                 });
@@ -628,10 +613,10 @@
                 return false;
             } else if (kode_dept == "") {
                 Swal.fire({
-                    title: 'Warning!'
-                    , text: 'Departemen Harus Diisi !'
-                    , icon: 'warning'
-                    , confirmButtonText: 'Ok'
+                    title: 'Warning!',
+                    text: 'Departemen Harus Diisi !',
+                    icon: 'warning',
+                    confirmButtonText: 'Ok'
                 }).then((result) => {
                     $("#kode_dept").focus();
                 });
@@ -640,6 +625,5 @@
             }
         });
     });
-
 </script>
 @endpush

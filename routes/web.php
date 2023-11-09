@@ -81,7 +81,8 @@ Route::middleware(['auth:user'])->group(function () {
     Route::get('/presensi/{id}/batalkanizinsakit', [PresensiController::class, 'batalkanizinsakit']);
 
     //
-    Route::get('/panel/pengajuan', [PanelPengajuanController::class, 'index']);
+    Route::get('/panel/pengajuan', [PanelPengajuanController::class, 'index'])->name('panelpengajuan.index');
+    Route::delete('/panel/pengajuan/delete/{id}', [PanelPengajuanController::class, 'destroy'])->name('panelpengajuan.destroy');
     Route::get('/panel/rencanakerja', [PanelRencanaKerjaController::class, 'index']);
 
 

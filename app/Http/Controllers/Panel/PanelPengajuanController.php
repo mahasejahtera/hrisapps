@@ -16,7 +16,7 @@ class PanelPengajuanController extends Controller
     public function index(Request $request)
     {
 
-        $query = SubmitPengajuan::join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept');
+        $query = SubmitPengajuan::select('submit_pengajuan.id','submit_pengajuan.nomor','karyawan.nama_lengkap','departemen.nama_dept','submit_pengajuan.tanggal','submit_pengajuan.due_date')->join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept');
 
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_lengkap', 'like', '%' . $request->nama_karyawan . '%');
@@ -31,17 +31,18 @@ class PanelPengajuanController extends Controller
         }
 
         $submit_pengajuan = $query->paginate(10);
+        // dd($submit_pengajuan);
 
         $departemen = DB::table('departemen')->get();
         $pengajuan = DB::table('pengajuan')->get();
         $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
-        return view('panel.pengajuan.index', compact('submit_pengajuan', 'departemen', 'cabang','pengajuan'));
+        return view('panel.pengajuan.index', compact('submit_pengajuan', 'departemen', 'cabang', 'pengajuan'));
     }
 
     public function karyawanData(Request $request)
     {
         $karyawanData = Karyawan::with(['jabatan_kerja', 'department', 'cabang'])->where('id', $request->id)->get();
-        
+
         $data = [
             'id'  => $karyawanData[0]->id,
             'nama'  => $karyawanData[0]->nama_lengkap,
@@ -61,7 +62,7 @@ class PanelPengajuanController extends Controller
             'salary'            => 'required|numeric|max:999999999'
         ]);
 
-        if($request->status_karyawan == 'pkwt') {
+        if ($request->status_karyawan == 'pkwt') {
             $request->validate([
                 'lama_kontrak_num'      => 'required',
                 'lama_kontrak_waktu'    => 'required',
@@ -70,7 +71,7 @@ class PanelPengajuanController extends Controller
             ]);
         }
 
-        if($request->status_karyawan == 'project') {
+        if ($request->status_karyawan == 'project') {
             $request->validate([
                 'project'           => 'required',
                 'mulai_kontrak'     => 'required',
@@ -192,5 +193,22 @@ class PanelPengajuanController extends Controller
         } else {
             return Redirect::back()->with(['warning' => 'Data Gagal Dihapus']);
         }
+    }
+
+    public function destroy($id)
+    {
+        // Temukan data yang akan dihapus berdasarkan ID
+        $data = SubmitPengajuan::find($id);
+
+        if (!$data) {
+            return redirect()->route('panelpengajuan.index')
+                ->with('error', 'Data tidak ditemukan.');
+        }
+
+        // Hapus data dari database
+        $data->delete();
+
+        return redirect()->route('panelpengajuan.index')
+            ->with('success', 'Data berhasil dihapus.');
     }
 }
