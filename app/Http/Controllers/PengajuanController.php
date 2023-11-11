@@ -148,6 +148,19 @@ class PengajuanController extends Controller
         return view('pengajuan.list', $data);
     }
 
+    public function add($id)
+    {
+        //
+        $data = [
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'id' => $id,
+
+        ];
+
+        //
+        return view('pengajuan.add', $data);
+    }
+
     public function departemen()
     {
         $data = [

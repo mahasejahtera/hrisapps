@@ -44,6 +44,7 @@ Route::get('pengajuan/archive',[PengajuanController::class,'archive'])->name('pe
 Route::get('pengajuan/preview',[PengajuanController::class,'preview'])->name('pengajuan.preview');
 Route::get('pengajuan/approval',[PengajuanController::class,'approval'])->name('pengajuan.approval');
 Route::get('pengajuan/revisi',[PengajuanController::class,'revisi'])->name('pengajuan.revisi');
+Route::get('pengajuan/add/{id}',[PengajuanController::class,'add'])->name('pengajuan.add');
 Route::resource('pengajuan', PengajuanController::class);
 
 

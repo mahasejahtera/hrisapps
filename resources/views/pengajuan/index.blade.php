@@ -14,26 +14,26 @@
         </div>
         <div class="row justify-content-between">
             <div class="col-12">
-                <a href="{{ route('hutangoperasional.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','hutangoperasional') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Hutang Operasional</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('operasionalkantor.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','operasionalkantor') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Operasional Kantor</p>
                 </a>
             </div>
             <div class="col-12">
-                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','reimbursement') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Reimbursement</p>
                 </a>
             </div>
             @if(session('role_id')==4)
             <div class="col-12">
-                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','reimbursement') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Inventaris Kantor</p>
                 </a>
@@ -41,34 +41,34 @@
             @endif
             @if(session('role_id')==2 || session('role_id')==4)
             <div class="col-12">
-                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','reimbursement') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Rekrutmen Karyawan</p>
                 </a>
             </div>
             @endif
             <div class="col-12">
-                <a href="{{ route('pelatihankaryawan.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','pelatihankaryawan') }}" class="menu-item">
                     <p class="menu-item-title">Pengajuan Pelatihan Karyawan</p>
                 </a>
             </div>
             @if(session('role_id')==2 || session('role_id')==4)
             <div class="col-12">
-                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','reimbursement') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Kegiatan/Acara</p>
                 </a>
             </div>
             @endif
             <div class="col-12">
-                <a href="{{ route('csr.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','csr') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan CSR</p>
                 </a>
             </div>
             @if(session('role_id')==4)
             <div class="col-12">
-                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','reimbursement') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Entertainment</p>
                 </a>
@@ -76,7 +76,7 @@
             @endif
             @if(session('role_id')==2 || session('role_id')==4)
             <div class="col-12">
-                <a href="{{ route('reimbursement.create') }}" class="menu-item">
+                <a href="{{ route('pengajuan.add','reimbursement') }}" class="menu-item">
 
                     <p class="menu-item-title">Pengajuan Kenaikan Gaji</p>
                 </a>
