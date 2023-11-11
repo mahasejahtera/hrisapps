@@ -122,7 +122,7 @@
                                                     <div class="dropdown-menu dropdown-menu-end">
 
 
-                                                        <a class="dropdown-item" href="#">
+                                                        <a class="dropdown-item" href="{{ route('panelpengajuan.edit', $d->id) }}">
                                                             Edit
                                                         </a>
 

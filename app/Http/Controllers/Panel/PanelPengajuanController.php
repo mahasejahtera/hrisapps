@@ -16,7 +16,7 @@ class PanelPengajuanController extends Controller
     public function index(Request $request)
     {
 
-        $query = SubmitPengajuan::select('submit_pengajuan.id','submit_pengajuan.nomor','karyawan.nama_lengkap','departemen.nama_dept','submit_pengajuan.tanggal','submit_pengajuan.due_date')->join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept');
+        $query = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'karyawan.nama_lengkap', 'departemen.nama_dept', 'submit_pengajuan.tanggal', 'submit_pengajuan.due_date')->join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept');
 
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_lengkap', 'like', '%' . $request->nama_karyawan . '%');
@@ -134,53 +134,34 @@ class PanelPengajuanController extends Controller
         }
     }
 
-    public function edit(Request $request)
+    public function edit($id)
     {
-        $nik = $request->nik;
         $departemen = DB::table('departemen')->get();
         $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
-        $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
-        return view('karyawan.edit', compact('departemen', 'karyawan', 'cabang'));
+        $karyawan = DB::table('karyawan')->where('nik', $id)->first();
+        $pengajuan = SubmitPengajuan::where('id', $id)->first();
+        return view('panel.pengajuan.edit', compact('departemen', 'karyawan', 'cabang', 'pengajuan'));
     }
 
-    public function update($nik, Request $request)
+    public function update($id, Request $request)
     {
-        $nik = $request->nik;
-        $nama_lengkap = $request->nama_lengkap;
-        $jabatan = $request->jabatan;
-        $no_hp = $request->no_hp;
-        $kode_dept = $request->kode_dept;
-        $kode_cabang = $request->kode_cabang;
-        $password = Hash::make('12345');
-        $old_foto = $request->old_foto;
-        if ($request->hasFile('foto')) {
-            $foto = $nik . "." . $request->file('foto')->getClientOriginalExtension();
-        } else {
-            $foto = $old_foto;
-        }
-
+        $nomor = $request->nomor;
+        $tanggal = $request->tanggal;
+        $due_date = $request->due_date;
+        
         try {
             $data =  [
-                'nama_lengkap' => $nama_lengkap,
-                'jabatan' => $jabatan,
-                'no_hp' => $no_hp,
-                'kode_dept' => $kode_dept,
-                'foto' => $foto,
-                'password' => $password,
-                'kode_cabang' => $kode_cabang
+                'nomor' => $nomor,
+                'tanggal' => $tanggal,
+                'due_date' => $due_date
             ];
-            $update = DB::table('karyawan')->where('nik', $nik)->update($data);
+            $update = SubmitPengajuan::where('id', $id)->update($data);
             if ($update) {
-                if ($request->hasFile('foto')) {
-                    $folderPath = "public/uploads/karyawan/";
-                    $folderPathOld = "public/uploads/karyawan/" . $old_foto;
-                    Storage::delete($folderPathOld);
-                    $request->file('foto')->storeAs($folderPath, $foto);
-                }
+                
                 return Redirect::back()->with(['success' => 'Data Berhasil Update']);
             }
         } catch (\Exception $e) {
-            //dd($e->message);
+            dd($e->getMessage());
             return Redirect::back()->with(['warning' => 'Data Gagal Diupdate']);
         }
     }

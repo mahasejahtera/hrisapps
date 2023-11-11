@@ -83,6 +83,8 @@ Route::middleware(['auth:user'])->group(function () {
     //
     Route::get('/panel/pengajuan', [PanelPengajuanController::class, 'index'])->name('panelpengajuan.index');
     Route::delete('/panel/pengajuan/delete/{id}', [PanelPengajuanController::class, 'destroy'])->name('panelpengajuan.destroy');
+    Route::get('/panel/pengajuan/{id}/edit', [PanelPengajuanController::class, 'edit'])->name('panelpengajuan.edit');
+    Route::post('/panel/pengajuan/{id}', [PanelPengajuanController::class, 'update'])->name('panelpengajuan.update');
     Route::get('/panel/rencanakerja', [PanelRencanaKerjaController::class, 'index']);
 
 
