@@ -39,7 +39,7 @@ Route::get('pengajuan/pribadi',[PengajuanController::class,'pribadi'])->name('pe
 Route::get('pengajuan/list',[PengajuanController::class,'list'])->name('pengajuan.list');
 Route::get('pengajuan/departemen',[PengajuanController::class,'departemen'])->name('pengajuan.departemen');
 Route::get('pengajuan/departemen/list/{kode_dept}',[PengajuanController::class,'departemen_list'])->name('pengajuan.departemen_list');
-Route::get('pengajuan/tracking',[PengajuanController::class,'tracking'])->name('pengajuan.tracking');
+Route::get('pengajuan/tracking/{id}',[PengajuanController::class,'tracking'])->name('pengajuan.tracking');
 Route::get('pengajuan/archive',[PengajuanController::class,'archive'])->name('pengajuan.archive');
 Route::get('pengajuan/preview',[PengajuanController::class,'preview'])->name('pengajuan.preview');
 Route::get('pengajuan/approval',[PengajuanController::class,'approval'])->name('pengajuan.approval');

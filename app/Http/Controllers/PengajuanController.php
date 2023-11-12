@@ -182,10 +182,13 @@ class PengajuanController extends Controller
         return view('pengajuan.departemenlist', $data);
     }
 
-    public function tracking()
+    public function tracking($id)
     {
+        $pengajuan = SubmitPengajuan::select('pengajuan.nama as nama_pengajuan')->join('pengajuan','submit_pengajuan.id_pengajuan', '=','pengajuan.id')->findOrFail($id);
+        // dd($pengajuan);
         $data = [
-            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
+            'pengajuan' => $pengajuan
         ];
         return view('pengajuan.tracking', $data);
     }

@@ -204,7 +204,7 @@
                         <div class="cards">
                             <div class="card">
 
-                                <h4>Input Form Hutang Operasional</h4>
+                                <h4>Input Form {{ $pengajuan->nama_pengajuan }}</h4>
                             </div>
                             <div class="card">
                                 <h4>Menunggu diperiksa oleh Manager</h4>
