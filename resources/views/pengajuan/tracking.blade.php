@@ -164,7 +164,7 @@
     }
 
     .activedot {
-        background: green !important; 
+        background: green !important;
     }
 </style>
 @endpush
@@ -189,47 +189,42 @@
                     <div class="container">
 
                         <div class="lines">
-                            <div class="dots activedot"></div>
+                            @for ($i = 1; $i <= 5; $i++) 
+                            <div class="dots @if ($pengajuan->current_tracking >= $i) activedot @endif"></div>
                             <div class="line"></div>
-                            <div class="dots"></div>
-                            <div class="line"></div>
-                            <div class="dots"></div>
-                            <div class="line"></div>
-                            <div class="dots"></div>
-                            <div class="line"></div>
-                            <div class="dots"></div>
-                            
-                        </div>
-
-                        <div class="cards">
-                            <div class="card">
-
-                                <h4>Input Form {{ $pengajuan->nama_pengajuan }}</h4>
-                            </div>
-                            <div class="card">
-                                <h4>Menunggu diperiksa oleh Manager</h4>
-                            </div>
-                            <div class="card">
-                                <h4>Menunggu diperiksa oleh Manager HRD</h4>
-                            </div>
-                            <div class="card">
-                                <h4>Disetujui oleh Direksi</h4>
-                            </div>
-                            <div class="card">
-                                <h4>Disetujui oleh Komisaris</h4>
-                            </div>
-                            <div class="card">
-                                <h4>Pengajuan Selesai</h4>
-                            </div>
-                        </div>
-
-
+                            @endfor
 
                     </div>
+
+                    <div class="cards">
+                        <div class="card">
+
+                            <h4>Input Form {{ $pengajuan->nama_pengajuan }}</h4>
+                        </div>
+                        <div class="card">
+                            <h4>Menunggu diperiksa oleh Manager</h4>
+                        </div>
+                        <div class="card">
+                            <h4>Menunggu diperiksa oleh Manager HRD</h4>
+                        </div>
+                        <div class="card">
+                            <h4>Disetujui oleh Direksi</h4>
+                        </div>
+                        <div class="card">
+                            <h4>Disetujui oleh Komisaris</h4>
+                        </div>
+                        <div class="card">
+                            <h4>Pengajuan Selesai</h4>
+                        </div>
+                    </div>
+
+
+
                 </div>
-
-
             </div>
+
+
+        </div>
         </div>
     </section>
     {{-- END : MENU --}}
