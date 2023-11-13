@@ -35,7 +35,7 @@
                     </p>
                     </div>
                     <span class="badge badge-success">Baru</span>
-                    <button class="btn btn-primary">View Tracking</button>
+                    <button class="btn btn-sm btn-primary text-sm" style="font-size:12px">View Tracking</button>
                 </a>
                 
             </div>
