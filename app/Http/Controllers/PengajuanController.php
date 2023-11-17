@@ -6,6 +6,8 @@ use App\Models\NomorPengajuan;
 use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 class PengajuanController extends Controller
 {
     /**
@@ -13,23 +15,10 @@ class PengajuanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct()
-    {
-        session()->flush();
-        session([
-            'id' => 9,
-            'role_id' => 1,
-            'kode_dept' => 'IT',
-            'inisial' => 'NF'
-        ]);
-        // dd(session('role_id'));
-    }
 
     public function index()
     {
-
-        // dd(session('role_id'));
-        switch (session('role_id')) {
+        switch (Auth::guard('karyawan')->user()->role_id) {
             case 1:
                 return $this->pribadi();
                 break;
@@ -54,7 +43,7 @@ class PengajuanController extends Controller
     {
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
-            'kodeDept'  => session('kode_dept')
+            'kodeDept'  => Auth::guard('karyawan')->user()->kode_dept_init
         ];
 
         return view('pengajuan.opsi', $data);
@@ -138,7 +127,7 @@ class PengajuanController extends Controller
     public function list()
     {
         //
-        $pengajuan = SubmitPengajuan::where(['id_karyawan' => session('id')])->get();
+        $pengajuan = SubmitPengajuan::where(['id_karyawan' => Auth::guard('karyawan')->user()->id])->get();
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
             'pengajuan' => $pengajuan
@@ -184,7 +173,7 @@ class PengajuanController extends Controller
 
     public function tracking($id)
     {
-        $pengajuan = SubmitPengajuan::select('pengajuan.nama as nama_pengajuan', 'submit_pengajuan.current_tracking')->join('pengajuan','submit_pengajuan.id_pengajuan', '=','pengajuan.id')->findOrFail($id);
+        $pengajuan = SubmitPengajuan::select('pengajuan.nama as nama_pengajuan', 'submit_pengajuan.current_tracking')->join('pengajuan', 'submit_pengajuan.id_pengajuan', '=', 'pengajuan.id')->findOrFail($id);
         // dd($pengajuan);
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
@@ -193,14 +182,16 @@ class PengajuanController extends Controller
         return view('pengajuan.tracking', $data);
     }
 
-    public function archive(){
+    public function archive()
+    {
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
         ];
         return view('pengajuan.archive', $data);
     }
 
-    public function preview(){
+    public function preview()
+    {
         $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
         if (empty($nomor)) {
             $nomor = 1;
@@ -214,7 +205,8 @@ class PengajuanController extends Controller
         return view('pengajuan.preview', $data);
     }
 
-    public function approval(){
+    public function approval()
+    {
         $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
         if (empty($nomor)) {
             $nomor = 1;
@@ -228,7 +220,8 @@ class PengajuanController extends Controller
         return view('pengajuan.approval', $data);
     }
 
-    public function revisi(){
+    public function revisi()
+    {
         $nomor = NomorPengajuan::where(['id_pengajuan' => 15, 'tahun' => date('Y')])->value('nomor_terakhir');
         if (empty($nomor)) {
             $nomor = 1;
