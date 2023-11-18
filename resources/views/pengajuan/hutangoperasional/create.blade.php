@@ -74,8 +74,8 @@
                         <input type="text" name="proyek" id="proyek" class="form-control form-control-sm" value="{{ old('proyek') }}" placeholder="Proyek">
                     </div>
                     <div class="col">
-                        /MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
-                        <input type="hidden" id="belakang" value="/MAHA.{{ session('kode_dept') }}.{{ session('inisial') }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}">
+                        /MAHA.{{ Auth::guard('karyawan')->user()->kode_dept_init }}.{{ Auth::guard('karyawan')->user()->kode_surat_karyawan }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}
+                        <input type="hidden" id="belakang" value="/MAHA.{{ Auth::guard('karyawan')->user()->kode_dept_init }}.{{ Auth::guard('karyawan')->user()->kode_surat_karyawan }}/{{ bulanKeRomawi(date('n')) }}/{{ date('Y') }}">
                     </div>
                 </div>
             </div>
@@ -105,10 +105,10 @@
                 <tbody>
                     <tr>
                         <td><input type="text" name="item[]" class="form-control item"></td>
-                        <td><input type="number" name="qty[]" class="form-control qty"></td>
+                        <td><input type="text" name="qty[]" class="form-control qty" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
                         <td><input type="text" name="satuan[]" class="form-control satuan"></td>
-                        <td><input type="number" name="harga_satuan[]" class="form-control harga-satuan"></td>
-                        <td><input type="number" name="jumlah_harga[]" class="form-control jumlah-harga"></td>
+                        <td><input type="text" name="harga_satuan[]" class="form-control harga-satuan" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
+                        <td><input type="text" name="jumlah_harga[]" class="form-control jumlah-harga" oninput="formatNumber(this)"></td>
                         <td><input type="text" name="keterangan[]" class="form-control keterangan"></td>
                     </tr>
                 </tbody>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="form-group">
-                <input type="number" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required>
+                <input type="text" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required oninput="formatNumber(this)">
             </div>
             <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>
@@ -149,10 +149,10 @@
         $('#item-table tbody').append(`
             <tr>
                 <td><input type="text" name="item[]" class="form-control item"></td>
-                <td><input type="number" name="qty[]" class="form-control qty"></td>
+                <td><input type="text" name="qty[]" class="form-control qty" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
                 <td><input type="text" name="satuan[]" class="form-control satuan"></td>
-                <td><input type="number" name="harga_satuan[]" class="form-control harga-satuan"></td>
-                <td><input type="number" name="jumlah_harga[]" class="form-control jumlah-harga"></td>
+                <td><input type="text" name="harga_satuan[]" class="form-control harga-satuan" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
+                <td><input type="text" name="jumlah_harga[]" class="form-control jumlah-harga" oninput="formatNumber(this)"></td>
                 <td><input type="text" name="keterangan[]" class="form-control keterangan"></td>
                 <td><button class="btn btn-danger remove-item">Remove</button></td>
             </tr>

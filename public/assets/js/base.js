@@ -524,5 +524,42 @@ var dmswitch = $(".dark-mode-switch");
 dmswitch.on('change', function () {
     dmswitch.prop('checked', this.checked);
 });
+
+function formatNumber(input) {
+    console.log(input);
+    let value = input.value;
+
+    value = value.replace(/[^0-9]/g, '');
+
+    // Format dengan tanda titik sebagai pemisah ribuan
+    value = new Intl.NumberFormat('id-ID').format(value);
+
+    // Terapkan nilai yang telah diformat kembali ke input
+    input.value = value;
+}
+
+function hitungJumlahHarga(input) {
+    let row = input.parentElement.parentElement;
+    // console.log(row);
+    let hargaSatuanInput = row.querySelector('.harga-satuan');
+    // console.log(hargaSatuanInput);
+    let qtyInput = row.querySelector('.qty');
+    let jumlahHargaInput = row.querySelector('.jumlah-harga');
+
+    let hargaSatuan = parseFloat(hargaSatuanInput.value.replace(/\./g, '')) || 0;
+    // console.log(hargaSatuanInput.value)
+    let qty = parseFloat(qtyInput.value.replace(/\./g, '')) || 0;
+    let jumlahHarga = hargaSatuan * qty;
+
+    jumlahHargaInput.value = jumlahHarga;
+
+    // Memicu event oninput secara manual
+    var event = new Event('input', {
+        bubbles: true,
+        cancelable: true,
+    });
+
+    jumlahHargaInput.dispatchEvent(event);
+}
 ///////////////////////////////////////////////////////////////////////////
 
