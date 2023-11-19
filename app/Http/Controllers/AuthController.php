@@ -10,8 +10,10 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -39,6 +41,11 @@ class AuthController extends Controller
 
         if (Auth::guard('karyawan')->attempt($credentials)) {
             $request->session()->regenerate();
+            $karyawan = Auth::guard('karyawan')->user();
+            $dept = Departemen::find($karyawan->kode_dept);
+            $kode = $dept->kode_dept;
+            $karyawan->kode_dept_init = $kode;
+            $karyawan->save();
             return redirect()->intended('karyawan');
             // return to_route('karyawan');
         } else {
@@ -49,7 +56,8 @@ class AuthController extends Controller
     public function prosesloginadmin(Request $request)
     {
         if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
-            return redirect('/panel/dashboardadmin');
+            $request->session()->regenerate();
+            return redirect()->intended('panel/dashboardadmin');
         } else {
             return redirect('/panel')->with(['warning' => 'Username atau Password Salah']);
         }
@@ -77,15 +85,35 @@ class AuthController extends Controller
             // 'username'      => 'required|min:3|unique:karyawan,username|alpha_dash',
             'nama_lengkap'  => 'required|min:3|max:100',
             'password'      => 'required|min:6',
-            'email'         => 'required|email|unique:karyawan,email',
+            // 'email'         => 'required|email|unique:karyawan,email',
+            'email'         => 'required|email|unique:karyawan,email|ends_with:@mahasejahtera.com',
             'jabatan'       => 'required',
             'kode_dept'     => 'required',
             'kode_cabang'   => 'required',
         ]);
 
-        // dd($validatedData);
-
         $validatedData['role_id'] = 1;
+        $validatedData['nama_lengkap'] = Str::title($request->nama_lengkap);
+
+        // role manager by jabatan
+        $jbt = $request->jabatan;
+
+        if($jbt == 7 || $jbt == 10 || $jbt == 15 || $jbt == 20 || $jbt == 26 || $jbt == 33 || $jbt == 40 || $jbt == 47) {
+            $validatedData['role_id'] = 2;
+        }
+
+        if($jbt == 6) {
+            $validatedData['role_id'] = 3;
+        }
+
+        if($jbt == 2) {
+            $validatedData['role_id'] = 4;
+        }
+
+        if($jbt == 1) {
+            $validatedData['role_id'] = 5;
+        }
+
         $validatedData['status'] = 0;
         // $validatedData['jabatan'] = 5;
         $validatedData['password'] = Hash::make($request->password);
@@ -122,6 +150,37 @@ class AuthController extends Controller
 
 
     /*=========================
+            JABATAN
+    ========================= */
+    public function getJabatanByDept(Request $request)
+    {
+        // get jabatan
+        $jabatan = Jabatan::where('departemen_id', $request->value)->get();
+
+        // set html option select
+        $jabatanOption = "<option value=''>--Pilih Jabatan--</option>";
+
+        if($request->isSet) {
+            foreach($jabatan as $jbt) {
+                if($request->oldJabatan == $jbt->id) {
+                    $jabatanOption .= "<option value='$jbt->id' selected>$jbt->nama_jabatan</option>";
+                } else {
+                    $jabatanOption .= "<option value='$jbt->id'>$jbt->nama_jabatan</option>";
+                }
+            }
+        } else {
+            foreach($jabatan as $jbt) {
+                $jabatanOption .= "<option value='$jbt->id'>$jbt->nama_jabatan</option>";
+            }
+        }
+
+        return [
+            'jabatanOption' => $jabatanOption
+        ];
+    }
+
+
+    /*=========================
             GOOGLE AUTH
     ========================= */
     // public function googleLogin()
@@ -135,7 +194,7 @@ class AuthController extends Controller
     //     // echo '<pre>';
     //     // print_r($googleUser);
     //     // echo '</pre>';
-        
+
     //     $data = [
     //         'nama_lengkap'      => $googleUser->name,
     //         'email'             => $googleUser->email,
@@ -150,10 +209,10 @@ class AuthController extends Controller
 
     //     $user = Karyawan::firstOrCreate($data);
     //     // var_dump($user);
-        
+
     //     // return $user;
-        
+
     //     Auth::guard('karyawan')->login($user);
-    //     return to_route('login')->with('google_err', 'Akun berhasil di daftarkan, silahkan login kembali!');  
+    //     return to_route('login')->with('google_err', 'Akun berhasil di daftarkan, silahkan login kembali!');
     // }
 }
