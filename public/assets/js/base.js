@@ -526,7 +526,6 @@ dmswitch.on('change', function () {
 });
 
 function formatNumber(input) {
-    console.log(input);
     let value = input.value;
 
     value = value.replace(/[^0-9]/g, '');
@@ -560,6 +559,20 @@ function hitungJumlahHarga(input) {
     });
 
     jumlahHargaInput.dispatchEvent(event);
+}
+
+function updateTotalBiaya() {
+    // Fungsi untuk mengupdate total biaya dari semua baris dalam tabel
+    var totalBiaya = 0;
+    var jumlahHargaElements = document.querySelectorAll('.jumlah-harga');
+
+    jumlahHargaElements.forEach(function(element) {
+        var jumlahHarga = parseFloat(element.value.replace(/\./g, '')) || 0;
+        totalBiaya += jumlahHarga;
+    });
+
+    // Setel nilai total biaya pada elemen yang sesuai, misalnya pada elemen dengan ID 'total-biaya'
+    document.getElementById('total-biaya').value = new Intl.NumberFormat('id-ID').format(totalBiaya);
 }
 ///////////////////////////////////////////////////////////////////////////
 
