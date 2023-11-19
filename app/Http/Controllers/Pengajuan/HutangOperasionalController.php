@@ -66,6 +66,9 @@ class HutangOperasionalController extends Controller
     public function store(Request $request)
     {
         // Validasi input
+        $totalBiaya = $request->input('total_biaya');
+        $totalBiaya = str_replace('.', '', $totalBiaya);
+        $request->merge(['total_biaya' => $totalBiaya]);
         $request->validate([
             'nomor' => 'required',
             'tanggal' => 'required|date',
