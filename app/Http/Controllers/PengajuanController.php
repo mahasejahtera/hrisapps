@@ -140,9 +140,12 @@ class PengajuanController extends Controller
     public function add($id)
     {
         //
+        $pengajuan = SubmitPengajuan::where(['id_karyawan' => Auth::guard('karyawan')->user()->id])->get();
+        // dd(Auth::guard('karyawan')->user()->id);
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
             'id' => $id,
+            'pengajuan' => $pengajuan
 
         ];
 

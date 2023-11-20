@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\NomorPengajuan;
 use App\Models\SubmitPengajuan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HutangOperasionalController extends Controller
 {
@@ -14,19 +15,11 @@ class HutangOperasionalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct()
-    {
-        session([
-            'id' => 9,
-            'kode_dept' => 2
-        ]);
-    }
 
     public function index()
     {
         //
-        $pengajuan = SubmitPengajuan::join('pengajuan', 'submit_pengajuan.id_pengajuan', '=', 'pengajuan.id')->where(['id_karyawan' => session('id')])->get();
-        // dd($pengajuan);
+        $pengajuan = SubmitPengajuan::join('pengajuan', 'submit_pengajuan.id_pengajuan', '=', 'pengajuan.id')->where(['id_karyawan' => Auth::guard('karyawan')->user()->id])->get();
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
             'pengajuan' => $pengajuan
@@ -82,7 +75,7 @@ class HutangOperasionalController extends Controller
         $post->nomor = $request->input('nomor');
         $post->tanggal = $request->input('tanggal');
         $post->due_date = $request->input('due_date');
-        $post->id_karyawan = session('id');
+        $post->id_karyawan = Auth::guard('karyawan')->user()->id;
         $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
         $post->total_biaya = $request->input('total_biaya');
         $post->id_pengajuan = $request->input('id_pengajuan');

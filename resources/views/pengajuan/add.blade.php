@@ -41,7 +41,25 @@
         </div>
 
         <div class="row justify-content-between">
+            @foreach ($pengajuan as $item)
+            <div class="col-12">
+                <a href="{{ route('hutangoperasional.create') }}" class="menu-item">
+                    <div>
+                        <p class="menu-item-title">
+                            {{$item->nama}}
+                            <br>
+                            {{$item->nomor}}
+                            <br>
+                            {{ date('d F Y', strtotime($item->created_at)) }}
 
+                        </p>
+                    </div>
+                    <span class="badge badge-success">Baru</span>
+                    <button class="btn btn-sm btn-primary text-sm" style="font-size:12px">View Tracking</button>
+                </a>
+
+            </div>
+            @endforeach
             <img style="width: 100%; height: 100%; " src="{{ asset('assets/img/add.png') }}" />
 
         </div>
