@@ -105,9 +105,9 @@
                 <tbody>
                     <tr>
                         <td><input type="text" name="item[]" class="form-control item"></td>
-                        <td><input type="text" name="qty[]" class="form-control qty" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
+                        <td><input type="text" name="qty[]" class="form-control qty" oninput="formatNumber(this);hitungJumlahHarga(this);updateTotalBiaya()"></td>
                         <td><input type="text" name="satuan[]" class="form-control satuan"></td>
-                        <td><input type="text" name="harga_satuan[]" class="form-control harga-satuan" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
+                        <td><input type="text" name="harga_satuan[]" class="form-control harga-satuan" oninput="formatNumber(this);hitungJumlahHarga(this);updateTotalBiaya()"></td>
                         <td><input type="text" name="jumlah_harga[]" class="form-control jumlah-harga" oninput="formatNumber(this)"></td>
                         <td><input type="text" name="keterangan[]" class="form-control keterangan"></td>
                     </tr>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="form-group">
-                <input type="text" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required oninput="formatNumber(this)">
+                <input type="text" name="total_biaya" class="form-control" value="{{ old('total_biaya') }}" placeholder="Total Biaya" required oninput="formatNumber(this)" id="total-biaya" readonly>
             </div>
             <button type="submit" class="btn btn-danger">Ajukan HO</button>
         </form>
@@ -149,9 +149,9 @@
         $('#item-table tbody').append(`
             <tr>
                 <td><input type="text" name="item[]" class="form-control item"></td>
-                <td><input type="text" name="qty[]" class="form-control qty" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
+                <td><input type="text" name="qty[]" class="form-control qty" oninput="formatNumber(this);hitungJumlahHarga(this);updateTotalBiaya()"></td>
                 <td><input type="text" name="satuan[]" class="form-control satuan"></td>
-                <td><input type="text" name="harga_satuan[]" class="form-control harga-satuan" oninput="formatNumber(this);hitungJumlahHarga(this)"></td>
+                <td><input type="text" name="harga_satuan[]" class="form-control harga-satuan" oninput="formatNumber(this);hitungJumlahHarga(this);updateTotalBiaya()"></td>
                 <td><input type="text" name="jumlah_harga[]" class="form-control jumlah-harga" oninput="formatNumber(this)"></td>
                 <td><input type="text" name="keterangan[]" class="form-control keterangan"></td>
                 <td><button class="btn btn-danger remove-item">Remove</button></td>
