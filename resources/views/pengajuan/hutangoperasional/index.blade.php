@@ -23,8 +23,9 @@
         <div class="row justify-content-between">
             @foreach ($pengajuan as $item)
             <div class="col-12">
-                <a href="{{ route('hutangoperasional.create') }}" class="menu-item">
+                <div href="{{ route('hutangoperasional.create') }}" class="menu-item">
                     <div>
+                    <a href="{{ route('hutangoperasional.create') }}">
                     <p class="menu-item-title">
                         {{$item->nama}}
                         <br>
@@ -33,10 +34,11 @@
                         {{ date('d F Y', strtotime($item->created_at)) }}
                         
                     </p>
+                    </a>
                     </div>
                     <span class="badge badge-success">Baru</span>
-                    <button class="btn btn-sm btn-primary text-sm" style="font-size:12px">View Tracking</button>
-                </a>
+                    <a href="{{route('pengajuan.tracking',$item->id)}}" class="btn btn-sm btn-primary text-sm" style="font-size:12px">View Tracking</a>
+                </div>
                 
             </div>
             @endforeach

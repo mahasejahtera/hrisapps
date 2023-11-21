@@ -19,7 +19,7 @@ class HutangOperasionalController extends Controller
     public function index()
     {
         //
-        $pengajuan = SubmitPengajuan::join('pengajuan', 'submit_pengajuan.id_pengajuan', '=', 'pengajuan.id')->where(['id_karyawan' => Auth::guard('karyawan')->user()->id])->get();
+        $pengajuan = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'pengajuan.nama', 'submit_pengajuan.created_at')->join('pengajuan', 'submit_pengajuan.id_pengajuan', '=', 'pengajuan.id')->where(['id_karyawan' => Auth::guard('karyawan')->user()->id])->get();
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
             'pengajuan' => $pengajuan
@@ -79,6 +79,7 @@ class HutangOperasionalController extends Controller
         $post->perihal_pekerjaan = $request->input('perihal_pekerjaan');
         $post->total_biaya = $request->input('total_biaya');
         $post->id_pengajuan = $request->input('id_pengajuan');
+        $post->current_tracking = 1;
         $post->save();
 
         NomorPengajuan::updateOrInsert(
