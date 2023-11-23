@@ -103,6 +103,26 @@ return [
             ]) : [],
         ],
 
+        'db_pengajuan' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL_PENGAJUAN'),
+            'host' => env('DB_HOST_PENGAJUAN', '127.0.0.1'),
+            'port' => env('DB_PORT_PENGAJUAN', '3306'),
+            'database' => env('DB_DATABASE_PENGAJUAN', 'forge'),
+            'username' => env('DB_USERNAME_PENGAJUAN', 'forge'),
+            'password' => env('DB_PASSWORD_PENGAJUAN', ''),
+            'unix_socket' => env('DB_SOCKET_PENGAJUAN', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

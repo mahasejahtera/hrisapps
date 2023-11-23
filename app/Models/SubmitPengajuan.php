@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class SubmitPengajuan extends Model
 {
     use HasFactory;
-
+    protected $connection = 'db_pengajuan';
     protected $table = 'submit_pengajuan';
 
     public function getSubmitPengajuanByKodeDept($kodeDept)
