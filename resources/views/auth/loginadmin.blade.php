@@ -13,6 +13,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Sign in with illustration - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
+
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo-maha-akbar.png') }}" type="image/x-icon">
+
     <!-- CSS files -->
     <link href="{{ asset('tabler/dist/css/tabler.min.css?1674944402') }}" rel="stylesheet" />
     <link href="{{ asset('tabler/dist/css/tabler-flags.min.css?1674944402') }}" rel="stylesheet" />
@@ -44,7 +47,7 @@
                         </div>
                         <div class="card card-md">
                             <div class="card-body">
-                                <h2 class="h2 text-center mb-4">Login to your account</h2>
+                                <h2 class="h2 text-center mb-4">Login to admin panel</h2>
                                 @if (Session::get('warning'))
                                 <div class="alert alert-warning">
                                     <p>{{ Session::get('warning') }}</p>
@@ -59,13 +62,13 @@
                                     <div class="mb-2">
                                         <label class="form-label">
                                             Password
-                                            <span class="form-label-description">
+                                            {{-- <span class="form-label-description">
                                                 <a href="./forgot-password.html">I forgot password</a>
-                                            </span>
+                                            </span> --}}
                                         </label>
                                         <div class="input-group input-group-flat">
                                             <input type="password" name="password" class="form-control" placeholder="Your password" autocomplete="off">
-                                            <span class="input-group-text">
+                                            {{-- <span class="input-group-text">
                                                 <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                                                     <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -73,7 +76,7 @@
                                                         <path d="M12 12m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
                                                         <path d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" /></svg>
                                                 </a>
-                                            </span>
+                                            </span> --}}
                                         </div>
                                     </div>
                                     <div class="mb-2">
@@ -83,7 +86,7 @@
                                         </label>
                                     </div>
                                     <div class="form-footer">
-                                        <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                                        <button type="submit" class="btn btn-danger w-100">Sign in</button>
                                     </div>
                                 </form>
                             </div>
@@ -93,7 +96,7 @@
                     </div>
                 </div>
                 <div class="col-lg d-none d-lg-block">
-                    <img src="{{ asset('tabler/static/illustrations/undraw_secure_login_pdn4.svg') }}" height="300" class="d-block mx-auto" alt="">
+                    <img src="{{ asset('assets/img/logo-maha-akbar.png') }}" height="300" class="d-block mx-auto" alt="">
                 </div>
             </div>
         </div>

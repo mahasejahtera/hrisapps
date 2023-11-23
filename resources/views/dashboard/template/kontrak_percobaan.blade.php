@@ -8,7 +8,7 @@
                 PERJANJIAN KERJA MASA PERCOBAAN
             </p>
             <p class="letter-number">
-                Nomor: 001/PKMS/MAHA.HR.RO/IX/2023
+                Nomor: {{ $karyawanBiodata[0]->karyawan->contract->no_surat }}
             </p>
 
             <div class="letter-content">
@@ -21,13 +21,13 @@
                         <td>1.<span class="mr-2"></span></td>
                         <td>Nama</td>
                         <td><span class="ml-5 mr-3">:</span></td>
-                        <td>Hazri Fadillah Harahap, S.E.</td>
+                        <td>{{ $pihakPertama[0]->nama_lengkap }}</td>
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
                         <td>Jabatan</td>
                         <td><span class="ml-5 mr-3">:</span></td>
-                        <td>Direktur Utama.</td>
+                        <td>{{ $pihakPertama[0]->nama_jabatan }}</td>
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
@@ -38,7 +38,7 @@
                 </table>
 
                 <p class="mt-2 ml-3">
-                    -Dalam hal ini bertindak untuk dan atas nama PT. Maha Akbar Sejahtera yang berkedudukan di     Jl. Eka Surya No. 48, Kel. Gedung Johor, Kec. Medan Johor, Kota Medan. Sebagaimana yang tercantum dalam Akta nomor 34 tanggal 16 Januari 2019, yang dibuat dihadapan Notaris Farida Hanum, SH, yang berkedudukan dan berkantor di Medan. Dengan demikian sah bertindak mewakili untuk dan atas nama PT. Maha Akbar Sejahtera.
+                    -Dalam hal ini bertindak untuk dan atas nama PT. Maha Akbar Sejahtera yang berkedudukan di Jl. Eka Surya No. 48, Kel. Gedung Johor, Kec. Medan Johor, Kota Medan. Sebagaimana yang tercantum dalam Akta nomor 34 tanggal 16 Januari 2019, yang dibuat dihadapan Notaris Farida Hanum, SH, yang berkedudukan dan berkantor di Medan. Dengan demikian sah bertindak mewakili untuk dan atas nama PT. Maha Akbar Sejahtera.
                 </p>
 
                 <p class="ml-3">
@@ -61,7 +61,7 @@
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
-                        <td>Tempat/ Tanggal Lahir</td>
+                        <td>Tempat/Tanggal Lahir</td>
                         <td><span class="ml-5 mr-3">:</span></td>
                         <td>{{ $karyawanBiodata[0]->birthplace .  ', ' . tanggalBulanIndo($karyawanBiodata[0]->birthdate) }}</td>
                     </tr>
@@ -87,7 +87,9 @@
                         <td><span class="mr-2"></span></td>
                         <td>Alamat Sesuai KTP</td>
                         <td><span class="ml-5 mr-3">:</span></td>
-                        <td>{{ $karyawanBiodata[0]->address_identity }}</td>
+                        <td>
+                            {{ $karyawanBiodata[0]->address_identity }}, Kel. {{ Str::title($karyawanBiodata[0]->identityVillage->name) }}, Kec. {{ Str::title($karyawanBiodata[0]->identityDistrict->name) }}, {{ Str::title($karyawanBiodata[0]->identityRegency->name) }}, {{ Str::title($karyawanBiodata[0]->identityProvince->name) }}
+                        </td>
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
@@ -115,7 +117,7 @@
                         </td>
                     </tr>
                 </table>
-                
+
                 <p class="mt-1 ml-3">
                     -Selanjutnya disebut sebagai <strong>PIHAK KEDUA</strong>.
                 </p>
@@ -151,6 +153,7 @@
 </div>
 
 <div class="letter-wrapper">
+
     <div class="letter-inner">
         <div class="letter-header-footer">
             <img src="{{ asset('assets/img/Header-surat.png') }}" alt="">
@@ -164,7 +167,7 @@
                     </div>
 
                     <div class="pasal-body mt-2">
-                        <P><strong>PIHAK PERTAMA</strong> dan <strong>PIHAK KEDUA</strong> sepakat bahwa Masa Percobaan dilaksanakan selama {{ $karyawanBiodata[0]->karyawan->lama_kontrak_num }} ({{ angkaTeks($karyawanBiodata[0]->karyawan->lama_kontrak_num) }}) {{ ucFirst($karyawanBiodata[0]->karyawan->lama_kontrak_waktu) }} yaitu dimulai pada tanggal {{ tanggalIndo($karyawanBiodata[0]->karyawan->mulai_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->mulai_kontrak)) }}) sampai dengan {{ tanggalIndo($karyawanBiodata[0]->karyawan->akhir_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->akhir_kontrak)) }}).</P>
+                        <P><strong>PIHAK PERTAMA</strong> dan <strong>PIHAK KEDUA</strong> sepakat bahwa Masa Percobaan dilaksanakan selama {{ $karyawanBiodata[0]->karyawan->contract->lama_kontrak_num }} ({{ angkaTeks($karyawanBiodata[0]->karyawan->contract->lama_kontrak_num) }}) {{ ucFirst($karyawanBiodata[0]->karyawan->contract->lama_kontrak_waktu) }} yaitu dimulai pada tanggal {{ tanggalIndo($karyawanBiodata[0]->karyawan->contract->mulai_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->contract->mulai_kontrak)) }}) sampai dengan {{ tanggalIndo($karyawanBiodata[0]->karyawan->contract->akhir_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->contract->akhir_kontrak)) }}).</P>
                     </div>
                 </div>
 
@@ -195,13 +198,13 @@
                     <div class="pasal-body mt-2">
                         <ol class="p-0">
                             <li>
-                                <strong>PIHAK KEDUA</strong> akan bekerja sebagai {{ $karyawanBiodata[0]->karyawan->jabatan_kerja->nama_jabatan }} pada Departemen {{ $karyawanBiodata[0]->karyawan->department->nama_dept }}.
+                                <strong>PIHAK KEDUA</strong> akan bekerja sebagai {{ $karyawanBiodata[0]->karyawan->contract->jabatan->nama_jabatan }} pada Departemen {{ $karyawanBiodata[0]->karyawan->contract->department->nama_dept }}.
                             </li>
                             <li>
                                 <strong>PIHAK PERTAMA</strong> berhak menempatkan <strong>PIHAK KEDUA</strong> dalam melaksanakan tugas baik didalam kota maupun diluar kota dan pekerjaan lain yang oleh <strong>PIHAK PERTAMA</strong> dianggap lebih sesuai dengan keahlian yang dimiliki oleh <strong>PIHAK KEDUA</strong>, dengan syarat masih tetap berada di dalam lingkungan perusahaan PT. Maha Akbar Sejahtera.
                             </li>
                             <li>
-                                <strong>PIHAK KEDUA</strong> selama masa percobaan berhak mendapatkan upah dari <strong>PIHAK PERTAMA</strong> sebesar Rp.{{ number_format($karyawanBiodata[0]->karyawan->salary,0,',','.') }},- ({{ bilanganTeks($karyawanBiodata[0]->karyawan->salary) }} rupiah).
+                                <strong>PIHAK KEDUA</strong> selama masa percobaan berhak mendapatkan upah dari <strong>PIHAK PERTAMA</strong> sebesar Rp.{{ number_format($karyawanBiodata[0]->karyawan->contract->salary,0,',','.') }},- ({{ bilanganTeks($karyawanBiodata[0]->karyawan->contract->salary) }} rupiah).
                             </li>
                             <li>
                                 <strong>PIHAK KEDUA</strong> dengan ini bersedia dilakukan pembayaran gaji dibulan pertama secara prorata.
@@ -221,11 +224,9 @@
                     <div class="letter-signature-wrapper ml-0">
                         <p><strong>PIHAK PERTAMA</strong></p>
                         <div class="letter-signature-inner">
-                            <img src="{{ asset("signature/".$karyawanBiodata[0]->karyawan->signature) }}" alt="">
-                            {!! QrCode::generate(asset("signature/".$karyawanBiodata[0]->karyawan->signature)) !!}
                         </div>
-                        <p class="letter-signature-name">(HAZRI FADILLAH HARAHAP, SE)</p>
-                        <p class="letter-signature-jabatan">Direktur Utama</p>
+                        <p class="letter-signature-name">({{ strtoupper($pihakPertama[0]->nama_lengkap) }})</p>
+                        <p class="letter-signature-jabatan">{{ $pihakPertama[0]->nama_jabatan }}</p>
                     </div>
 
                     <div class="mx-auto">
@@ -236,12 +237,15 @@
 
                         <button type="button" class="btn primary mt-3" id="btnAgree">Setuju</button>
                     </div>
-                    
+
                     <div class="letter-signature-wrapper">
                         <p>PIHAK KEDUA</p>
                         <div class="letter-signature-inner">
                             <img src="{{ asset("signature/".$karyawanBiodata[0]->karyawan->signature) }}" alt="">
-                            {!! QrCode::generate(asset("signature/".$karyawanBiodata[0]->karyawan->signature)) !!}
+
+                            <div class="qr-code">
+                                <img src="" alt="">
+                            </div>
                         </div>
                         <p class="letter-signature-name">({{ $karyawanBiodata[0]->fullname }})</p>
                     </div>

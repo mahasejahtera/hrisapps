@@ -1,0 +1,159 @@
+.btn-edit-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+}
+
+.btn-edit {
+    width: 50px;
+    height: auto;
+}
+
+
+/*============================
+    CK EDITOR
+============================*/
+.ck.ck-editor__top {
+    display: none;
+}
+
+
+
+/*=================================
+    EMPLOYEE PAYROLL REPORT PAGE
+==================================*/
+
+@page {
+    size: A4;
+    margin: 20mm 10mm;
+}
+
+#employee-report__page main {
+    font-family: 'Arial', sans-serif;
+}
+
+#employee-report__page .page-header {
+    margin-bottom: 20px;
+}
+
+#employee-report__page .page-title {
+    font-size: 50px;
+    margin: 0;
+}
+
+#employee-report__page .sub-title {
+    font-size: 30px;
+    margin: 0;
+}
+
+#employee-report__page .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#employee-report__page .table th {
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    background-color: #f2f2f2;
+}
+
+#employee-report__page .table td {
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#employee-report__page .card {
+    margin-bottom: 20px;
+    border-radius: 5px;
+    clear: both;
+}
+
+#employee-report__page .card-body {
+    padding: 15px;
+    overflow: hidden;
+}
+
+#employee-report__page .text-center {
+    text-align: center;
+}
+
+#employee-report__page .signatures {
+    margin-top: 20px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#employee-report__page .signature-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#employee-report__page .signature-table th,
+.signature-table td {
+    border: none;
+    padding: 8px;
+    text-align: center;
+}
+
+#employee-report__page .space-row td {
+    height: 50px;
+}
+
+#employee-report__page .date-container {
+    text-align: right;
+    margin-top: 20px;
+    margin-right: 200px
+}
+
+#employee-report__page .print-button {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#employee-report__page .print-button button {
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+}
+
+@media print {
+    #employee-report__page .print-button {
+        display: none;
+    }
+}
+
+#employee-report__page .page-break {
+    page-break-before: always;
+}
+
+#employee-report__page .center {
+    text-align: center;
+}
+
+#employee-report__page .ml {
+    margin-left: 20px;
+}
+
+#employee-report__page .f1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#employee-report__page .line {
+    text-decoration: underline
+}

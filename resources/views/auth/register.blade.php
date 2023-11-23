@@ -76,7 +76,7 @@
 
                     <div class="form-group icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M224,44H32A12,12,0,0,0,20,56V192a20,20,0,0,0,20,20H216a20,20,0,0,0,20-20V56A12,12,0,0,0,224,44ZM193.15,68,128,127.72,62.85,68ZM44,188V83.28l75.89,69.57a12,12,0,0,0,16.22,0L212,83.28V188Z"></path></svg>
-                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email"  value="{{ old('email') }}" placeholder="Email" required>
+                        <input type="text" class="form-control @error('email') is-invalid @enderror" id="email" name="email"  value="{{ old('email') }}" placeholder="Email" required>
                         @error('email')
                             <div class="invalid-feedback">
                                 {{ $message }}
@@ -86,30 +86,13 @@
 
                     <div class="form-group icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M160,12A84.05,84.05,0,0,0,79.38,119.65L23.51,175.51A12,12,0,0,0,20,184v40a12,12,0,0,0,12,12H72a12,12,0,0,0,12-12V212H96a12,12,0,0,0,12-12V188h12a12,12,0,0,0,8.49-3.51l7.86-7.87A84,84,0,1,0,160,12Zm0,144a59.58,59.58,0,0,1-22.1-4.2,12,12,0,0,0-13.22,2.55L115,164H96a12,12,0,0,0-12,12v12H72a12,12,0,0,0-12,12v12H44V189l57.65-57.65a12,12,0,0,0,2.55-13.21A60,60,0,1,1,160,156Zm36-80a16,16,0,1,1-16-16A16,16,0,0,1,196,76Z"></path></svg>
-                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Password" required>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Kata Sandi" required>
                         @error('password')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
                         @enderror
                     </div>  
-
-
-                    <div class="form-group icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M240,204H228V96a20,20,0,0,0-20-20H172V32a20,20,0,0,0-28.45-18.12l-104,48.54A20.06,20.06,0,0,0,28,80.55V204H16a12,12,0,0,0,0,24H240a12,12,0,0,0,0-24ZM204,100V204H172V100ZM52,83.09,148,38.3V204H52ZM132,112v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm-40,0v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm0,52v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Zm40,0v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Z"></path></svg>
-
-                        <select name="jabatan" id="jabatan" class="form-control @error('jabatan') is-invalid @enderror" required>
-                            <option value="">--Pilih Jabatan--</option>
-                            @foreach ($jabatans as $jabatan)
-                                <option value="{{ $jabatan->id }}" @selected(old('jabatan') == $jabatan->id)>{{ $jabatan->nama_jabatan }}</option>
-                            @endforeach
-                        </select>
-                        @error('jabatan')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
 
                     <div class="form-group icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M240,204H228V96a20,20,0,0,0-20-20H172V32a20,20,0,0,0-28.45-18.12l-104,48.54A20.06,20.06,0,0,0,28,80.55V204H16a12,12,0,0,0,0,24H240a12,12,0,0,0,0-24ZM204,100V204H172V100ZM52,83.09,148,38.3V204H52ZM132,112v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm-40,0v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm0,52v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Zm40,0v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Z"></path></svg>
@@ -121,6 +104,22 @@
                             @endforeach
                         </select>
                         @error('kode_dept')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M240,204H228V96a20,20,0,0,0-20-20H172V32a20,20,0,0,0-28.45-18.12l-104,48.54A20.06,20.06,0,0,0,28,80.55V204H16a12,12,0,0,0,0,24H240a12,12,0,0,0,0-24ZM204,100V204H172V100ZM52,83.09,148,38.3V204H52ZM132,112v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm-40,0v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm0,52v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Zm40,0v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Z"></path></svg>
+
+                        <select name="jabatan" id="jabatan" class="form-control @error('jabatan') is-invalid @enderror" required>
+                            {{-- <option value="">--Pilih Jabatan--</option>
+                            @foreach ($jabatans as $jabatan)
+                                <option value="{{ $jabatan->id }}" @selected(old('jabatan') == $jabatan->id)>{{ $jabatan->nama_jabatan }}</option>
+                            @endforeach --}}
+                        </select>
+                        @error('jabatan')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>
@@ -171,6 +170,55 @@
     <!-- Base Js File -->
     <script src="{{ asset('assets/js/base.js') }}"></script>
 
+
+    <script>
+        $(document).ready(function(e) {
+            $('#jabatan').html("<option value=''>--Pilih Jabatan--</option>");
+            const oldJabatan = "{{ old('jabatan') }}";
+
+            if(oldJabatan) {
+                const valueDept = $('#kode_dept').val();
+
+                $.ajax({
+                    url: "{{ route('register.jabatan') }}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        value: valueDept,
+                        oldJabatan: oldJabatan,
+                        isSet: true
+                    },
+                    success: function(response) {
+                        $('#jabatan').html(response.jabatanOption);
+                    }
+                });
+            }
+        });
+
+        $('#kode_dept').on('change', function(e) {
+            const $this = $(this);
+            const deptValue = $this.val();
+
+            if(deptValue != '')
+            {
+                $.ajax({
+                    url: "{{ route('register.jabatan') }}",
+                    type: "post",
+                    dataType: 'json',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        value: deptValue
+                    },
+                    success: function(response) {
+                        $('#jabatan').html(response.jabatanOption);
+                    }
+                });
+            } else {
+                $('#jabatan').html("<option value=''>--Pilih Jabatan--</option>");
+            }
+        });
+    </script>
 
 </body>
 

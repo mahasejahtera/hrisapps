@@ -9,6 +9,7 @@ class KaryawanEducation extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'karyawan_education';
     protected $fillable = [
         'karyawan_id',

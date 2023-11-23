@@ -40,7 +40,6 @@
     @include('layouts.bottomNavDashboard')
     @include('layouts.script')
 
-    @stack('scripts')
 </body>
 
 </html>

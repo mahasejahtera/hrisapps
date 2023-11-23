@@ -30,7 +30,7 @@ function hitungjamterlambatdesimal($jam_masuk, $jam_presensi)
 
     // $jterlambat = $jamterlambat <= 9 ? "0" . $jamterlambat : $jamterlambat;
     // $mterlambat = $menitterlambat <= 9 ? "0" . $menitterlambat : $menitterlambat;
-    
+
     $jterlambat = $jamterlambat <= 9 ? "0" . $jamterlambat : $jamterlambat;
     $mterlambat = $menitterlambat <= 9 ? "0" . $menitterlambat : $menitterlambat;
 
@@ -39,6 +39,36 @@ function hitungjamterlambatdesimal($jam_masuk, $jam_presensi)
     // return $desimalterlambat;
     // return intval($jterlambat) . '.' . intval($mterlambat);
     return $mterlambat + 60;
+}
+
+function jumlahHari($tglAwal, $tglAkhir)
+{
+    $tgl1 = strtotime($tglAwal);
+    $tgl2 = strtotime($tglAkhir);
+    $jarak = $tgl2 - $tgl1;
+
+    $hari = ($jarak / 60 / 60 / 24) + 1;
+    return $hari;
+}
+
+function jumlahHariMinggu($startDate, $endDate) {
+    $startTimestamp = strtotime($startDate);
+    $endTimestamp = strtotime($endDate);
+
+    $sundayCount = 0;
+
+    // Loop melalui setiap hari dalam rentang waktu
+    for ($currentTimestamp = $startTimestamp; $currentTimestamp <= $endTimestamp; $currentTimestamp += 86400) {
+        // 86400 detik = 1 hari
+        $currentDayOfWeek = date('N', $currentTimestamp);
+
+        // Jika hari ini adalah Minggu (7 adalah hari Minggu dalam format ISO-8601)
+        if ($currentDayOfWeek == 7) {
+            $sundayCount++;
+        }
+    }
+
+    return $sundayCount;
 }
 
 
@@ -68,6 +98,7 @@ function bulanIndo($bulan)
             break;
         case '07':
             $bulanIndo = 'Juli';
+            break;
         case '08':
             $bulanIndo = 'Agustus';
             break;
@@ -490,15 +521,4 @@ function labelStatusApprovedIzin($status=0)
     }
 
     return $label;
-}
-
-function bulanKeRomawi($bulan)
-{
-    $romawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
-
-    if ($bulan >= 1 && $bulan <= 12) {
-        return $romawi[$bulan];
-    }
-
-    return "Bulan tidak valid";
 }

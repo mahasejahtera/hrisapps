@@ -9,6 +9,7 @@ class KaryawanDocument extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
     protected $table = 'karyawan_document';
 
     protected $fillable = [
@@ -19,7 +20,8 @@ class KaryawanDocument extends Model
         'ijazah',
         'buku_rekening',
         'npwp',
-        'bpjs'
+        'bpjs_ktn',
+        'bpjs_kes'
     ];
 
 

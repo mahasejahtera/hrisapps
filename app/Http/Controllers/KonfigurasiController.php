@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Karyawan;
 use App\Models\Setjamkerja;
 use App\Models\Setjamkerjadept;
 use Illuminate\Http\Request;
@@ -108,14 +109,14 @@ class KonfigurasiController extends Controller
         }
     }
 
-    public function setjamkerja($nik)
+    public function setjamkerja(Karyawan $karyawan)
     {
-        $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
+        $karyawan = DB::table('karyawan')->where('nik', $karyawan->nik)->first();
         $jamkerja = DB::table('jam_kerja')->orderBy('nama_jam_kerja')->get();
-        $cekjamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $nik)->count();
+        $cekjamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $karyawan->nik)->count();
         // dd($cekjamkerja);
         if ($cekjamkerja > 0) {
-            $setjamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $nik)->get();
+            $setjamkerja = DB::table('konfigurasi_jamkerja')->where('nik', $karyawan->nik)->get();
             return view('konfigurasi.editsetjamkerja', compact('karyawan', 'jamkerja', 'setjamkerja'));
         } else {
             return view('konfigurasi.setjamkerja', compact('karyawan', 'jamkerja'));
@@ -142,7 +143,7 @@ class KonfigurasiController extends Controller
             Setjamkerja::insert($data);
             return redirect('/karyawan')->with(['success' => 'Jam Kerja Berhasil Di Seting']);
         } catch (\Exception $e) {
-            return redirect('/karyawan')->with(['warning' => 'Jam Kerja Gagal Di Seting']);
+            return redirect('/karyawan')->with(['warning' => 'Jsam Kerja Gagal Di Seting']);
             // dd($e);
         }
     }

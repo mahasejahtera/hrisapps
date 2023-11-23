@@ -6,9 +6,24 @@ use App\Models\Departemen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Yajra\DataTables\Facades\DataTables;
 
 class DepartemenController extends Controller
 {
+    /*=================================================
+                    DATATABLES
+    =================================================*/
+    public function departmentDatatables(Request $request)
+    {
+        if($request->ajax()) {
+            $department = Departemen::query();
+
+            return DataTables::of($department)
+                    ->addIndexColumn()
+                    ->make(true);
+        }
+    }
+
     public function index(Request $request)
     {
         $nama_dept = $request->nama_dept;
@@ -17,7 +32,7 @@ class DepartemenController extends Controller
         if (!empty($nama_dept)) {
             $query->where('nama_dept', 'like', '%' . $nama_dept . '%');
         }
-        
+
         $departemen = $query->get();
         // $departemen = DB::table('departemen')->orderBy('kode_dept')->get();
         return view('departemen.index', compact('departemen'));

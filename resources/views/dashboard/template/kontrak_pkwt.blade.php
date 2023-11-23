@@ -8,7 +8,7 @@
                 SURAT PERJANJIAN KERJA KARYAWAN
             </p>
             <p class="letter-number">
-                Nomor: 025/SPK-K/MAHA.HR.RO/VIII/2023
+                Nomor: {{ $karyawanBiodata[0]->karyawan->contract->no_surat }}
             </p>
 
             <div class="letter-content">
@@ -21,13 +21,13 @@
                         <td>1.<span class="mr-2"></span></td>
                         <td>Nama</td>
                         <td><span class="ml-5 mr-3">:</span></td>
-                        <td>Hazri Fadillah Harahap, S.E.</td>
+                        <td>{{ $pihakPertama[0]->nama_lengkap }}</td>
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
                         <td>Jabatan</td>
                         <td><span class="ml-5 mr-3">:</span></td>
-                        <td>Direktur Utama.</td>
+                        <td>{{ $pihakPertama[0]->nama_jabatan }}</td>
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
@@ -61,7 +61,7 @@
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
-                        <td>Tempat/ Tanggal Lahir</td>
+                        <td>Tempat/Tanggal Lahir</td>
                         <td><span class="ml-5 mr-3">:</span></td>
                         <td>{{ $karyawanBiodata[0]->birthplace .  ', ' . tanggalBulanIndo($karyawanBiodata[0]->birthdate) }}</td>
                     </tr>
@@ -87,7 +87,9 @@
                         <td><span class="mr-2"></span></td>
                         <td>Alamat Sesuai KTP</td>
                         <td><span class="ml-5 mr-3">:</span></td>
-                        <td>{{ $karyawanBiodata[0]->address_identity }}</td>
+                        <td>
+                            {{ $karyawanBiodata[0]->address_identity }}, Kel. {{ Str::title($karyawanBiodata[0]->identityVillage->name) }}, Kec. {{ Str::title($karyawanBiodata[0]->identityDistrict->name) }}, {{ Str::title($karyawanBiodata[0]->identityRegency->name) }}, {{ Str::title($karyawanBiodata[0]->identityProvince->name) }}
+                        </td>
                     </tr>
                     <tr>
                         <td><span class="mr-2"></span></td>
@@ -115,7 +117,7 @@
                         </td>
                     </tr>
                 </table>
-                
+
                 <p class="mt-1 ml-3">
                     -Selanjutnya disebut sebagai <strong>PIHAK KEDUA</strong>.
                 </p>
@@ -134,7 +136,7 @@
                     <div class="pasal-body mt-2">
                         <ol class="p-0">
                             <li>
-                                <strong>PIHAK PERTAMA</strong> dengan ini menyatakan menerima <strong>PIHAK KEDUA</strong> sebagai karyawan perusahaan PT Maha Akbar Sejahtera yang terletak Jl. Eka Surya No. 48 Kecamatan Medan Johor, Kota Medan, yang bergerak dalam bidang usaha Konstruksi, Telekomunikasi, Development dan IT. 
+                                <strong>PIHAK PERTAMA</strong> dengan ini menyatakan menerima <strong>PIHAK KEDUA</strong> sebagai karyawan perusahaan PT Maha Akbar Sejahtera yang terletak Jl. Eka Surya No. 48 Kecamatan Medan Johor, Kota Medan, yang bergerak dalam bidang usaha Konstruksi, Telekomunikasi, Development dan IT.
                             </li>
                             <li>
                                 <strong>PIHAK KEDUA</strong> dengan ini menyatakan kesediaannya menjadi Karyawan <strong>PIHAK PERTAMA</strong>.
@@ -165,7 +167,7 @@
                     </div>
 
                     <div class="pasal-body mt-2">
-                        <P><strong>PIHAK PERTAMA</strong> dan <strong>PIHAK KEDUA</strong> sepakat bahwa perjanjian kerja ini dilaksanakan dengan waktu tertentu (PKWT) selama {{ $karyawanBiodata[0]->karyawan->lama_kontrak_num }} ({{ angkaTeks($karyawanBiodata[0]->karyawan->lama_kontrak_num) }}) {{ ucFirst($karyawanBiodata[0]->karyawan->lama_kontrak_waktu) }} yaitu dimulai sejak tanggal {{ tanggalIndo($karyawanBiodata[0]->karyawan->mulai_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->mulai_kontrak)) }}) sampai dengan tanggal {{ tanggalIndo($karyawanBiodata[0]->karyawan->akhir_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->akhir_kontrak)) }}).</P>
+                        <P><strong>PIHAK PERTAMA</strong> dan <strong>PIHAK KEDUA</strong> sepakat bahwa perjanjian kerja ini dilaksanakan dengan waktu tertentu (PKWT) selama {{ $karyawanBiodata[0]->karyawan->contract->lama_kontrak_num }} ({{ angkaTeks($karyawanBiodata[0]->karyawan->contract->lama_kontrak_num) }}) {{ ucFirst($karyawanBiodata[0]->karyawan->contract->lama_kontrak_waktu) }} yaitu dimulai sejak tanggal {{ tanggalIndo($karyawanBiodata[0]->karyawan->contract->mulai_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->contract->mulai_kontrak)) }}) sampai dengan tanggal {{ tanggalIndo($karyawanBiodata[0]->karyawan->contract->akhir_kontrak) }} ({{ tanggalIndoText(tanggalIndo($karyawanBiodata[0]->karyawan->contract->akhir_kontrak)) }}).</P>
                     </div>
                 </div>
 
@@ -188,7 +190,7 @@
 
                                 <ol type="a">
                                     <li>
-                                        Surat Peringatan (SP) 1 dan 2;
+                                        Surat Teguran, Surat Peringatan (SP) 1 dan 2;
                                     </li>
                                     <li>
                                         Pemutusan Hubungan Kerja secara sepihak oleh <strong>PIHAK PERTAMA</strong>;
@@ -289,17 +291,17 @@
                     <div class="pasal-body mt-2">
                         <ol class="p-0">
                             <li>
-                                <strong>PIHAK KEDUA</strong> akan bekerja sebagai {{ $karyawanBiodata[0]->karyawan->jabatan_kerja->nama_jabatan }} Pada Departemen {{ $karyawanBiodata[0]->karyawan->department->nama_dept }}.
+                                <strong>PIHAK KEDUA</strong> akan bekerja sebagai {{ $karyawanBiodata[0]->karyawan->contract->jabatan->nama_jabatan }} Pada Departemen {{ $karyawanBiodata[0]->karyawan->contract->department->nama_dept }}.
                             </li>
                             <li>
                                 <strong>PIHAK KEDUA</strong> memiliki Tugas dan Tanggung Jawab kerja sebagai berikut :
                                 <ol type="a">
-                                    <li>
-                                        Menjalankan SOP dan Peraturan Perusahaan dengan baik dan benar;
-                                    </li>
-                                    <li>
-                                        Mengikuti instruksi/arahan/tugas/perintah dari atasan (Manager Departemen, HRD, dan Direksi);
-                                    </li>
+                                    {{-- @foreach ($karyawanJobdesk as $kj)
+                                        <li>
+                                            {{ $kj->jobdesk }}
+                                        </li>
+                                    @endforeach --}}
+                                    <div class="ml-2">{!! $karyawan->contract->jobdesk_content !!}</div>
                                 </ol>
                             </li>
                             <li>
@@ -363,9 +365,6 @@
                                     </li>
                                     <li>
                                         Mendapatkan kenyamanan dan keamanan kerja;
-                                    </li>
-                                    <li>
-                                        Dapat menggunakan fasilitas kendaraan kantor.
                                     </li>
                                 </ol>
                             </li>
@@ -484,7 +483,7 @@
                     <div class="pasal-body mt-2">
                         <ol class="p-0">
                             <li>
-                                <strong>PIHAK KEDUA</strong> berhak mendapatkan upah pokok dari <strong>PIHAK PERTAMA</strong> sebesar Rp.{{ number_format($karyawanBiodata[0]->karyawan->salary,0,',','.') }},- ({{ bilanganTeks($karyawanBiodata[0]->karyawan->salary) }} rupiah).
+                                <strong>PIHAK KEDUA</strong> berhak mendapatkan upah pokok dari <strong>PIHAK PERTAMA</strong> sebesar Rp.{{ number_format($karyawanBiodata[0]->karyawan->contract->salary,0,',','.') }},- ({{ bilanganTeks($karyawanBiodata[0]->karyawan->contract->salary) }} rupiah).
                             </li>
                             <li>
                                 <strong>PIHAK KEDUA</strong> dengan ini bersedia dilakukan pembayaran upah dibulan pertama secara prorata.
@@ -801,11 +800,9 @@
                     <div class="letter-signature-wrapper ml-0">
                         <p><strong>PIHAK PERTAMA</strong></p>
                         <div class="letter-signature-inner">
-                            <img src="{{ asset("signature/".$karyawanBiodata[0]->karyawan->signature) }}" alt="">
-                            {!! QrCode::generate(asset("signature/".$karyawanBiodata[0]->karyawan->signature)) !!}
                         </div>
-                        <p class="letter-signature-name">(HAZRI FADILLAH HARAHAP, SE)</p>
-                        <p class="letter-signature-jabatan">Direktur Utama</p>
+                        <p class="letter-signature-name">({{ strtoupper($pihakPertama[0]->nama_lengkap) }})</p>
+                        <p class="letter-signature-jabatan">{{ $pihakPertama[0]->nama_jabatan }}</p>
                     </div>
 
                     <div class="mx-auto">
@@ -816,12 +813,15 @@
 
                         <button type="button" class="btn primary mt-3" id="btnAgree">Setuju</button>
                     </div>
-                    
+
                     <div class="letter-signature-wrapper">
                         <p>PIHAK KEDUA</p>
                         <div class="letter-signature-inner">
                             <img src="{{ asset("signature/".$karyawanBiodata[0]->karyawan->signature) }}" alt="">
-                            {!! QrCode::generate(asset("signature/".$karyawanBiodata[0]->karyawan->signature)) !!}
+
+                            <div class="qr-code">
+                                <img src="" alt="">
+                            </div>
                         </div>
                         <p class="letter-signature-name">({{ $karyawanBiodata[0]->fullname }})</p>
                     </div>

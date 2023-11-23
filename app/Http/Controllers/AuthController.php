@@ -41,11 +41,6 @@ class AuthController extends Controller
 
         if (Auth::guard('karyawan')->attempt($credentials)) {
             $request->session()->regenerate();
-            $karyawan = Auth::guard('karyawan')->user();
-            $dept = Departemen::find($karyawan->kode_dept);
-            $kode = $dept->kode_dept;
-            $karyawan->kode_dept_init = $kode;
-            $karyawan->save();
             return redirect()->intended('karyawan');
             // return to_route('karyawan');
         } else {

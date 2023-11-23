@@ -5,43 +5,57 @@
     {{-- START : HEADER --}}
     <header id="header-nav">
         <div class="employee-header-nav">
-            <div class="header-profile">
-                <div class="header-profile-img">
-                    <img src="{{ asset('assets/img/nophoto.png') }}" alt="default avatar">
+            <a href="{{ route('profil', auth()->guard('karyawan')->user()->email) }}">
+                <div class="header-profile">
+                    <div class="header-profile-img">
+                        @if (!empty(Auth::guard('karyawan')->user()->foto))
+                            <img src="{{ asset('storage/' . Auth::guard('karyawan')->user()->foto) }}" alt="default avatar">
+                        @else
+                            <img src="{{ asset('assets/img/nophoto.png') }}" alt="default avatar">
+                        @endif
+                    </div>
+                    <div class="header-profile-employee">
+                        <p class="profile-name">{{ Auth::guard('karyawan')->user()->nama_lengkap }}</p>
+                        <p class="profile-jobtitle">
+                            {{ (!empty(Auth::guard('karyawan')->user()->old_contract_id)) ? ((Auth::guard('karyawan')->user()->contract->kontrak_check == 0) ? Auth::guard('karyawan')->user()->contract->jabatan->nama_jabatan : Auth::guard('karyawan')->user()->oldContract->jabatan->nama_jabatan) : Auth::guard('karyawan')->user()->contract->jabatan->nama_jabatan }}
+                        </p>
+                    </div>
                 </div>
-                <div class="header-profile-employee">
-                    <p class="profile-name">{{ Auth::guard('karyawan')->user()->nama_lengkap }}</p>
-                    <p class="profile-jobtitle">{{ Auth::guard('karyawan')->user()->jabatan_kerja->nama_jabatan }}</p>
-                </div>
-            </div>
+            </a>
 
             <div class="header-icon-nav">
-                <div class="dropdown">
-                    <button class="btn" type="button" data-toggle="dropdown" aria-expanded="false">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 256 256"><path d="M225.29,165.93C216.61,151,212,129.57,212,104a84,84,0,0,0-168,0c0,25.58-4.59,47-13.27,61.93A20.08,20.08,0,0,0,30.66,186,19.77,19.77,0,0,0,48,196H84.18a44,44,0,0,0,87.64,0H208a19.77,19.77,0,0,0,17.31-10A20.08,20.08,0,0,0,225.29,165.93ZM128,212a20,20,0,0,1-19.6-16h39.2A20,20,0,0,1,128,212ZM54.66,172C63.51,154,68,131.14,68,104a60,60,0,0,1,120,0c0,27.13,4.48,50,13.33,68Z"></path></svg>
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here Something else here</a>
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn" type="button" data-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 256 256"><path d="M225.29,165.93C216.61,151,212,129.57,212,104a84,84,0,0,0-168,0c0,25.58-4.59,47-13.27,61.93A20.08,20.08,0,0,0,30.66,186,19.77,19.77,0,0,0,48,196H84.18a44,44,0,0,0,87.64,0H208a19.77,19.77,0,0,0,17.31-10A20.08,20.08,0,0,0,225.29,165.93ZM128,212a20,20,0,0,1-19.6-16h39.2A20,20,0,0,1,128,212ZM54.66,172C63.51,154,68,131.14,68,104a60,60,0,0,1,120,0c0,27.13,4.48,50,13.33,68Z"></path></svg>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here Something else here</a>
+                        </div>
                     </div>
+
+                    <button type="button" data-toggle="modal" data-target="#logoutModal" style="background: none; border: none">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 256 256"><path d="M112,216a8,8,0,0,1-8,8H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32h56a8,8,0,0,1,0,16H48V208h56A8,8,0,0,1,112,216Zm109.66-93.66-40-40A8,8,0,0,0,168,88v32H104a8,8,0,0,0,0,16h64v32a8,8,0,0,0,13.66,5.66l40-40A8,8,0,0,0,221.66,122.34Z"></path></svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
     {{-- END : HEADER --}}
-    
-    
+
+
     {{-- START : MAIN --}}
     <main id="main-dashboard">
         {{-- START : DATA PROGRESS --}}
-        @if (auth()->guard('karyawan')->user()->status != 2)
+        @if (auth()->guard('karyawan')->user()->status == 1)
             <section class="personal-data-progress">
                 <a href="{{ route('karyawan.datadiri', auth()->guard('karyawan')->user()->email) }}">
                     <p>Lengkapi data diri</p>
-                    <div class="maha__progress-bar">
-                        <div class="progress-bar-fill"><p>50%</p></div>
-                    </div>
+                    <button class="btn primary btn-block">
+                        Klik disini
+                    </button>
                 </a>
             </section>
         @endif
@@ -49,8 +63,21 @@
 
         {{-- START : MENU --}}
         <section id="menu-wrapper">
-            @if (auth()->guard('karyawan')->user()->status != 2)
-                <div class="suspend-wrapper"></div>
+            @if (auth()->guard('karyawan')->user()->status != 3)
+                <div class="suspend-wrapper text-center">
+                    @if (auth()->guard('karyawan')->user()->status == 2)
+                        <div class="suspend-data">
+                            <div class="icon-rounded-wrapper">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M243.28,68.24l-24-23.56a16,16,0,0,0-22.58,0L104,136h0l-.11-.11L67.25,100.62a16,16,0,0,0-22.57.06l-24,24a16,16,0,0,0,0,22.61l71.62,72a16,16,0,0,0,22.63,0L243.33,90.91A16,16,0,0,0,243.28,68.24ZM103.62,208,32,136l24-24,.11.11,36.64,35.27a16,16,0,0,0,22.52,0L208.06,56,232,79.6Z"></path></svg>
+                            </div>
+
+                            <div class="">
+                                <p>Data diri anda sudah lengkap</p>
+                                <p>Tunggu admin verifikasi data kamu!!!</p>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             @endif
             <div class="row justify-content-between">
                 <div class="col-4">
@@ -63,7 +90,7 @@
                     </a>
                 </div>
                 <div class="col-4">
-                    <a href="#" class="menu-item">
+                    <a href="http://hrisapps-rencana-kerja.test/" class="menu-item">
                         <div class="menu-item-icon blue">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 256 256"><path d="M28,64A12,12,0,0,1,40,52H216a12,12,0,0,1,0,24H40A12,12,0,0,1,28,64Zm12,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24Zm104,40H40a12,12,0,0,0,0,24H144a12,12,0,0,0,0-24Zm88,0H220V168a12,12,0,0,0-24,0v12H184a12,12,0,0,0,0,24h12v12a12,12,0,0,0,24,0V204h12a12,12,0,0,0,0-24Z"></path></svg>
                         </div>
@@ -126,34 +153,82 @@
     </main>
     {{-- END : MAIN --}}
 
-    
+    {{-- modal delete --}}
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Logout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Anda yakin ingin keluar dari aplikasi ?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ route('karyawan.logout') }}" class="btn btn-danger">Keluar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scriptJS')
     <script>
+        const employeeStatus = {{ auth()->guard('karyawan')->user()->status }};
         // document ready
         $(document).ready(function() {
-            const employeeStatus = {{ auth()->guard('karyawan')->user()->status }};
-            
-            if(employeeStatus != 2) {
+
+            if(employeeStatus != 3) {
                 deleteHrefMenu();
             }
         });
 
         $('.suspend-wrapper').on('click', (e) => {
-            alert('Silahkan Lengkapi Data Diri...!!!');
+            if(employeeStatus == 2) {
+                alert('Tunggu verifikasi admin...!!!');
+            } else {
+                alert('Silahkan Lengkapi Data Diri...!!!');
+            }
         });
-        
-        $('.menu-item').on('click', (e) => {
-            alert('Silahkan Lengkapi Data Diri...!!!');
-        });
+
+        // $('.menu-item').on('click', (e) => {
+        //     alert('Silahkan Lengkapi Data Diri...!!!');
+        // });
+
+        // $('.item').on('click', (e) => {
+        //     alert('Silahkan Lengkapi Data Diri...!!!');
+        // });
 
         // delete href menu
         function deleteHrefMenu() {
             const menus = $('.menu-item');
+            const bottomMenu = $('.item');
 
             menus.each( (i, e) => {
-                $(e).removeAttr('href');
+                $(e).attr('href', '#');
+
+                $(e).on('click', function() {
+                    if(employeeStatus == 2) {
+                        alert('Tunggu verifikasi admin...!!!');
+                    } else {
+                        alert('Silahkan Lengkapi Data Diri...!!!');
+                    }
+                });
+            });
+
+            bottomMenu.each( (i, e) => {
+                $(e).attr('href', '#');
+
+                $(e).on('click', function() {
+                    if(employeeStatus == 2) {
+                        alert('Tunggu verifikasi admin...!!!');
+                    } else {
+                        alert('Silahkan Lengkapi Data Diri...!!!');
+                    }
+                });
             });
         }
     </script>

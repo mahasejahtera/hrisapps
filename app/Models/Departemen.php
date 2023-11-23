@@ -8,5 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Departemen extends Model
 {
     use HasFactory;
+    protected $connection = 'mysql';
     protected $table = "departemen";
 }

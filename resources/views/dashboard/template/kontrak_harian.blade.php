@@ -8,7 +8,7 @@
                 SURAT PERJANJIAN KERJA KARYAWAN
             </p>
             <p class="letter-number">
-                Nomor: 025/SPK-K/MAHA.HR.RO/VIII/2023
+                Nomor: {{ $karyawanBiodata[0]->karyawan->contract->no_surat }}
             </p>
 
             <div class="letter-content">
@@ -225,8 +225,6 @@
                     <div class="letter-signature-wrapper ml-0">
                         <p><strong>Pemberi Kerja</strong></p>
                         <div class="letter-signature-inner">
-                            <img src="{{ asset("signature/".$karyawanBiodata[0]->karyawan->signature) }}" alt="">
-                            {!! QrCode::generate(asset("signature/".$karyawanBiodata[0]->karyawan->signature)) !!}
                         </div>
                         <p class="letter-signature-name">{{ strtoupper("Afriyan") }}</p>
                         <p class="letter-signature-jabatan">Manajer Proyek</p>
@@ -240,12 +238,14 @@
 
                         <button type="button" class="btn primary mt-3" id="btnAgree">Setuju</button>
                     </div>
-                    
+
                     <div class="letter-signature-wrapper">
                         <p>PIHAK KEDUA</p>
                         <div class="letter-signature-inner">
                             <img src="{{ asset("signature/".$karyawanBiodata[0]->karyawan->signature) }}" alt="">
-                            {!! QrCode::generate(asset("signature/".$karyawanBiodata[0]->karyawan->signature)) !!}
+                            <div class="qr-code">
+                                <img src="" alt="">
+                            </div>
                         </div>
                         <p class="letter-signature-name">{{ strtoupper($karyawanBiodata[0]->fullname) }}</p>
                         <p class="letter-signature-jabatan">Pekerja</p>

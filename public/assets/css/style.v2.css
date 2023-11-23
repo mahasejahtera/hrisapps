@@ -294,20 +294,13 @@ body {
   font-size: 15px;
   color: var(--neutral-90);
   margin-bottom: 5px;
+  font-weight: 700;
 }
 #main-dashboard .personal-data-progress .maha__progress-bar .progress-bar-fill {
   background-color: var(--blue-hover);
 }
 #main-dashboard #menu-wrapper {
   position: relative;
-}
-#main-dashboard #menu-wrapper .suspend-wrapper {
-  position: absolute;
-  top: -10px;
-  z-index: 9999;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
 }
 #main-dashboard #menu-wrapper .menu-item {
   display: flex;
@@ -409,6 +402,10 @@ body {
   margin: 75px 0px 50px;
   overflow: scroll;
 }
+#form-bio .custom-file-label {
+  height: -moz-fit-content;
+  height: fit-content;
+}
 
 /*====================================
             SIGNATURE
@@ -416,10 +413,15 @@ body {
 .signature-wrapper {
   position: relative;
   width: 100%;
+  max-width: 500px;
   padding: 30px;
+  margin: auto;
+}
+.signature-wrapper .alert {
+  margin-top: 50px;
 }
 .signature-wrapper .signature-pad {
-  margin: 50px 0px 10px;
+  margin-bottom: 10px;
   width: 100%;
   height: 200px;
   background-color: #DDDDDD;
@@ -436,7 +438,7 @@ body {
   width: auto;
   max-height: 200px;
 }
-.signature-wrapper .qrcode-signature svg {
+.signature-wrapper .qrcode-signature .qr-code img {
   position: absolute;
   height: 70px;
   bottom: 100px;
@@ -522,7 +524,7 @@ body {
   -o-object-position: center;
      object-position: center;
 }
-.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-inner svg {
+.letter-wrapper .letter-inner .letter-body .letter-signature-wrapper .letter-signature-inner .qr-code img {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -546,9 +548,211 @@ body {
 }
 
 /*====================================
+            SUSPEND WRAPPER
+====================================*/
+.suspend-wrapper {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.suspend-wrapper .suspend-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  height: -moz-fit-content;
+  height: fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 30px;
+  background-color: #D6FFAC;
+  border-radius: 35px;
+}
+.suspend-wrapper .suspend-data .icon-rounded-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #1E703F;
+}
+.suspend-wrapper .suspend-data .icon-rounded-wrapper svg {
+  width: 50px;
+  height: 50px;
+}
+.suspend-wrapper .suspend-data .icon-rounded-wrapper svg path {
+  fill: var(--white);
+}
+.suspend-wrapper .suspend-data p {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/*====================================
             CONFIRM BIODATA
 ====================================*/
 .biodata-confirm-wrapper .biodata-confirm-title {
   font-size: 30px;
   font-weight: 700;
+}
+
+.form-document-wrapper .btn {
+  font-weight: normal;
+  font-size: 12px;
+  width: -moz-max-content;
+  width: max-content;
+}
+.form-document-wrapper .btn-document-form {
+  display: flex;
+  justify-content: end;
+  gap: 10px;
+}
+.form-document-wrapper .form-document-inner {
+  border-top: 2px solid #c7c7c7;
+  padding-top: 8px;
+}
+.form-document-wrapper .form-document-inner:nth-child(1) {
+  border: none;
+}
+
+@media (max-width: 530px) {
+  .form-document-wrapper .btn-document-form {
+    display: block;
+    text-align: right;
+    gap: 10px;
+    width: 35%;
+  }
+  .form-document-wrapper .btn-document-form button {
+    margin-bottom: 8px;
+  }
+}
+.img-list-empty {
+  width: 90% !important;
+  max-width: 600px;
+}
+
+/*===========================================
+            PROFILE
+==========================================*/
+.huader-profile-wrapper {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 25px;
+  padding-right: 25px;
+  padding-left: 25px;
+  z-index: 100;
+  background-color: var(--neutral-20);
+}
+.huader-profile-wrapper #menuBtn {
+  display: none;
+}
+.huader-profile-wrapper .menu-btn {
+  cursor: pointer;
+}
+.huader-profile-wrapper .header-profile-inner {
+  display: flex;
+  align-items: center;
+}
+.huader-profile-wrapper .header-profile-inner p {
+  margin: 0px;
+  margin-left: 10px;
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--neutral-90);
+}
+.huader-profile-wrapper svg {
+  width: 35px;
+  height: 35px;
+}
+.huader-profile-wrapper svg path {
+  fill: var(--neutral-90);
+}
+
+.profile-menu-wrapper {
+  position: fixed;
+  top: 68px;
+  width: 100%;
+  height: 100vh;
+  padding: 50px 20px 20px;
+  margin-left: 100%;
+  background-color: var(--neutral-20);
+  transition: all 0.5s ease;
+}
+.profile-menu-wrapper .profile-menu-inner .profile-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  background-color: var(--neutral-30);
+  box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  color: var(--neutral-90);
+}
+.profile-menu-wrapper .profile-menu-inner .profile-menu-item p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.profile-menu-wrapper.show {
+  margin-left: 0px;
+}
+
+.profile-content {
+  margin-top: 100px !important;
+}
+
+/*=====================================================
+                MENU ITEM
+======================================================*/
+.menu-list-wrapper {
+  margin-top: 100px;
+  padding: 0px 25px;
+}
+.menu-list-wrapper .menu-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  background-color: var(--neutral-30);
+  box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  color: var(--neutral-90);
+}
+.menu-list-wrapper .menu-list-item p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+.menu-list-wrapper .menu-list-item svg {
+  width: 32px;
+  height: 32px;
+}
+.menu-list-wrapper .menu-list-item svg path {
+  fill: var(--neutral-90);
+}
+
+/*================================================
+            PENGAJUAN IZIN / LEMBUR FRONT END
+================================================*/
+.data-izin-wrapper {
+  margin-bottom: 100px;
+}
+
+.form-lembur-wrapper {
+  margin-bottom: 100px;
 }/*# sourceMappingURL=style.v2.css.map */

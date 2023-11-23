@@ -26,23 +26,23 @@
         </div>
     @endif
 
-    @if ($karyawanBiodata[0]->karyawan->status_karyawan == 'pkwt')
+    @if ($karyawanBiodata[0]->karyawan->contract->contract_status == 'pkwt')
         @include('dashboard.template.kontrak_pkwt')
     @endif
 
-    @if ($karyawanBiodata[0]->karyawan->status_karyawan == 'percobaan')
+    @if ($karyawanBiodata[0]->karyawan->contract->contract_status == 'percobaan')
         @include('dashboard.template.kontrak_percobaan')
     @endif
 
-    @if ($karyawanBiodata[0]->karyawan->status_karyawan == 'tetap')
+    @if ($karyawanBiodata[0]->karyawan->contract->contract_status == 'tetap')
         @include('dashboard.template.kontrak_tetap')
     @endif
 
-    @if ($karyawanBiodata[0]->karyawan->status_karyawan == 'project')
+    @if ($karyawanBiodata[0]->karyawan->contract->contract_status == 'project')
         @include('dashboard.template.kontrak_project')
     @endif
 
-    @if ($karyawanBiodata[0]->karyawan->status_karyawan == 'harian')
+    @if ($karyawanBiodata[0]->karyawan->contract->contract_status == 'harian')
         @include('dashboard.template.kontrak_harian')
     @endif
 </section>
@@ -53,7 +53,15 @@
     <script>
         $(document).ready(function() {
             $('#btnAgree').prop('disabled', true);
+            const urlSPT = "{{ route('spt.ttddigital', $karyawan->email) }}";
+            setQrCode(urlSPT);
         });
+
+        function setQrCode(value) {
+            const svgQrcode = `https://api.qrserver.com/v1/create-qr-code/?data=${value}`;
+            $('.letter-signature-wrapper .qr-code img').attr('src', svgQrcode);
+        }
+
         // checkbox agree change
         $('#agreeCheckbox').on('change', function(e) {
             const $this = $(this);
