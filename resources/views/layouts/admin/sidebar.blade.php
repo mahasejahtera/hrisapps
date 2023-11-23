@@ -376,22 +376,22 @@
                     <div class="dropdown-menu">
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
-                                <a class="dropdown-item  ">
+                                <a href="{{route('panelpengajuan.list','HR')}}" class="dropdown-item  ">
                                     Pengajuan Dept HRD
                                 </a>
-                                <a class="dropdown-item ">
+                                <a href="{{route('panelpengajuan.list','KU')}}" class="dropdown-item ">
                                     Pengajuan Dept Keuangan
                                 </a>
-                                <a class="dropdown-item ">
+                                <a href="{{route('panelpengajuan.list','SC')}}" class="dropdown-item ">
                                     Pengajuan Dept SCM
                                 </a>
-                                <a class="dropdown-item  ">
+                                <a href="{{route('panelpengajuan.list','PN')}}" class="dropdown-item  ">
                                     Pengajuan Dept Pemasaran
                                 </a>
-                                <a class="dropdown-item ">
+                                <a href="{{route('panelpengajuan.list','PR')}}" class="dropdown-item ">
                                     Pengajuan Dept Produksi
                                 </a>
-                                <a class="dropdown-item ">
+                                <a href="{{route('panelpengajuan.list','TK')}}" class="dropdown-item ">
                                     Pengajuan Dept Teknik
                                 </a>
                             </div>

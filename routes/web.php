@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KonfigurasiController;
+use App\Http\Controllers\Panel\PanelPengajuanController;
 use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\Pengajuan\CSRController;
 use App\Http\Controllers\Pengajuan\HutangOperasionalController;

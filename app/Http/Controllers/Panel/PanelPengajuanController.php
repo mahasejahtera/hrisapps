@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Panel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Karyawan;
+use App\Models\Pengajuan;
 use App\Models\SubmitPengajuan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,7 +17,7 @@ class PanelPengajuanController extends Controller
     public function index(Request $request)
     {
 
-        $query = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'karyawan.nama_lengkap', 'departemen.nama_dept', 'submit_pengajuan.tanggal', 'submit_pengajuan.due_date')->join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept');
+        $query = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'mysql.karyawan.nama_lengkap', 'departemen.nama_dept', 'submit_pengajuan.tanggal', 'submit_pengajuan.due_date')->join('mysql.karyawan', 'mysql.karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'mysql.karyawan.kode_dept');
 
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_lengkap', 'like', '%' . $request->nama_karyawan . '%');
@@ -34,7 +35,7 @@ class PanelPengajuanController extends Controller
         // dd($submit_pengajuan);
 
         $departemen = DB::table('departemen')->get();
-        $pengajuan = DB::table('pengajuan')->get();
+        $pengajuan = Pengajuan::get();
         $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
         return view('panel.pengajuan.index', compact('submit_pengajuan', 'departemen', 'cabang', 'pengajuan'));
     }
@@ -42,7 +43,7 @@ class PanelPengajuanController extends Controller
     public function list($id, Request $request)
     {
 
-        $query = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'karyawan.nama_lengkap', 'departemen.nama_dept', 'submit_pengajuan.tanggal', 'submit_pengajuan.due_date')->join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept')->where('karyawan.kode_dept', $id);
+        $query = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'karyawan.nama_lengkap', 'departemen.nama_dept', 'submit_pengajuan.tanggal', 'submit_pengajuan.due_date')->join('mahasej3_hrisapps.karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('mahasej3_hrisapps.departemen', 'departemen.id', '=', 'mahasej3_hrisapps.karyawan.kode_dept')->where('karyawan.kode_dept', $id);
 
         if (!empty($request->nama_karyawan)) {
             $query->where('nama_lengkap', 'like', '%' . $request->nama_karyawan . '%');
@@ -60,7 +61,7 @@ class PanelPengajuanController extends Controller
         // dd($submit_pengajuan);
 
         $departemen = DB::table('departemen')->get();
-        $pengajuan = DB::table('pengajuan')->get();
+        $pengajuan = Pengajuan::get();
         $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
         return view('panel.pengajuan.index', compact('submit_pengajuan', 'departemen', 'cabang', 'pengajuan'));
     }
