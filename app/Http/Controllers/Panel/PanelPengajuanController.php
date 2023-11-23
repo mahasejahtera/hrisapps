@@ -39,6 +39,32 @@ class PanelPengajuanController extends Controller
         return view('panel.pengajuan.index', compact('submit_pengajuan', 'departemen', 'cabang', 'pengajuan'));
     }
 
+    public function list($id, Request $request)
+    {
+
+        $query = SubmitPengajuan::select('submit_pengajuan.id', 'submit_pengajuan.nomor', 'karyawan.nama_lengkap', 'departemen.nama_dept', 'submit_pengajuan.tanggal', 'submit_pengajuan.due_date')->join('karyawan', 'karyawan.id', '=', 'submit_pengajuan.id_karyawan')->join('departemen', 'departemen.id', '=', 'karyawan.kode_dept')->where('karyawan.kode_dept', $id);
+
+        if (!empty($request->nama_karyawan)) {
+            $query->where('nama_lengkap', 'like', '%' . $request->nama_karyawan . '%');
+        }
+
+        if (!empty($request->kode_pengajuan)) {
+            $query->where('submit_pengajuan.id_pengajuan', $request->kode_pengajuan);
+        }
+
+        if (!empty($request->kode_dept)) {
+            $query->where('karyawan.kode_dept', $request->kode_dept);
+        }
+
+        $submit_pengajuan = $query->paginate(10);
+        // dd($submit_pengajuan);
+
+        $departemen = DB::table('departemen')->get();
+        $pengajuan = DB::table('pengajuan')->get();
+        $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
+        return view('panel.pengajuan.index', compact('submit_pengajuan', 'departemen', 'cabang', 'pengajuan'));
+    }
+
     public function karyawanData(Request $request)
     {
         $karyawanData = Karyawan::with(['jabatan_kerja', 'department', 'cabang'])->where('id', $request->id)->get();
