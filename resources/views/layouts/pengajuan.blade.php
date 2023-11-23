@@ -23,6 +23,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.v2.css') }}">
 
     <link rel="manifest" href="__manifest.json">
+
+    @stack('styles')
 </head>
 
 <body>
@@ -40,7 +42,6 @@
     @include('layouts.bottomNavDashboard')
     @include('layouts.script')
 
-    @stack('scripts')
 </body>
 
 </html>

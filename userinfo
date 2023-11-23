@@ -1,0 +1,102 @@
+    "id" => 9
+    "nik" => "30923001"
+    "username" => null
+    "nama_lengkap" => "T. Rizaldi Fadli"
+    "email" => "t.rizaldifadli2001@gmail.com"
+    "jabatan" => "1"
+    "no_hp" => null
+    "foto" => null
+    "kode_dept" => "2"
+    "kode_cabang" => "BDG"
+    "password" => "$2y$10$IjyUppTR7TsAIxnU6AZdjOzfj4XIXzEZFVnnRPiH33.YoRbdg9LV6"
+    "signature" => "9_651650a2ac392.png"
+    "pakta_integritas_check" => 1
+    "pakta_integritas_check_date" => "2023-09-29"
+    "status_karyawan" => "pkwt"
+    "project" => "Pembuatan Aplikasi HRIS"
+    "salary" => "3300000"
+    "lama_kontrak_num" => null
+    "lama_kontrak_waktu" => null
+    "mulai_kontrak" => "2023-09-01"
+    "akhir_kontrak" => "2024-08-31"
+    "kontrak_check" => 1
+    "kontrak_check_date" => "2023-09-29"
+    "remember_token" => null
+    "role_id" => 1
+    "status" => 2
+    "created_at" => "2023-09-20 15:17:19"
+    "updated_at" => "2023-09-29 11:44:56"
+    "deleted_at" => null
+
+
+
+    1 = karyawan 
+    2 = manajer 
+    3 = general manager 
+    4 = direktur 
+    5 = komisaris
+
+    KARYAWAN
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager
+    3 = Menunggu Diperiksa Oleh Manager HRD
+    4 = Disetujui Oleh Direksi
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    MANAGER
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager (Tidak Perlu)
+    3 = Menunggu Diperiksa Oleh Manager HRD
+    4 = Disetujui Oleh Direksi
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    MANAGER HRD
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager (Tidak Perlu) (Dapat Notif)
+    3 = Menunggu Diperiksa Oleh Manager HRD (Tidak Perlu) (Dapat Notif)
+    4 = Disetujui Oleh Direksi
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    DIREKTUR
+    1 = Input Form Hutang Operasional
+    2 = Menunggu Diperiksa Oleh Manager (Tidak Perlu)
+    3 = Menunggu Diperiksa Oleh Manager HRD (Tidak Perlu) (Dapat Notif Mengetahui)
+    4 = Disetujui Oleh Direksi (Tidak Perlu)
+    5 = Disetujui Oleh Komisaris
+    6 = Pengajuan Selesai
+
+    1 : Approve
+    2 : Reject
+    3 : Revisi
+
+    008/HO.MEPMADINA/MAHA.TK.NF/VIII/2023
+ 
+    008 : nomor (GENERATE) --> reset perbulan , per jenis pengajuan, arsip perjenis pengajuan(HO, CSR, dst)
+    A 001 HO 001 CSR B 003 HO BEDA DEPT
+    B 002 HO CSR 002 BEDA DEPT 
+    C 003 HO 003 BEDA DEPT
+    HO : Hutang Operasional (GENERATE)
+    MEPMADINA : CSR.(MANUAL) --> CSR (KHUSUS)
+    MAHA : MAHA (GENERATE)
+    TK : DEPARTEMEN (GENERATE)
+    NF : Inisial nama (GENERATE)
+    VIII : Bulan (GENERATE)
+    2023 : Tahun (GENERATE)
+
+    Tabel diperbesar/diperlebar
+
+    Perdepartemen beda tipe pengajuan --> manager, HO,Reimbursement ada di semua karyawan
+
+    Tombol remove di Tabel
+
+    Ajukan HO sesuai Form Pengajuan
+
+    1: Baru
+    2: Dilihat
+    3: Revisi
+    4: Acc
+
+    Karyawan ke revisi
