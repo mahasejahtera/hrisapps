@@ -524,5 +524,55 @@ var dmswitch = $(".dark-mode-switch");
 dmswitch.on('change', function () {
     dmswitch.prop('checked', this.checked);
 });
+
+function formatNumber(input) {
+    let value = input.value;
+
+    value = value.replace(/[^0-9]/g, '');
+
+    // Format dengan tanda titik sebagai pemisah ribuan
+    value = new Intl.NumberFormat('id-ID').format(value);
+
+    // Terapkan nilai yang telah diformat kembali ke input
+    input.value = value;
+}
+
+function hitungJumlahHarga(input) {
+    let row = input.parentElement.parentElement;
+    // console.log(row);
+    let hargaSatuanInput = row.querySelector('.harga-satuan');
+    // console.log(hargaSatuanInput);
+    let qtyInput = row.querySelector('.qty');
+    let jumlahHargaInput = row.querySelector('.jumlah-harga');
+
+    let hargaSatuan = parseFloat(hargaSatuanInput.value.replace(/\./g, '')) || 0;
+    // console.log(hargaSatuanInput.value)
+    let qty = parseFloat(qtyInput.value.replace(/\./g, '')) || 0;
+    let jumlahHarga = hargaSatuan * qty;
+
+    jumlahHargaInput.value = jumlahHarga;
+
+    // Memicu event oninput secara manual
+    var event = new Event('input', {
+        bubbles: true,
+        cancelable: true,
+    });
+
+    jumlahHargaInput.dispatchEvent(event);
+}
+
+function updateTotalBiaya() {
+    // Fungsi untuk mengupdate total biaya dari semua baris dalam tabel
+    var totalBiaya = 0;
+    var jumlahHargaElements = document.querySelectorAll('.jumlah-harga');
+
+    jumlahHargaElements.forEach(function(element) {
+        var jumlahHarga = parseFloat(element.value.replace(/\./g, '')) || 0;
+        totalBiaya += jumlahHarga;
+    });
+
+    // Setel nilai total biaya pada elemen yang sesuai, misalnya pada elemen dengan ID 'total-biaya'
+    document.getElementById('total-biaya').value = new Intl.NumberFormat('id-ID').format(totalBiaya);
+}
 ///////////////////////////////////////////////////////////////////////////
 

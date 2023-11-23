@@ -522,3 +522,14 @@ function labelStatusApprovedIzin($status=0)
 
     return $label;
 }
+
+function bulanKeRomawi($bulan)
+{
+    $romawi = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+
+    if ($bulan >= 1 && $bulan <= 12) {
+        return $romawi[$bulan];
+    }
+
+    return "Bulan tidak valid";
+}
