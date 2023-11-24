@@ -14,9 +14,9 @@ class SubmitPengajuan extends Model
 
     public function getSubmitPengajuanByKodeDept($kodeDept)
     {
-        return DB::table('submit_pengajuan')
-            ->join('karyawan', 'submit_pengajuan.id_karyawan', '=', 'karyawan.id')
-            ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.id')
+        return DB::connection($this->connection)->table('submit_pengajuan')
+            ->join('mahasej3_hrisapps.karyawan', 'submit_pengajuan.id_karyawan', '=', 'mahasej3_hrisapps.karyawan.id')
+            ->join('mahasej3_hrisapps.departemen', 'karyawan.kode_dept', '=', 'mahasej3_hrisapps.departemen.id')
             ->select('submit_pengajuan.*')
             ->where('departemen.kode_dept', $kodeDept)
             ->get();
