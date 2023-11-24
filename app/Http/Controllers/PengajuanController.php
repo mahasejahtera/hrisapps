@@ -164,7 +164,6 @@ class PengajuanController extends Controller
 
     public function departemen_list($kodeDept)
     {
-        // dd($kodeDept);
         $pengajuan = (new SubmitPengajuan)->getSubmitPengajuanByKodeDept($kodeDept);
         $data = [
             'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
