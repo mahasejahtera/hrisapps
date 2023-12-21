@@ -1,4 +1,7 @@
 <?php
+
+use App\Models\Holiday;
+
 function hitungjamterlambat($jadwal_jam_masuk, $jam_presensi)
 {
     $j1 = strtotime($jadwal_jam_masuk);
@@ -15,6 +18,12 @@ function hitungjamterlambat($jadwal_jam_masuk, $jam_presensi)
 
     $terlambat = $jterlambat . ":" . $mterlambat;
     return $terlambat;
+}
+
+function formatRupiah($angka)
+{
+    $rupiah =   'Rp ' . number_format($angka, 0, ',', '.');
+    return $rupiah;
 }
 
 
@@ -69,6 +78,57 @@ function jumlahHariMinggu($startDate, $endDate) {
     }
 
     return $sundayCount;
+}
+
+
+function jmlPembagianHariIzin($tglAwal, $tglAkhir)
+{
+    [$yearAwal, $monthAwal, $dayAwal] = explode('-', $tglAwal);
+    [$yearAkhir, $monthAkhir, $dayAkhir] = explode('-', $tglAkhir);
+
+    $jmlHariBulanPertama = 0;
+    $jmlHariBulankedua = 0;
+
+    if($monthAwal == $monthAkhir && $dayAkhir < 29) {
+        $jmlHariBulanPertama = jumlahHari($tglAwal, $tglAkhir);
+        $jmlHariBulanPertama -= jumlahHariMinggu($tglAwal, $tglAkhir);
+        $jmlHariBulanPertama -= Holiday::whereBetween('holidays_date', [$tglAwal, $tglAkhir])->count();
+    }
+
+    if($monthAwal == $monthAkhir && $dayAkhir > 28) {
+        // hitung bulan pertama
+        $jmlHariBulanPertama = jumlahHari($tglAwal, "$yearAkhir-$monthAkhir-28");
+        $jmlHariBulanPertama -= jumlahHariMinggu($tglAwal, "$yearAkhir-$monthAkhir-28");
+        $jmlHariBulanPertama -= Holiday::whereBetween('holidays_date', [$tglAwal, "$yearAkhir-$monthAkhir-28"])->count();
+
+        // hitung bulan kedua
+        $jmlHariBulankedua = jumlahHari("$yearAkhir-$monthAkhir-29", $tglAkhir);
+        $jmlHariBulankedua -= jumlahHariMinggu("$yearAkhir-$monthAkhir-29", $tglAkhir);
+        $jmlHariBulankedua -= Holiday::whereBetween('holidays_date', ["$yearAkhir-$monthAkhir-29", $tglAkhir])->count();
+    }
+
+    if($monthAwal != $monthAkhir && $dayAwal > 28 && $dayAkhir < 29) {
+        $jmlHariBulanPertama = jumlahHari($tglAwal, $tglAkhir);
+        $jmlHariBulanPertama -= jumlahHariMinggu($tglAwal, $tglAkhir);
+        $jmlHariBulanPertama -= Holiday::whereBetween('holidays_date', [$tglAwal, $tglAkhir])->count();
+    }
+
+    if($monthAwal != $monthAkhir && $dayAwal < 29 && $dayAkhir < 29) {
+        // hitung bulan pertama
+        $jmlHariBulanPertama = jumlahHari($tglAwal, "$yearAwal-$monthAwal-28");
+        $jmlHariBulanPertama -= jumlahHariMinggu($tglAwal, "$yearAwal-$monthAwal-28");
+        $jmlHariBulanPertama -= Holiday::whereBetween('holidays_date', [$tglAwal, "$yearAwal-$monthAwal-28"])->count();
+
+        // hitung bulan kedua
+        $jmlHariBulankedua = jumlahHari("$yearAwal-$monthAwal-29", $tglAkhir);
+        $jmlHariBulankedua -= jumlahHariMinggu("$yearAwal-$monthAwal-29", $tglAkhir);
+        $jmlHariBulankedua -= Holiday::whereBetween('holidays_date', ["$yearAwal-$monthAwal-29", $tglAkhir])->count();
+    }
+
+    return [
+        'bulanPertama'  => $jmlHariBulanPertama,
+        'bulanKedua'    => $jmlHariBulankedua
+    ];
 }
 
 
@@ -517,6 +577,41 @@ function labelStatusApprovedIzin($status=0)
 
         default:
             $label = 'Pending -';
+            break;
+    }
+
+    return $label;
+}
+
+function labelStatusApprovedGaji($status=0)
+{
+    $label = '';
+
+    switch ($status) {
+        case 0:
+            $label = 'Pending HRD';
+            break;
+        case 1:
+            $label = 'Pending Direktur';
+            break;
+        case 2:
+            $label = 'Pending Komisaris';
+            break;
+        case 3:
+            $label = 'Approved';
+            break;
+        case 4:
+            $label = 'Ditolak HRD';
+            break;
+        case 5:
+            $label = 'Ditolak Direktur';
+            break;
+        case 5:
+            $label = 'Ditolak Komisaris';
+            break;
+
+        default:
+            $label = 'Pending - ';
             break;
     }
 

@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\ApprovalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\JabatanController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KonfigurasiController;
 use App\Http\Controllers\Panel\PanelPengajuanController;
@@ -64,12 +66,14 @@ Route::get('/panel', function () {
 })->name('loginadmin');
 
 Route::middleware(['guest:user'])->group(function () {
-
     Route::post('/prosesloginadmin', [AuthController::class, 'prosesloginadmin']);
 });
 
 Route::middleware('isNotSuspend')->group(function () {
     Route::middleware('auth:karyawan')->group(function () {
+
+        // jumlah hari minggu + libur
+        Route::post('/jumlah-libur-minggu', [PresensiController::class, 'getJumlahLibur'])->name('hitungjumlahliburminggu');
 
         // Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('karyawan');
@@ -118,6 +122,7 @@ Route::middleware('isNotSuspend')->group(function () {
         //Izin
         Route::get('/presensi/izin', [PresensiController::class, 'izin'])->name('presensi.izin');
         Route::get('/presensi/izin-pribadi', [PresensiController::class, 'izinPribadi'])->name('presensi.izinpribadi');
+        Route::get('/presensi/izin/pribadi/{pengajuan_izin:id}/destroy', [PresensiController::class, 'destroyIzin'])->name('presensi.izin.pribadi.destroy');
         Route::get('/presensi/izin-karyawan', [PresensiController::class, 'izinKaryawan'])->name('presensi.izinkaryawan');
         Route::get('/presensi/buatizin', [PresensiController::class, 'buatizin']);
         Route::post('/presensi/izin/get-jenis', [PresensiController::class, 'getJenisIzin'])->name('presensi.izin.getjenis');
@@ -130,6 +135,7 @@ Route::middleware('isNotSuspend')->group(function () {
         // lembur
         Route::get('/presensi/lembur', [PresensiController::class, 'lembur'])->name('presensi.lembur');
         Route::get('/presensi/lembur/pribadi', [PresensiController::class, 'lemburPribadi'])->name('presensi.lembur.pribadi');
+        Route::get('/presensi/lembur/pribadi/{lembur:id}/destroy', [PresensiController::class, 'destroyLembur'])->name('presensi.lembur.pribadi.destroy');
         Route::get('/presensi/lembur/karyawan', [PresensiController::class, 'lemburKaryawan'])->name('presensi.lembur.karyawan');
         Route::get('/presensi/lembur/detail/{lembur:id}', [PresensiController::class, 'detailLembur'])->name('presensi.lembur.detail');
         Route::get('/presensi/buat-lembur', [PresensiController::class, 'createLembur'])->name('presensi.lembur.create');
@@ -140,6 +146,10 @@ Route::middleware('isNotSuspend')->group(function () {
         Route::post('/presensi/{lembur:id}/tolak-lembur', [PresensiController::class, 'tolakLembur'])->name('presensi.lembur.tolak');
         Route::get('/presensi/{lembur:id}/terima-lembur', [PresensiController::class, 'terimaLembur'])->name('presensi.lembur.terima');
 
+        //perintah lembur
+        Route::get('/presensi/perintah-lembur', [PresensiController::class, 'perintahLembur'])->name('presensi.perintahlembur');
+        Route::get('/presensi/perintah-lembur/add', [PresensiController::class, 'addPerintahLembur'])->name('presensi.perintahlembur.add');
+        Route::post('/presensi/perintah-lembur/add/proses', [PresensiController::class, 'storePerintahLembur'])->name('presensi.perintahlembur.store');
 
         // PROFILE
         Route::get('/profil/change-password', [KaryawanController::class, 'changePassword'])->name('profil.changepassword');
@@ -147,7 +157,6 @@ Route::middleware('isNotSuspend')->group(function () {
         Route::get('/profil/{karyawan:email}', [KaryawanController::class, 'profile'])->name('profil');
         Route::get('/profil/kontrak-kerja/{karyawan:email}', [KaryawanController::class, 'kontrakKerja'])->name('profil.kontrakkerja');
 
-        // Pengajuan
         Route::group(['prefix' => 'pengajuan'], function () {
             Route::resource('hutangoperasional', HutangOperasionalController::class);
             Route::resource('operasionalkantor', OperasionalKantorController::class);
@@ -166,6 +175,20 @@ Route::middleware('isNotSuspend')->group(function () {
         Route::get('pengajuan/revisi', [PengajuanController::class, 'revisi'])->name('pengajuan.revisi');
         Route::get('pengajuan/add/{id}', [PengajuanController::class, 'add'])->name('pengajuan.add');
         Route::resource('pengajuan', PengajuanController::class);
+
+        /*================================
+                     APPROVAL
+        =============================== */
+        Route::prefix('/approval')->group(function () {
+            Route::name('approval')->group(function () {
+
+                Route::get('/', [ApprovalController::class, 'index']);
+                Route::get('/salary', [ApprovalController::class, 'employeeSalary'])->name('.salary');
+                Route::get('/salary/detail/{pengajuan_gaji}', [ApprovalController::class, 'detailEmployeeSalary'])->name('.salary.detail');
+                Route::get('/salary/{pengajuan_gaji}/approve', [ApprovalController::class, 'approveEmployeeSalary'])->name('.salary.approve');
+                Route::post('/salary/{pengajuan_gaji}/reject', [ApprovalController::class, 'rejectEmployeeSalary'])->name('.salary.reject');
+            });
+        });
     });
 });
 
@@ -193,6 +216,16 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/karyawan/nonaktifkan-karyawan', [KaryawanController::class, 'nonaktifkanKaryawan'])->name('karyawan.nonaktifkan');
     Route::post('/karyawan/change-password', [KaryawanController::class, 'changePasswordKaryawanPanel'])->name('karyawan.changepassword');
 
+    // karyawan harian
+    Route::get('/karyawan/harian/datatables', [KaryawanController::class, 'karyawanHarianDatatable'])->name('admin.karyawan.harian.datatables');
+    Route::post('/karyawan/harian', [KaryawanController::class, 'storeKaryawanHarian'])->name('admin.karyawan.harian.store');
+    Route::get('/karyawan/harian/{karyawan:id}/setjamkerja', [KonfigurasiController::class, 'setjamkerja'])->name('karyawan.harian.jamkerja');
+    Route::get('/karyawan/harian/detail/{id}', [KaryawanController::class, 'karyawanHarianDetail'])->name('admin.karyawan.harian.detail');
+    Route::post('/karyawan/harian/detail/update/{id}', [KaryawanController::class, 'updateKaryawanHarian'])->name('admin.karyawan.harian.update');
+    Route::post('/karyawan/harian/detail/add/sp/{id}', [KaryawanController::class, 'addSuratPernyataan'])->name('admin.karyawan.harian.add.sp');
+    Route::post('/karyawan/harian/detail/edit/sp/{id} ', [KaryawanController::class, 'editSuratPernyataan'])->name('admin.karyawan.harian.edit.sp');
+    Route::get('/karyawan/harian/detail/delete/sp/{id} ', [KaryawanController::class, 'deleteSuratPernyataan'])->name('admin.karyawan.harian.sp.delete');
+
     // jobdesk
     Route::get('/karyawan/jobdesk/{karyawan:email}', [KaryawanController::class, 'karyawanJobdesk'])->name('admin.karyawan.jobdesk');
     Route::post('/karyawan/jobdesk/', [KaryawanController::class, 'karyawanJobdeskStore'])->name('admin.karyawan.jobdeskstore');
@@ -202,7 +235,7 @@ Route::middleware(['auth:user'])->group(function () {
 
 
     // transfer
-    Route::post('/karyawan/transfer', [KaryawanController::class, 'karyawanTrnaferStore'])->name('karyawan.transfer.store');
+    Route::post('/karyawan/transfer', [KaryawanController::class, 'karyawanTransferStore'])->name('karyawan.transfer.store');
 
 
     //Departemen
@@ -212,6 +245,13 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/departemen/edit', [DepartemenController::class, 'edit']);
     Route::post('/departemen/{kode_dept}/update', [DepartemenController::class, 'update']);
     Route::post('/departemen/{kode_dept}/delete', [DepartemenController::class, 'delete']);
+
+    //Jabatan
+    Route::get('/jabatan', [JabatanController::class, 'indexJabatan']);
+    Route::get('/jabatan/tetap/datatables', [JabatanController::class, 'jabatanTetapDatatables'])->name('jabatan.datatables');
+    Route::get('/jabatan/harian/datatables', [JabatanController::class, 'jabatanHarianDatatables'])->name('jabatan.harian.datatables');
+    Route::post('/jabatan/add', [JabatanController::class, 'addJabatan']);
+    Route::post('/jabatan/edit/{id}', [JabatanController::class, 'editJabatan']);
 
     //Presensi
     Route::get('/presensi/monitoring', [PresensiController::class, 'monitoring']);
@@ -285,13 +325,8 @@ Route::middleware(['auth:user'])->group(function () {
     Route::get('/presensi/izin/karyawan', [PresensiController::class, 'izinKaryawanAdmin']);
     Route::post('/presensi/izin/karyawan/search', [PresensiController::class, 'izinKaryawanAdminSearch']);
     Route::get('/presensi/izin/karyawan/laporan', [PresensiController::class, 'izinKaryawanAdminHasil']);
+    Route::post('/presensi/izin/karyawan/track', [PresensiController::class, 'izinAjax'])->name('izin.ajax');
 
-    Route::get('/panel/pengajuan', [PanelPengajuanController::class, 'index'])->name('panelpengajuan.index');
-    Route::delete('/panel/pengajuan/delete/{id}', [PanelPengajuanController::class, 'destroy'])->name('panelpengajuan.destroy');
-    Route::get('/panel/pengajuan/{id}/edit', [PanelPengajuanController::class, 'edit'])->name('panelpengajuan.edit');
-    Route::post('/panel/pengajuan/{id}', [PanelPengajuanController::class, 'update'])->name('panelpengajuan.update');
-    Route::get('/panel/rencanakerja', [PanelRencanaKerjaController::class, 'index']);
-    Route::get('/panel/pengajuan/{id}', [PanelPengajuanController::class, 'list'])->name('panelpengajuan.list');
 
     //Cabang
     Route::get('/cabang/datatables', [CabangController::class, 'cabangDatatables'])->name('cabang.datatables');
@@ -300,6 +335,7 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/cabang/edit', [CabangController::class, 'edit']);
     Route::post('/cabang/update', [CabangController::class, 'update']);
     Route::post('/cabang/{kode_cabang}/delete', [CabangController::class, 'delete']);
+    Route::get('/cabang/map/{id}', [CabangController::class, 'mapCabang']);
 
     //Konfigurasi
 
@@ -373,6 +409,10 @@ Route::middleware(['auth:user'])->group(function () {
             Route::post('/bonus/karyawan/edit/{id} ', [PayrollController::class, 'editEmployeeBonus'])->name('bonus.karyawan.edit');
             Route::post('/bonus/karyawan/delete/{id} ', [PayrollController::class, 'deleteEmployeeBonus'])->name('bonus.karyawan.delete');
             Route::post('/bonus/karyawan/search', [PayrollController::class, 'searchEmployeeBonus'])->name('bonus.karyawan.search');
+
+            //pengajuan gaji
+            Route::post('/pengajuan/add', [PayrollController::class, 'createSalarySubmission'])->name('pengajuan.add');
+            Route::post('/pengajuan/track', [PayrollController::class, 'salaryAjax'])->name('gaji.ajax');
         });
     });
 

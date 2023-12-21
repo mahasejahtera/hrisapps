@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cabang;
-use App\Models\Departemen;
 use App\Models\IndonesiaDistrict;
 use App\Models\IndonesiaProvince;
 use App\Models\IndonesiaRegency;
@@ -17,8 +15,6 @@ use App\Models\KaryawanEducation;
 use App\Models\KaryawanFamily;
 use App\Models\KaryawanJobdesk;
 use App\Models\KaryawanSibling;
-use App\Models\PengajuanGaji;
-use App\Models\Presensi;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,19 +36,9 @@ class DashboardController extends Controller
     // Dashboard
     public function index()
     {
-        $roleId = Auth::guard('karyawan')->user()->role_id;
-        $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
-        $departmentId = Auth::guard('karyawan')->user()->contract->department_id;
-        $approveCount = 0;
-
-        // search employeeSalarySubmission Count
-        if($roleId == 2 && $departmentId == 9 || $jabatanId == 34) $approveCount += PengajuanGaji::where('status_approved', 0)->count();
-        if($roleId == 4) $approveCount += PengajuanGaji::where('status_approved', 1)->count();
-        if($roleId == 5) $approveCount += PengajuanGaji::where('status_approved', 2)->count();
 
         $data = [
-            'title'             => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
-            'approveCount'      => $approveCount
+            'title'     => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera'
         ];
 
 
@@ -1338,12 +1324,7 @@ class DashboardController extends Controller
 
     public function dashboardadmin()
     {
-        $data = [
-            'karyawan' => Karyawan::all()->count(),
-            'karyawanMasukHariIni' => Presensi::where('tgl_presensi', date('Y-m-d'))->count(),
-            'departemen' => Departemen::all()->count(),
-            'cabang' => Cabang::all()->count(),
-        ];
-        return view('dashboard.dashboardadmin', $data);
+        $karyawan = Karyawan::all()->count();
+        return view('dashboard.dashboardadmin', compact('karyawan'));
     }
 }
