@@ -524,6 +524,7 @@ var dmswitch = $(".dark-mode-switch");
 dmswitch.on('change', function () {
     dmswitch.prop('checked', this.checked);
 });
+///////////////////////////////////////////////////////////////////////////
 
 function formatNumber(input) {
     let value = input.value;
@@ -575,4 +576,3 @@ function updateTotalBiaya() {
     document.getElementById('total-biaya').value = new Intl.NumberFormat('id-ID').format(totalBiaya);
 }
 ///////////////////////////////////////////////////////////////////////////
-
