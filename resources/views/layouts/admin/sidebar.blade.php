@@ -206,13 +206,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/panel/dashboardadmin">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-                                <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-                                <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path
+                                    d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z">
+                                </path>
                             </svg>
                         </span>
                         <span class="nav-link-title">
@@ -225,22 +223,19 @@
                         href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button"
                         aria-expanded="{{ request()->is(['karyawan', 'departemen', 'cabang']) ? 'true' : '' }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" />
-                                <path d="M12 12l8 -4.5" />
-                                <path d="M12 12l0 9" />
-                                <path d="M12 12l-8 -4.5" />
-                                <path d="M16 5.25l-8 4.5" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path
+                                    d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z">
+                                </path>
                             </svg>
                         </span>
                         <span class="nav-link-title">
                             Data Karyawan
                         </span>
                     </a>
-                    <div class="dropdown-menu {{ request()->is(['karyawan*', 'departemen', 'cabang']) ? 'show' : '' }}">
+                    <div
+                        class="dropdown-menu {{ request()->is(['karyawan*', 'departemen*', 'cabang*', 'jabatan*']) ? 'show' : '' }}">
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
                                 <a class="dropdown-item {{ request()->is(['karyawan*']) ? 'active' : '' }}"
@@ -250,6 +245,10 @@
                                 <a class="dropdown-item {{ request()->is(['departemen']) ? 'active' : '' }}"
                                     href="/departemen">
                                     Departemen
+                                </a>
+                                <a class="dropdown-item {{ request()->is(['jabatan']) ? 'active' : '' }}"
+                                    href="/jabatan">
+                                    Jabatan
                                 </a>
                                 <a class="dropdown-item {{ request()->is(['cabang']) ? 'active' : '' }}"
                                     href="/cabang">
@@ -264,22 +263,19 @@
                         href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button"
                         aria-expanded="{{ request()->is(['izinsakit', 'monitoring', 'laporan', 'rekap', 'jamkerja', 'jamkerjadept']) ? 'true' : '' }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <!-- Download SVG icon from http://tabler-icons.io/i/package -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alarm"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 13m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                                <path d="M12 10l0 3l2 0"></path>
-                                <path d="M7 4l-2.75 2"></path>
-                                <path d="M17 4l2.75 2"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path
+                                    d="M72,128a134.63,134.63,0,0,1-14.16,60.47,8,8,0,1,1-14.32-7.12A118.8,118.8,0,0,0,56,128,71.73,71.73,0,0,1,83,71.8,8,8,0,1,1,93,84.29,55.76,55.76,0,0,0,72,128Zm56-8a8,8,0,0,0-8,8,184.12,184.12,0,0,1-23,89.1,8,8,0,0,0,14,7.76A200.19,200.19,0,0,0,136,128,8,8,0,0,0,128,120Zm0-32a40,40,0,0,0-40,40,8,8,0,0,0,16,0,24,24,0,0,1,48,0,214.09,214.09,0,0,1-20.51,92A8,8,0,1,0,146,226.83,230,230,0,0,0,168,128,40,40,0,0,0,128,88Zm0-64A104.11,104.11,0,0,0,24,128a87.76,87.76,0,0,1-5,29.33,8,8,0,0,0,15.09,5.33A103.9,103.9,0,0,0,40,128a88,88,0,0,1,176,0,282.24,282.24,0,0,1-5.29,54.45,8,8,0,0,0,6.3,9.4,8.22,8.22,0,0,0,1.55.15,8,8,0,0,0,7.84-6.45A298.37,298.37,0,0,0,232,128,104.12,104.12,0,0,0,128,24ZM94.4,152.17A8,8,0,0,0,85,158.42a151,151,0,0,1-17.21,45.44,8,8,0,0,0,13.86,8,166.67,166.67,0,0,0,19-50.25A8,8,0,0,0,94.4,152.17ZM128,56a72.85,72.85,0,0,0-9,.56,8,8,0,0,0,2,15.87A56.08,56.08,0,0,1,184,128a252.12,252.12,0,0,1-1.92,31A8,8,0,0,0,189,168a8.39,8.39,0,0,0,1,.06,8,8,0,0,0,7.92-7,266.48,266.48,0,0,0,2-33A72.08,72.08,0,0,0,128,56Zm57.93,128.25a8,8,0,0,0-9.75,5.75c-1.46,5.69-3.15,11.4-5,17a8,8,0,0,0,5,10.13,7.88,7.88,0,0,0,2.55.42,8,8,0,0,0,7.58-5.46c2-5.92,3.79-12,5.35-18.05A8,8,0,0,0,185.94,184.26Z">
+                                </path>
                             </svg>
                         </span>
                         <span class="nav-link-title">
                             Data Absensi
                         </span>
                     </a>
-                    <div class="dropdown-menu {{ request()->is(['presensi/izinsakit', 'presensi/monitoring', 'presensi/laporan', 'presensi/rekap', 'konfigurasi/jamkerja', 'konfigurasi/jamkerjadept', 'presensi/izin/karyawan', 'presensi/hari/libur', 'presensi/detailabsenpresensi', 'getpresensi', 'presensi/persetujuan', 'presensi/persetujuan/search', 'presensi/penolakan', 'presensi/penolakan/search']) ? 'show' : '' }}">
+                    <div
+                        class="dropdown-menu {{ request()->is(['presensi/izinsakit', 'presensi/monitoring', 'presensi/laporan', 'presensi/rekap', 'konfigurasi/jamkerja', 'konfigurasi/jamkerjadept', 'presensi/izin/karyawan', 'presensi/hari/libur', 'presensi/detailabsenpresensi', 'getpresensi', 'presensi/persetujuan', 'presensi/persetujuan/search', 'presensi/penolakan', 'presensi/penolakan/search']) ? 'show' : '' }}">
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
                                 <a class="dropdown-item  {{ request()->is('presensi/hari/libur') ? 'active' : '' }}"
@@ -300,11 +296,11 @@
                                 </a>
                                 <a class="dropdown-item {{ request()->is(['konfigurasi/jamkerja']) ? 'active' : '' }}"
                                     href="/konfigurasi/jamkerja">
-                                    Konfigurasi Jam Kerja
+                                    Jam Kerja
                                 </a>
                                 <a class="dropdown-item {{ request()->is(['konfigurasi/jamkerjadept']) ? 'active' : '' }}"
                                     href="/konfigurasi/jamkerjadept">
-                                    Konfig Jam Kerja Departmen
+                                    Jam Kerja Departemen
                                 </a>
                             </div>
                         </div>
@@ -312,24 +308,23 @@
 
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['payroll','payroll.*']) ? 'active' : '' }}" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button" aria-expanded="{{ request()->routeIs(['payroll']) ? 'true' : '' }}">
+                    <a class="nav-link dropdown-toggle {{ request()->routeIs(['payroll', 'payroll.*']) ? 'active' : '' }}"
+                        href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="false" role="button"
+                        aria-expanded="{{ request()->routeIs(['payroll']) ? 'true' : '' }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                             <!-- Download SVG icon from http://tabler-icons.io/i/package -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alarm"
-                                width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M12 13m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
-                                <path d="M12 10l0 3l2 0"></path>
-                                <path d="M7 4l-2.75 2"></path>
-                                <path d="M17 4l2.75 2"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path
+                                    d="M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V104H224v88Zm-16-24a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h32A8,8,0,0,1,208,168Zm-64,0a8,8,0,0,1-8,8H120a8,8,0,0,1,0-16h16A8,8,0,0,1,144,168Z">
+                                </path>
                             </svg>
                         </span>
                         <span class="nav-link-title">
                             Data Payroll
                         </span>
                     </a>
-                    <div class="dropdown-menu {{ request()->routeIs(['payroll.','payroll.*']) ? 'show' : '' }}">
+                    <div class="dropdown-menu {{ request()->routeIs(['payroll.', 'payroll.*']) ? 'show' : '' }}">
                         <div class="dropdown-menu-columns">
                             <div class="dropdown-menu-column">
                                 <a class="dropdown-item {{ request()->routeIs(['payroll.']) ? 'active' : '' }}"
@@ -357,16 +352,11 @@
                         data-bs-auto-close="false" role="button"
                         aria-expanded="{{ request()->is(['izinsakit', 'monitoring', 'laporan', 'rekap', 'jamkerja', 'jamkerjadept']) ? 'true' : '' }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-file-analytics" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
-                                <path d="M9 17l0 -5"></path>
-                                <path d="M12 17l0 -1"></path>
-                                <path d="M15 17l0 -3"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path
+                                    d="M168,112h48a16,16,0,0,0,16-16V48a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16V64h-8a32,32,0,0,0-32,32v24H80v-8A16,16,0,0,0,64,96H32a16,16,0,0,0-16,16v32a16,16,0,0,0,16,16H64a16,16,0,0,0,16-16v-8h32v24a32,32,0,0,0,32,32h8v16a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V160a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16v16h-8a16,16,0,0,1-16-16V96a16,16,0,0,1,16-16h8V96A16,16,0,0,0,168,112ZM64,144H32V112H64v32Zm104,16h48v48H168Zm0-112h48V96H168Z">
+                                </path>
                             </svg>
                         </span>
                         <span class="nav-link-title">
@@ -404,16 +394,11 @@
                         data-bs-auto-close="false" role="button"
                         aria-expanded="{{ request()->is(['izinsakit', 'monitoring', 'laporan', 'rekap', 'jamkerja', 'jamkerjadept']) ? 'true' : '' }}">
                         <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-file-analytics" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
-                                <path d="M9 17l0 -5"></path>
-                                <path d="M12 17l0 -1"></path>
-                                <path d="M15 17l0 -3"></path>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path
+                                    d="M216,56H176V48a24,24,0,0,0-24-24H104A24,24,0,0,0,80,48v8H40A16,16,0,0,0,24,72V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V72A16,16,0,0,0,216,56ZM40,112H216v48H40ZM96,48a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96ZM216,72V96H40V72Zm0,128H40V176H216v24Z">
+                                </path>
                             </svg>
                         </span>
                         <span class="nav-link-title">
@@ -429,7 +414,6 @@
                                 <a class="dropdown-item  ">
                                     Tugas Karyawan
                                 </a>
-
                             </div>
                         </div>
                     </div>
@@ -439,18 +423,12 @@
                     <a class="nav-link dropdown-toggle " href="#navbar-base" data-bs-toggle="dropdown"
                         data-bs-auto-close="false" role="button"
                         aria-expanded="{{ request()->is(['izinsakit', 'monitoring', 'laporan', 'rekap', 'jamkerja', 'jamkerjadept']) ? 'true' : '' }}">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-archive-filled" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <rect x="2" y="3" width="20" height="4" rx="2" stroke-width="0"
-                                    fill="currentColor"></rect>
-                                <path
-                                    d="M19 9c.513 0 .936 .463 .993 1.06l.007 .14v7.2c0 1.917 -1.249 3.484 -2.824 3.594l-.176 .006h-10c-1.598 0 -2.904 -1.499 -2.995 -3.388l-.005 -.212v-7.2c0 -.663 .448 -1.2 1 -1.2h14zm-5 2h-4l-.117 .007a1 1 0 0 0 0 1.986l.117 .007h4l.117 -.007a1 1 0 0 0 0 -1.986l-.117 -.007z"
-                                    stroke-width="0" fill="currentColor"></path>
-                            </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                            viewBox="0 0 256 256">
+                            <path
+                                d="M223.16,68.42l-16-32A8,8,0,0,0,200,32H56a8,8,0,0,0-7.16,4.42l-16,32A8.08,8.08,0,0,0,32,72V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V72A8.08,8.08,0,0,0,223.16,68.42ZM60.94,48H195.06l8,16H52.94ZM208,208H48V80H208V208Zm-42.34-61.66a8,8,0,0,1,0,11.32l-32,32a8,8,0,0,1-11.32,0l-32-32a8,8,0,0,1,11.32-11.32L120,164.69V104a8,8,0,0,1,16,0v60.69l18.34-18.35A8,8,0,0,1,165.66,146.34Z">
+                            </path>
+                        </svg>
                         </span>
                         <span class="nav-link-title">
                             Arsip
