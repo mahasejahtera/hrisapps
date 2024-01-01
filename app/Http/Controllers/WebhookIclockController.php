@@ -8,7 +8,7 @@ use App\Models\Setjamkerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class WebhookIclockController extends Controller
+class WebhookIclockController extends BaseController
 {
     public function index(Request $request){
         $data = $request->post('data');
@@ -36,13 +36,12 @@ class WebhookIclockController extends Controller
 
                 // get kode jam kerja
                 $hari = hariIndo(date('N'));
-                Log::info($hari);
                 $jamkerja = Setjamkerja::with(['jam_kerja'])
                             ->where('nik', $kry->nik)
                             ->where('hari', $hari)
                             ->first();
 
-                Log::info($jamkerja);
+                $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])->where('nik', $kry->nik)->first();
 
                 $jamMasuk = $jamkerja->jam_kerja->jam_masuk;
                 $batasAbsenMasuk = $jamkerja->jam_kerja->akhir_jam_masuk;
@@ -83,10 +82,12 @@ class WebhookIclockController extends Controller
                                 'jam_in'                => $jam,
                                 'kode_jam_kerja'        => $jamkerja->kode_jam_kerja,
                                 'status_absen'          => 2,
+                                'absen_masuk_type'      => 2,
                                 'finger_status'         => $fingerStatus,
                                 'is_late'               => $is_late,
                                 'status'                => $status,
-                                'absen_in_status'       => $status
+                                'absen_in_status'       => $status,
+                                'cabang_absen'          => $karyawan->contract->kode_cabang
                             ];
 
                             Presensi::create($data);
@@ -102,6 +103,7 @@ class WebhookIclockController extends Controller
                             if(empty($presensi->jam_out)) {
                                 // kalau kosong insert
                                 $presensi->jam_out = $jam;
+                                $presensi->absen_pulang_type = 2;
                                 $presensi->early_out = $earlyOut;
                                 $presensi->save();
 
@@ -113,6 +115,7 @@ class WebhookIclockController extends Controller
                                     // jam pulang lebih awal atau tidak
                                     // kalau kosong insert
                                     $presensi->jam_out = $jam;
+                                    $presensi->absen_pulang_type = 2;
                                     $presensi->early_out = $earlyOut;
                                     $presensi->lembur_in = $jam;
                                     $presensi->save();
@@ -122,8 +125,9 @@ class WebhookIclockController extends Controller
                                 } else {
                                     // kalau ada datanya update jam pulang dan lembur mulai
                                     if($presensi->jam_out < $jamPulang) {
-                                        $presensi->early_out = $earlyOut;
                                         $presensi->jam_out = $jam;
+                                        $presensi->absen_pulang_type = 2;
+                                        $presensi->early_out = $earlyOut;
                                     }
                                     $presensi->lembur_in = $jam;
                                     $presensi->save();

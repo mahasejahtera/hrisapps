@@ -10,28 +10,18 @@ use App\Models\KaryawanBiodata;
 use App\Models\KaryawanContract;
 use App\Models\Lembur;
 use App\Models\Loan;
-use App\Models\PengajuanGaji;
 use App\Models\Pengajuanizin;
 use App\Models\Potongan;
 use App\Models\PotonganJenis;
 use App\Models\Presensi;
-use App\Models\TrackingGaji;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
-class PayrollController extends BaseController
+class PayrollController extends Controller
 {
-    private $suratController;
-
-    public function __construct()
-    {
-        $this->suratController = new SuratController();
-    }
-
     /*===========================================
                     DATATABLE
     ===========================================*/
@@ -153,20 +143,22 @@ class PayrollController extends BaseController
     public function payrollReport()
     {
         $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])->where('is_daily', 0)->orderBy('nama_lengkap', 'ASC')->get();
+        $karyawan = DB::table('karyawan')->orderBy('nama_lengkap')->get();
         return view('payroll.report.payroll-report', compact('namabulan', 'karyawan'));
     }
 
     public function employeeReportPayroll(Request $request)
     {
+
         $nik = $request->nik;
         $bulan = $request->bulan;
         $tahun = $request->tahun;
         $status = $request->status;
-        $karyawan = Karyawan::where('is_daily', 0)->get();
-        $karyawanPribadi = Karyawan::with(['jabatan_kerja', 'department', 'contract', 'oldContract'])->where('nik', $nik)
+        $karyawan = Karyawan::all();
+        $karyawanPribadi = Karyawan::with(['jabatan_kerja', 'department', 'contract', 'oldContract'])->where('nik', $nik)->first();
+        $karyawanGaji = KaryawanContract::where('karyawan_id', $karyawanPribadi->id)
+            ->orderBy('id', 'DESC')
             ->first();
-        $karyawanGaji = $karyawanPribadi->contract;
         $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
         //Pengambilan data bulan sebelumnya dan tahun selanjutnya
@@ -177,8 +169,6 @@ class PayrollController extends BaseController
             $tahun_sebelumnya = $tahun - 1;
         }
 
-        $today = Carbon::now();
-        $todayFormatted = $today->format('Y-m-d');
         $startDate = Carbon::create($tahun_sebelumnya, $bulan_sebelumnya, 29);
         $endDate = Carbon::create($tahun, $bulan, 28);
 
@@ -245,47 +235,18 @@ class PayrollController extends BaseController
             ->count();
 
         // Total Jumlah Masuk
-        $getLibur = Holiday::whereDate('holidays_date', '<=', $endDate)
-            ->whereBetween('holidays_date', [$startDate, date('Y-m-d')])
-            ->get();
-
-        $JmlLibur = $getLibur->count();
-
-        //hitung total tanggal merah hari minggu bulanan
-        $totalLiburMinggu = 0;
-        foreach ($getLibur as $holiday) {
-            $tanggalLibur = Carbon::parse($holiday->holidays_date);
-            if ($tanggalLibur->dayOfWeek == Carbon::SUNDAY) {
-                $totalLiburMinggu++;
-            }
-        }
-
-        //total jumlah masuk
+        $JmlLibur = Holiday::whereBetween('holidays_date', [$startDate, $endDate])->count();
         $jmlMasuk += $JmlLibur;
-        $jmlMasuk -= $totalLiburMinggu;
         $jmlMasuk += $jumlahcuti;
         $jmlMasuk += $jumlahsakit;
         $jmlMasuk += $jumlahizin;
 
-        //hitung jumlah hari kerja
-        $jumlahHariKerja = 0;
-        $periode = CarbonPeriod::create($startDate, $today);
-        foreach ($periode as $date) {
-            if ($date->dayOfWeek != Carbon::SUNDAY) {
-                $jumlahHariKerja++;
-            }
+
+        // Hitung Potongan Absensi
+        $mangkir = 26 - $jmlMasuk;
+        if ($mangkir < 0) {
+            $mangkir = 0;
         }
-
-        if ($jumlahHariKerja > 26) $jumlahHariKerja = 26;
-
-        //hitung mangkir
-        $jumlahHariKerja += $JmlLibur;
-        $jumlahHariKerja -= $totalLiburMinggu;
-        $mangkir = $jumlahHariKerja - $jmlMasuk;
-        // dd([$jumlahHariKerja, $jmlMasuk, $mangkir]);
-
-        if ($mangkir < 0) $mangkir = 0;
-        //potongan mangkir
         $potonganmangkir = ($karyawanGaji->salary / 26) * $mangkir;
 
         // hitung gaji pokok dan operasional
@@ -302,31 +263,31 @@ class PayrollController extends BaseController
         $potonganTidakAbsenPulang = 0;
         //cek tidak absen pulang
         if ($jmlTidakAbsenPulang >= 3 && $jmlTidakAbsenPulang <= 5) {
-            // $jmlMasuk = $jmlMasuk - 1;
+            $jmlMasuk = $jmlMasuk - 1;
             $potonganTidakAbsenPulang = 1;
         } elseif ($jmlTidakAbsenPulang >= 6 && $jmlTidakAbsenPulang <= 8) {
-            // $jmlMasuk = $jmlMasuk - 2;
+            $jmlMasuk = $jmlMasuk - 2;
             $potonganTidakAbsenPulang = 2;
         } elseif ($jmlTidakAbsenPulang >= 9 && $jmlTidakAbsenPulang <= 11) {
-            // $jmlMasuk = $jmlMasuk - 3;
+            $jmlMasuk = $jmlMasuk - 3;
             $potonganTidakAbsenPulang = 3;
         } elseif ($jmlTidakAbsenPulang >= 12 && $jmlTidakAbsenPulang <= 14) {
-            // $jmlMasuk = $jmlMasuk - 4;
+            $jmlMasuk = $jmlMasuk - 4;
             $potonganTidakAbsenPulang = 4;
         } elseif ($jmlTidakAbsenPulang >= 15 && $jmlTidakAbsenPulang <= 17) {
-            // $jmlMasuk = $jmlMasuk - 5;
+            $jmlMasuk = $jmlMasuk - 5;
             $potonganTidakAbsenPulang = 5;
         } elseif ($jmlTidakAbsenPulang >= 18 && $jmlTidakAbsenPulang <= 20) {
-            // $jmlMasuk = $jmlMasuk - 6;
+            $jmlMasuk = $jmlMasuk - 6;
             $potonganTidakAbsenPulang = 6;
         } elseif ($jmlTidakAbsenPulang >= 21 && $jmlTidakAbsenPulang <= 23) {
-            // $jmlMasuk = $jmlMasuk - 7;
+            $jmlMasuk = $jmlMasuk - 7;
             $potonganTidakAbsenPulang = 7;
         } elseif ($jmlTidakAbsenPulang >= 24 && $jmlTidakAbsenPulang <= 26) {
-            // $jmlMasuk = $jmlMasuk - 8;
+            $jmlMasuk = $jmlMasuk - 8;
             $potonganTidakAbsenPulang = 8;
         } else {
-            // $jmlMasuk = $jmlMasuk;
+            $jmlMasuk = $jmlMasuk;
         }
 
         //hitung pro-rata absen pulang
@@ -353,6 +314,7 @@ class PayrollController extends BaseController
             $tgl_lembur = Carbon::parse($lembur->tgl_lembur);
             $jam_mulai = Carbon::parse($lembur->jam_mulai);
             $jam_selesai = Carbon::parse($lembur->jam_selesai);
+
             // cari hari libur
             $hariLiburLembur = Holiday::where('holidays_date', $lembur->tgl_lembur)->count();
 
@@ -363,25 +325,8 @@ class PayrollController extends BaseController
             }
         }
 
-        $hitungLemburJambiasa = 0;
-        if ($selisihjambiasa == 1) {
-            $hitungLemburJambiasa = 1.5;
-        } else if ($selisihjambiasa == 2) {
-            $hitungLemburJambiasa = 3.5;
-        } else if ($selisihjambiasa == 3) {
-            $hitungLemburJambiasa = 5.5;
-        } else if ($selisihjambiasa == 4) {
-            $hitungLemburJambiasa = 7.5;
-        } else if ($selisihjambiasa == 5) {
-            $hitungLemburJambiasa = 9.5;
-        } else if ($selisihjambiasa == 6) {
-            $hitungLemburJambiasa = 11.5;
-        } else {
-            $hitungLemburJambiasa =  0;
-        }
-
         $gajilemburperjam = $gajiPokok / 173;
-        $totalGajiLembur = ($hitungLemburJambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
+        $totalGajiLembur = ($selisihjambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
 
         //UMLK
         $umlk = Presensi::where('nik', $nik)
@@ -417,35 +362,17 @@ class PayrollController extends BaseController
         }
 
         // BONUS
-        //tetap
-        $karyawanBonusTetap = Bonus::with(['karyawan', 'jenis_bonus'])
+        $karyawanBonus = Bonus::with(['karyawan', 'jenis_bonus'])
             ->where('karyawan_id', $karyawanPribadi->id)
-            ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 1)
-            ->where('mulai_bonus', '<=', "$tahun-$bulan->01")
-            ->get();
-
-        $karyawanBonusOther = Bonus::with(['karyawan', 'jenis_bonus'])
-            ->where('karyawan_id', $karyawanPribadi->id)
-            ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 2)
             ->where('bulan_bonus', $bulan)
             ->where('tahun_bonus', $tahun)
             ->get();
 
-
-        $totalBonusTetap = Bonus::with(['karyawan', 'jenis_bonus'])
+        $totalBonus = Bonus::with(['karyawan', 'jenis_bonus'])
             ->where('karyawan_id', $karyawanPribadi->id)
-            ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 1)
-            ->where('mulai_bonus', '<=', "$tahun-$bulan->01")
-            ->sum('jumlah_bonus');
-
-        $totalBonusOther = Bonus::with(['karyawan', 'jenis_bonus'])
-            ->where('karyawan_id', $karyawanPribadi->id)
-            ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 2)
             ->where('bulan_bonus', $bulan)
             ->where('tahun_bonus', $tahun)
             ->sum('jumlah_bonus');
-
-        $totalBonus = $totalBonusTetap + $totalBonusOther;
 
         // hitung total pendapatan
         $totalPendapatan = 0;
@@ -498,6 +425,7 @@ class PayrollController extends BaseController
         // pendapatan gaji
         $totalGaji = $totalPendapatan - $totalPotongan;
 
+
         $data = [
             'namabulan'                 => $namabulan,
             'bulan'                     => $bulan,
@@ -513,8 +441,7 @@ class PayrollController extends BaseController
             'jumlahPotonganTerlambat'   => $jumlahPotonganTerlambat,
             'totalGajiLembur'           => $totalGajiLembur,
             'totalUMLK'                 => $totalumlk,
-            'karyawanBonusTetap'        => $karyawanBonusTetap,
-            'karyawanBonusOther'        => $karyawanBonusOther,
+            'karyawanBonus'             => $karyawanBonus,
             'totalPendapatan'           => $totalPendapatan,
             'totalPinjaman'             => $totalPinjaman,
             'nominalCicilan'            => $nominalCicilan,
@@ -538,11 +465,12 @@ class PayrollController extends BaseController
 
     public function allEmployeePayrollReport(Request $request)
     {
+
         $jenisKontrak = ['tetap', 'percobaan', 'pkwt'];
+
         $employeeTetapList = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
             ->select('karyawan.nik as nik')
             ->join('karyawan_contract', 'karyawan.contract_id', '=', 'karyawan_contract.id')
-            ->where('status', 3)
             ->whereIn('karyawan_contract.contract_status', $jenisKontrak)
             ->orderBy('karyawan_contract.department_id', 'DESC')
             ->orderBy('karyawan.role_id', 'DESC')
@@ -555,7 +483,6 @@ class PayrollController extends BaseController
             ->select('karyawan.nik as nik')
             ->join('karyawan_contract', 'karyawan.contract_id', '=', 'karyawan_contract.id')
             ->where('karyawan_contract.contract_status', 'project')
-            ->where('status', 3)
             ->orderBy('karyawan_contract.department_id', 'DESC')
             ->orderBy('karyawan.role_id', 'DESC')
             ->get();
@@ -563,37 +490,19 @@ class PayrollController extends BaseController
         foreach ($employeeProjectList as $item) {
             $allNiksProject[] = $item->nik;
         }
-        $bulan = $request->bulan;
-        $tahun = $request->tahun;
 
-        $statusNum = 0;
-        if ($request->status == 'project') $statusNum = 1;
-
-        $pengajuanGajiData = PengajuanGaji::where('bulan', $bulan)
-            ->where('tahun', $tahun)
-            ->where('status_karyawan', $statusNum)
-            ->first();
-
-        $statusPayroll = PengajuanGaji::where('bulan', $bulan)
-            ->where('tahun', $tahun)
-            ->where('status_karyawan', 0)
-            ->first();
         $statusKaryawan = $request->status;
-
-        $hrPayrollEmployee = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang', 'atasanApprove', 'jabatanAtasanApprove'])
-            ->where('jabatan_id', 36)
-            ->where('department_id', 9)
-            ->orderBy('id', 'DESC')
-            ->first();
-
         if ($statusKaryawan == 'tetap') {
             $result = [];
             foreach ($allNiksTetap as $nik) {
                 $bulan = $request->bulan;
                 $tahun = $request->tahun;
                 $status = $request->status;
+                $karyawan = Karyawan::all();
                 $karyawanPribadi = Karyawan::with(['jabatan_kerja', 'department', 'contract', 'oldContract'])->where('nik', $nik)->first();
-                $karyawanGaji = $karyawanPribadi->contract;
+                $karyawanGaji = KaryawanContract::where('karyawan_id', $karyawanPribadi->id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
                 $karyawanBiodata = KaryawanBiodata::where('karyawan_id', $karyawanPribadi->id)->first();
                 $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -607,7 +516,7 @@ class PayrollController extends BaseController
 
                 $startDate = Carbon::create($tahun_sebelumnya, $bulan_sebelumnya, 29);
                 $endDate = Carbon::create($tahun, $bulan, 28);
-                $today = Carbon::now();
+
                 //Penghitungan jumlah cuti
                 $cutibulanpertama = Pengajuanizin::where('nik', $nik)
                     ->whereMonth('tgl_mulai_izin', $bulan)
@@ -671,46 +580,18 @@ class PayrollController extends BaseController
                     ->count();
 
                 // Total Jumlah Masuk
-                $getLibur = Holiday::whereDate('holidays_date', '<=', $endDate)
-                    ->whereBetween('holidays_date', [$startDate, date('Y-m-d')])
-                    ->get();
-
-                $JmlLibur = $getLibur->count();
-
-                //hitung total tanggal merah hari minggu bulanan
-                $totalLiburMinggu = 0;
-                foreach ($getLibur as $holiday) {
-                    $tanggalLibur = Carbon::parse($holiday->holidays_date);
-                    if ($tanggalLibur->dayOfWeek == Carbon::SUNDAY) {
-                        $totalLiburMinggu++;
-                    }
-                }
-
-                //total jumlah masuk
+                $JmlLibur = Holiday::whereBetween('holidays_date', [$startDate, $endDate])->count();
                 $jmlMasuk += $JmlLibur;
-                $jmlMasuk -= $totalLiburMinggu;
                 $jmlMasuk += $jumlahcuti;
                 $jmlMasuk += $jumlahsakit;
                 $jmlMasuk += $jumlahizin;
 
-                //hitung jumlah hari kerja
-                $jumlahHariKerja = 0;
-                $periode = CarbonPeriod::create($startDate, $today);
-                foreach ($periode as $date) {
-                    if ($date->dayOfWeek != Carbon::SUNDAY) {
-                        $jumlahHariKerja++;
-                    }
+
+                // Hitung Potongan Absensi
+                $mangkir = 26 - $jmlMasuk;
+                if ($mangkir < 0) {
+                    $mangkir = 0;
                 }
-
-                if ($jumlahHariKerja > 26) $jumlahHariKerja = 26;
-
-                //hitung mangkir
-                $jumlahHariKerja += $JmlLibur;
-                $jumlahHariKerja -= $totalLiburMinggu;
-                $mangkir = $jumlahHariKerja - $jmlMasuk;
-                if ($mangkir < 0) $mangkir = 0;
-
-                //potongan mangkir
                 $potonganmangkir = ($karyawanGaji->salary / 26) * $mangkir;
 
                 // hitung gaji pokok dan operasional
@@ -727,31 +608,31 @@ class PayrollController extends BaseController
                 $potonganTidakAbsenPulang = 0;
                 //cek tidak absen pulang
                 if ($jmlTidakAbsenPulang >= 3 && $jmlTidakAbsenPulang <= 5) {
-                    // $jmlMasuk = $jmlMasuk - 1;
+                    $jmlMasuk = $jmlMasuk - 1;
                     $potonganTidakAbsenPulang = 1;
                 } elseif ($jmlTidakAbsenPulang >= 6 && $jmlTidakAbsenPulang <= 8) {
-                    // // $jmlMasuk = $jmlMasuk - 2;
+                    $jmlMasuk = $jmlMasuk - 2;
                     $potonganTidakAbsenPulang = 2;
                 } elseif ($jmlTidakAbsenPulang >= 9 && $jmlTidakAbsenPulang <= 11) {
-                    // // $jmlMasuk = $jmlMasuk - 3;
+                    $jmlMasuk = $jmlMasuk - 3;
                     $potonganTidakAbsenPulang = 3;
                 } elseif ($jmlTidakAbsenPulang >= 12 && $jmlTidakAbsenPulang <= 14) {
-                    // // $jmlMasuk = $jmlMasuk - 4;
+                    $jmlMasuk = $jmlMasuk - 4;
                     $potonganTidakAbsenPulang = 4;
                 } elseif ($jmlTidakAbsenPulang >= 15 && $jmlTidakAbsenPulang <= 17) {
-                    // // $jmlMasuk = $jmlMasuk - 5;
+                    $jmlMasuk = $jmlMasuk - 5;
                     $potonganTidakAbsenPulang = 5;
                 } elseif ($jmlTidakAbsenPulang >= 18 && $jmlTidakAbsenPulang <= 20) {
-                    // // $jmlMasuk = $jmlMasuk - 6;
+                    $jmlMasuk = $jmlMasuk - 6;
                     $potonganTidakAbsenPulang = 6;
                 } elseif ($jmlTidakAbsenPulang >= 21 && $jmlTidakAbsenPulang <= 23) {
-                    // // $jmlMasuk = $jmlMasuk - 7;
+                    $jmlMasuk = $jmlMasuk - 7;
                     $potonganTidakAbsenPulang = 7;
                 } elseif ($jmlTidakAbsenPulang >= 24 && $jmlTidakAbsenPulang <= 26) {
-                    // // $jmlMasuk = $jmlMasuk - 8;
+                    $jmlMasuk = $jmlMasuk - 8;
                     $potonganTidakAbsenPulang = 8;
                 } else {
-                    // // $jmlMasuk = $jmlMasuk;
+                    $jmlMasuk = $jmlMasuk;
                 }
 
                 //hitung pro-rata absen pulang
@@ -789,25 +670,8 @@ class PayrollController extends BaseController
                     }
                 }
 
-                $hitungLemburJambiasa = 0;
-                if ($selisihjambiasa == 1) {
-                    $hitungLemburJambiasa = 1.5;
-                } else if ($selisihjambiasa == 2) {
-                    $hitungLemburJambiasa = 3.5;
-                } else if ($selisihjambiasa == 3) {
-                    $hitungLemburJambiasa = 5.5;
-                } else if ($selisihjambiasa == 4) {
-                    $hitungLemburJambiasa = 7.5;
-                } else if ($selisihjambiasa == 5) {
-                    $hitungLemburJambiasa = 9.5;
-                } else if ($selisihjambiasa == 6) {
-                    $hitungLemburJambiasa = 11.5;
-                } else {
-                    $hitungLemburJambiasa =  0;
-                }
-
                 $gajilemburperjam = $gajiPokok / 173;
-                $totalGajiLembur = ($hitungLemburJambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
+                $totalGajiLembur = ($selisihjambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
 
                 //UMLK
                 $umlk = Presensi::where('nik', $nik)
@@ -843,35 +707,17 @@ class PayrollController extends BaseController
                 }
 
                 // BONUS
-                //tetap
-                $karyawanBonusTetap = Bonus::with(['karyawan', 'jenis_bonus'])
+                $karyawanBonus = Bonus::with(['karyawan', 'jenis_bonus'])
                     ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 1)
-                    ->where('mulai_bonus', '<=', "$tahun-$bulan->01")
-                    ->get();
-
-                $karyawanBonusOther = Bonus::with(['karyawan', 'jenis_bonus'])
-                    ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 2)
                     ->where('bulan_bonus', $bulan)
                     ->where('tahun_bonus', $tahun)
                     ->get();
 
-
-                $totalBonusTetap = Bonus::with(['karyawan', 'jenis_bonus'])
+                $totalBonus = Bonus::with(['karyawan', 'jenis_bonus'])
                     ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 1)
-                    ->where('mulai_bonus', '<=', "$tahun-$bulan->01")
-                    ->sum('jumlah_bonus');
-
-                $totalBonusOther = Bonus::with(['karyawan', 'jenis_bonus'])
-                    ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 2)
                     ->where('bulan_bonus', $bulan)
                     ->where('tahun_bonus', $tahun)
                     ->sum('jumlah_bonus');
-
-                $totalBonus = $totalBonusTetap + $totalBonusOther;
 
                 // hitung total pendapatan
                 $totalPendapatan = 0;
@@ -928,6 +774,7 @@ class PayrollController extends BaseController
                     'namabulan'                 => $namabulan,
                     'bulan'                     => $bulan,
                     'tahun'                     => $tahun,
+                    'karyawan'                  => $karyawan,
                     'karyawanPribadi'           => $karyawanPribadi,
                     'karyawanGaji'              => $karyawanGaji,
                     'jmlMasuk'                  => $jmlMasuk,
@@ -938,8 +785,7 @@ class PayrollController extends BaseController
                     'jumlahPotonganTerlambat'   => $jumlahPotonganTerlambat,
                     'totalGajiLembur'           => $totalGajiLembur,
                     'totalUMLK'                 => $totalumlk,
-                    'karyawanBonusTetap'        => $karyawanBonusTetap,
-                    'karyawanBonusOther'        => $karyawanBonusOther,
+                    'karyawanBonus'             => $karyawanBonus,
                     'karyawanBiodata'           => $karyawanBiodata,
                     'totalPendapatan'           => $totalPendapatan,
                     'totalPinjaman'             => $totalPinjaman,
@@ -976,21 +822,20 @@ class PayrollController extends BaseController
                 ->orderBy('id', 'desc')
                 ->first();
 
-            return view('payroll.report.all-employee-payroll-report', compact('result', 'bulan', 'tahun', 'direktur', 'komisaris', 'hrdsvp', 'adminpayroll', 'statusPayroll', 'hrPayrollEmployee', 'pengajuanGajiData'));
+            return view('payroll.report.all-employee-payroll-report', compact('result', 'bulan', 'tahun', 'direktur', 'komisaris', 'hrdsvp', 'adminpayroll'));
         } else {
             $result = [];
             $bulan = $request->bulan;
             $tahun = $request->tahun;
-            $statusPayroll = PengajuanGaji::where('bulan', $bulan)
-                ->where('tahun', $tahun)
-                ->where('status_karyawan', 1)
-                ->first();
             foreach ($allNiksProject as $nik) {
                 $bulan = $request->bulan;
                 $tahun = $request->tahun;
                 $status = $request->status;
+                $karyawan = Karyawan::all();
                 $karyawanPribadi = Karyawan::with(['jabatan_kerja', 'department', 'contract', 'oldContract'])->where('nik', $nik)->first();
-                $karyawanGaji = $karyawanPribadi->contract;
+                $karyawanGaji = KaryawanContract::where('karyawan_id', $karyawanPribadi->id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
                 $karyawanBiodata = KaryawanBiodata::where('karyawan_id', $karyawanPribadi->id)->first();
                 $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -1004,7 +849,7 @@ class PayrollController extends BaseController
 
                 $startDate = Carbon::create($tahun_sebelumnya, $bulan_sebelumnya, 29);
                 $endDate = Carbon::create($tahun, $bulan, 28);
-                $today = Carbon::now();
+
                 //Penghitungan jumlah cuti
                 $cutibulanpertama = Pengajuanizin::where('nik', $nik)
                     ->whereMonth('tgl_mulai_izin', $bulan)
@@ -1068,45 +913,18 @@ class PayrollController extends BaseController
                     ->count();
 
                 // Total Jumlah Masuk
-                $getLibur = Holiday::whereDate('holidays_date', '<=', $endDate)
-                    ->whereBetween('holidays_date', [$startDate, date('Y-m-d')])
-                    ->get();
-
-                $JmlLibur = $getLibur->count();
-
-                //hitung total tanggal merah hari minggu bulanan
-                $totalLiburMinggu = 0;
-                foreach ($getLibur as $holiday) {
-                    $tanggalLibur = Carbon::parse($holiday->holidays_date);
-                    if ($tanggalLibur->dayOfWeek == Carbon::SUNDAY) {
-                        $totalLiburMinggu++;
-                    }
-                }
-
-                //total jumlah masuk
+                $JmlLibur = Holiday::whereBetween('holidays_date', [$startDate, $endDate])->count();
                 $jmlMasuk += $JmlLibur;
-                $jmlMasuk -= $totalLiburMinggu;
                 $jmlMasuk += $jumlahcuti;
                 $jmlMasuk += $jumlahsakit;
                 $jmlMasuk += $jumlahizin;
 
-                //hitung jumlah hari kerja
-                $jumlahHariKerja = 0;
-                $periode = CarbonPeriod::create($startDate, $today);
-                foreach ($periode as $date) {
-                    if ($date->dayOfWeek != Carbon::SUNDAY) {
-                        $jumlahHariKerja++;
-                    }
+
+                // Hitung Potongan Absensi
+                $mangkir = 26 - $jmlMasuk;
+                if ($mangkir < 0) {
+                    $mangkir = 0;
                 }
-
-                if ($jumlahHariKerja > 26) $jumlahHariKerja = 26;
-
-                //hitung mangkir
-                $jumlahHariKerja += $JmlLibur;
-                $jumlahHariKerja -= $totalLiburMinggu;
-                $mangkir = $jumlahHariKerja - $jmlMasuk;
-                if ($mangkir < 0) $mangkir = 0;
-                //potongan mangkir
                 $potonganmangkir = ($karyawanGaji->salary / 26) * $mangkir;
 
                 // hitung gaji pokok dan operasional
@@ -1123,31 +941,31 @@ class PayrollController extends BaseController
                 $potonganTidakAbsenPulang = 0;
                 //cek tidak absen pulang
                 if ($jmlTidakAbsenPulang >= 3 && $jmlTidakAbsenPulang <= 5) {
-                    // $jmlMasuk = $jmlMasuk - 1;
+                    $jmlMasuk = $jmlMasuk - 1;
                     $potonganTidakAbsenPulang = 1;
                 } elseif ($jmlTidakAbsenPulang >= 6 && $jmlTidakAbsenPulang <= 8) {
-                    // $jmlMasuk = $jmlMasuk - 2;
+                    $jmlMasuk = $jmlMasuk - 2;
                     $potonganTidakAbsenPulang = 2;
                 } elseif ($jmlTidakAbsenPulang >= 9 && $jmlTidakAbsenPulang <= 11) {
-                    // $jmlMasuk = $jmlMasuk - 3;
+                    $jmlMasuk = $jmlMasuk - 3;
                     $potonganTidakAbsenPulang = 3;
                 } elseif ($jmlTidakAbsenPulang >= 12 && $jmlTidakAbsenPulang <= 14) {
-                    // $jmlMasuk = $jmlMasuk - 4;
+                    $jmlMasuk = $jmlMasuk - 4;
                     $potonganTidakAbsenPulang = 4;
                 } elseif ($jmlTidakAbsenPulang >= 15 && $jmlTidakAbsenPulang <= 17) {
-                    // $jmlMasuk = $jmlMasuk - 5;
+                    $jmlMasuk = $jmlMasuk - 5;
                     $potonganTidakAbsenPulang = 5;
                 } elseif ($jmlTidakAbsenPulang >= 18 && $jmlTidakAbsenPulang <= 20) {
-                    // $jmlMasuk = $jmlMasuk - 6;
+                    $jmlMasuk = $jmlMasuk - 6;
                     $potonganTidakAbsenPulang = 6;
                 } elseif ($jmlTidakAbsenPulang >= 21 && $jmlTidakAbsenPulang <= 23) {
-                    // $jmlMasuk = $jmlMasuk - 7;
+                    $jmlMasuk = $jmlMasuk - 7;
                     $potonganTidakAbsenPulang = 7;
                 } elseif ($jmlTidakAbsenPulang >= 24 && $jmlTidakAbsenPulang <= 26) {
-                    // $jmlMasuk = $jmlMasuk - 8;
+                    $jmlMasuk = $jmlMasuk - 8;
                     $potonganTidakAbsenPulang = 8;
                 } else {
-                    // $jmlMasuk = $jmlMasuk;
+                    $jmlMasuk = $jmlMasuk;
                 }
 
                 //hitung pro-rata absen pulang
@@ -1185,26 +1003,8 @@ class PayrollController extends BaseController
                     }
                 }
 
-                $hitungLemburJambiasa = 0;
-
-                if ($selisihjambiasa == 1) {
-                    $hitungLemburJambiasa = 1.5;
-                } else if ($selisihjambiasa == 2) {
-                    $hitungLemburJambiasa = 3.5;
-                } else if ($selisihjambiasa == 3) {
-                    $hitungLemburJambiasa = 5.5;
-                } else if ($selisihjambiasa == 4) {
-                    $hitungLemburJambiasa = 7.5;
-                } else if ($selisihjambiasa == 5) {
-                    $hitungLemburJambiasa = 9.5;
-                } else if ($selisihjambiasa == 6) {
-                    $hitungLemburJambiasa = 11.5;
-                } else {
-                    $hitungLemburJambiasa =  0;
-                }
-
                 $gajilemburperjam = $gajiPokok / 173;
-                $totalGajiLembur = ($hitungLemburJambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
+                $totalGajiLembur = ($selisihjambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
 
                 //UMLK
                 $umlk = Presensi::where('nik', $nik)
@@ -1240,35 +1040,17 @@ class PayrollController extends BaseController
                 }
 
                 // BONUS
-                //tetap
-                $karyawanBonusTetap = Bonus::with(['karyawan', 'jenis_bonus'])
+                $karyawanBonus = Bonus::with(['karyawan', 'jenis_bonus'])
                     ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 1)
-                    ->where('mulai_bonus', '<=', "$tahun-$bulan->01")
-                    ->get();
-
-                $karyawanBonusOther = Bonus::with(['karyawan', 'jenis_bonus'])
-                    ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 2)
                     ->where('bulan_bonus', $bulan)
                     ->where('tahun_bonus', $tahun)
                     ->get();
 
-
-                $totalBonusTetap = Bonus::with(['karyawan', 'jenis_bonus'])
+                $totalBonus = Bonus::with(['karyawan', 'jenis_bonus'])
                     ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 1)
-                    ->where('mulai_bonus', '<=', "$tahun-$bulan->01")
-                    ->sum('jumlah_bonus');
-
-                $totalBonusOther = Bonus::with(['karyawan', 'jenis_bonus'])
-                    ->where('karyawan_id', $karyawanPribadi->id)
-                    ->whereRelation('jenis_bonus', 'tipe_bonus', '=', 2)
                     ->where('bulan_bonus', $bulan)
                     ->where('tahun_bonus', $tahun)
                     ->sum('jumlah_bonus');
-
-                $totalBonus = $totalBonusTetap + $totalBonusOther;
 
                 // hitung total pendapatan
                 $totalPendapatan = 0;
@@ -1325,6 +1107,7 @@ class PayrollController extends BaseController
                     'namabulan'                 => $namabulan,
                     'bulan'                     => $bulan,
                     'tahun'                     => $tahun,
+                    'karyawan'                  => $karyawan,
                     'karyawanPribadi'           => $karyawanPribadi,
                     'karyawanGaji'              => $karyawanGaji,
                     'jmlMasuk'                  => $jmlMasuk,
@@ -1335,8 +1118,7 @@ class PayrollController extends BaseController
                     'jumlahPotonganTerlambat'   => $jumlahPotonganTerlambat,
                     'totalGajiLembur'           => $totalGajiLembur,
                     'totalUMLK'                 => $totalumlk,
-                    'karyawanBonusTetap'        => $karyawanBonusTetap,
-                    'karyawanBonusOther'        => $karyawanBonusOther,
+                    'karyawanBonus'             => $karyawanBonus,
                     'karyawanBiodata'           => $karyawanBiodata,
                     'totalPendapatan'           => $totalPendapatan,
                     'totalPinjaman'             => $totalPinjaman,
@@ -1373,7 +1155,7 @@ class PayrollController extends BaseController
                 ->orderBy('id', 'desc')
                 ->first();
 
-            return view('payroll.report.project-employee-payroll-report', compact('result', 'bulan', 'tahun', 'direktur', 'komisaris', 'hrdsvp', 'adminpayroll', 'statusPayroll', 'hrPayrollEmployee', 'pengajuanGajiData'));
+            return view('payroll.report.project-employee-payroll-report', compact('result', 'bulan', 'tahun', 'direktur', 'komisaris', 'hrdsvp', 'adminpayroll'));
         }
     }
 
@@ -1400,21 +1182,23 @@ class PayrollController extends BaseController
         $dari = $request->dari;
         $sampai = $request->sampai;
 
-        $employeeDailyList = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-            ->where('is_daily', 1)
-            ->get();
+        // $allNiksHarian = Karyawan::whereHas('karyawanContract', function ($query){
+        //     $query->where('contract_status', 'harian');
+        // })
+        // ->pluck('nik');
 
-        $hrPayrollEmployee = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang', 'atasanApprove', 'jabatanAtasanApprove'])
-            ->where('jabatan_id', 36)
-            ->where('department_id', 9)
-            ->orderBy('id', 'DESC')
-            ->first();
+        $employeeDailyList = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+            ->select('karyawan.nik as nik')
+            ->join('karyawan_contract', 'karyawan.contract_id', '=', 'karyawan_contract.id')
+            ->where('karyawan_contract.contract_status', 'harian')
+            ->get();
 
         $allNiksHarian = [];
 
         foreach ($employeeDailyList as $item) {
             $allNiksHarian[] = $item->nik;
         }
+
         $result = [];
         foreach ($allNiksHarian as $nik) {
             $karyawanPribadi = Karyawan::where('nik', $nik)
@@ -1428,11 +1212,14 @@ class PayrollController extends BaseController
                 ->where('karyawan_id', $karyawanPribadi->id)
                 ->first();
 
-            //hadir
             $daftarhadir = Presensi::where('nik', $nik)
                 ->whereDate('tgl_presensi', '>=', $dari)
                 ->whereDate('tgl_presensi', '<=', $sampai)
                 ->count();
+
+            //GAJIPOKOK DAN OPERASIONAL
+            $gaji75 = $karyawanGaji->salary * 0.75;
+            $gaji25 = $karyawanGaji->salary * 0.25;
 
             //terlambat
             $dataterlambat = Presensi::where('nik', $nik)
@@ -1442,112 +1229,24 @@ class PayrollController extends BaseController
                 ->get()
                 ->count();
 
-            $jmlTidakAbsenPulang = Presensi::where('nik', $nik)
-                ->whereBetween('tgl_presensi', [$dari, $sampai])
-                ->where('jam_out', null)
-                ->whereIn('absen_in_status', [1, 2, 5])
-                ->count();
-
-            $potonganTidakAbsenPulang = 0;
-
-            //cek tidak absen pulang
-            if ($jmlTidakAbsenPulang >= 3 && $jmlTidakAbsenPulang <= 5) {
-                $daftarhadir = $daftarhadir - 1;
-                $potonganTidakAbsenPulang = 1;
-            } elseif ($jmlTidakAbsenPulang >= 6 && $jmlTidakAbsenPulang <= 8) {
-                $daftarhadir = $daftarhadir - 2;
-                $potonganTidakAbsenPulang = 2;
-            } elseif ($jmlTidakAbsenPulang >= 9 && $jmlTidakAbsenPulang <= 11) {
-                $daftarhadir = $daftarhadir - 3;
-                $potonganTidakAbsenPulang = 3;
-            } elseif ($jmlTidakAbsenPulang >= 12 && $jmlTidakAbsenPulang <= 14) {
-                $daftarhadir = $daftarhadir - 4;
-                $potonganTidakAbsenPulang = 4;
-            } elseif ($jmlTidakAbsenPulang >= 15 && $jmlTidakAbsenPulang <= 17) {
-                $daftarhadir = $daftarhadir - 5;
-                $potonganTidakAbsenPulang = 5;
-            } elseif ($jmlTidakAbsenPulang >= 18 && $jmlTidakAbsenPulang <= 20) {
-                $daftarhadir = $daftarhadir - 6;
-                $potonganTidakAbsenPulang = 6;
-            } elseif ($jmlTidakAbsenPulang >= 21 && $jmlTidakAbsenPulang <= 23) {
-                $daftarhadir = $daftarhadir - 7;
-                $potonganTidakAbsenPulang = 7;
-            } elseif ($jmlTidakAbsenPulang >= 24 && $jmlTidakAbsenPulang <= 26) {
-                $daftarhadir = $daftarhadir - 8;
-                $potonganTidakAbsenPulang = 8;
-            } else {
-                $daftarhadir = $daftarhadir;
-            }
-
-            //hitung pro-rata absen pulang
-            $jmlProRataAbsenPulang = $karyawanGaji->salary * $potonganTidakAbsenPulang;
-
             //potongan
             $potonganterlambat = $dataterlambat * 10000;
+            $potonganabsensi = ($karyawanGaji->salary / 26) * $daftarhadir;
 
-            $dataLembur = Lembur::where('karyawan_id', $karyawanPribadi->id)
-                ->whereBetween('tgl_lembur', [$dari, $sampai])
-                ->where('status_approved', 5)
-                ->get();
-            $selisihjambiasa = 0;
-            $selisihjamminggu = 0;
-
-            foreach ($dataLembur as $lembur) {
-                $tgl_lembur = Carbon::parse($lembur->tgl_lembur);
-                $jam_mulai = Carbon::parse($lembur->jam_mulai);
-                $jam_selesai = Carbon::parse($lembur->jam_selesai);
-                // cari hari libur
-                $hariLiburLembur = Holiday::where('holidays_date', $lembur->tgl_lembur)->count();
-                if ($tgl_lembur->isSunday() || $hariLiburLembur > 0) {
-                    $selisihjamminggu += $jam_mulai->diffInHours($jam_selesai);
-                } else {
-                    $selisihjambiasa += $jam_mulai->diffInHours($jam_selesai);
-                }
-            }
-
-            $hitungLemburJambiasa = 0;
-
-            if ($selisihjambiasa == 1) {
-                $hitungLemburJambiasa = 1.5;
-            } else if ($selisihjambiasa == 2) {
-                $hitungLemburJambiasa = 3.5;
-            } else if ($selisihjambiasa == 3) {
-                $hitungLemburJambiasa = 5.5;
-            } else if ($selisihjambiasa >= 4) {
-                $hitungLemburJambiasa = 7.5;
-            } else {
-                $hitungLemburJambiasa =  0;
-            }
-
-            $gajilemburperjam = ($karyawanGaji->salary * 26) / 173;
-            if ($selisihjambiasa >= 4) {
-                $totalGajiLembur = ($karyawanGaji->salary) + ($selisihjamminggu * $gajilemburperjam * 2);
-            } else {
-                $totalGajiLembur = ($hitungLemburJambiasa * $gajilemburperjam) + ($selisihjamminggu * $gajilemburperjam * 2);
-            }
-            $totalGaji = ($karyawanGaji->salary * $daftarhadir) + $totalGajiLembur;
-
+            $daftartidakhadir = 6 - $daftarhadir;
             $result[$nik] = [
-                'karyawanPribadi'           => $karyawanPribadi,
-                'daftarhadir'               => $daftarhadir,
-                'dataTerlambat'             => $dataterlambat,
-                'jmlTidakAbsenPulang'       => $jmlTidakAbsenPulang,
-                'karyawanGaji'              => $karyawanGaji,
-                'karyawanBiodata'           => $karyawanBiodata,
-                'potonganterlambat'         => $potonganterlambat,
-                'jamLemburHariBiasa'        => $selisihjambiasa,
-                'jamLemburHariLibur'        => $selisihjamminggu,
-                'totalGajiLembur'           => $totalGajiLembur,
-                'totalGaji'                 => $totalGaji,
-                'jmlProRataAbsenPulang'     => $jmlProRataAbsenPulang,
+                'karyawanPribadi' => $karyawanPribadi,
+                'daftarhadir' => $daftarhadir,
+                'daftartidakhadir' => $daftartidakhadir,
+                'karyawanGaji' => $karyawanGaji,
+                'karyawanBiodata' => $karyawanBiodata,
+                'gaji75' => $gaji75,
+                'gaji25' => $gaji25,
+                'potonganterlambat' => $potonganterlambat,
+                'potonganabsensi' => $potonganabsensi,
             ];
         }
-
-        $statusPayroll = PengajuanGaji::where('tgl_mulai', $dari)
-            ->where('status_karyawan', 2)
-            ->first();
-
-        return view('payroll.report.daily-employee-payroll-report', compact('result', 'direktur', 'komisaris', 'hrdsvp', 'adminpayroll', 'dari', 'sampai', 'statusPayroll', 'hrPayrollEmployee'));
+        return view('payroll.report.daily-employee-payroll-report', compact('result', 'direktur', 'komisaris', 'hrdsvp', 'adminpayroll', 'dari', 'sampai'));
     }
 
 
@@ -1606,8 +1305,6 @@ class PayrollController extends BaseController
             'bulan_bonus' => $request->bulan_bonus,
             'tahun_bonus' => $request->tahun_bonus,
         ];
-
-        $data['mulai_bonus'] = "$request->tahun_bonus-$request->bulan_bonus-01";
 
         Bonus::create($data);
         return to_route('payroll.bonus.index')->with('message', 'Bonus Berhasil Ditambahkan');
@@ -1858,7 +1555,6 @@ class PayrollController extends BaseController
                 'tahun_mulai'           => 'required|numeric'
             ]);
 
-            $validatedData['mulai_potongan'] = "$request->tahun_mulai-$request->bulan_mulai-01";
             $validatedData['sisa_bulan_potongan'] = $request->lama_potongan;
             $validatedData['jml_potongan'] = ($request->lama_potongan > 0) ? $request->total_potongan / $request->lama_potongan : $request->total_potongan;
 
@@ -1877,11 +1573,40 @@ class PayrollController extends BaseController
         try {
             $validatedData = $request->validate([
                 'jenis_potongan_id'     => 'required',
-                'total_potongan'        => 'required|numeric',
-                'lama_potongan'         => 'required|numeric',
+                'jml_potongan'          => 'required|numeric',
                 'bulan_mulai'           => 'required|numeric',
                 'tahun_mulai'           => 'required|numeric'
             ]);
+
+            if (!empty($request->lama_potongan)) {
+                $request->validate([
+                    'lama_potongan' => 'numeric'
+                ]);
+
+                $validatedData['lama_potongan'] = $request->lama_potongan;
+                $validatedData['sisa_bulan_potongan'] = $request->lama_potongan;
+            }
+
+            if (!empty($request->total_potongan)) {
+                $request->validate([
+                    'total_potongan' => 'numeric'
+                ]);
+
+                if (empty($request->lama_potongan)) {
+                    return back()->with('error', 'Lama potongan harus diisi!');
+                }
+
+                $deductionsTotal = $request->total_potongan;
+                $deductionsAmount = $request->jml_potongan;
+                $deductionsLength = $request->lama_potongan;
+                $deductionsAmountLength = $deductionsAmount * $deductionsLength;
+
+                if ($deductionsAmountLength != $deductionsTotal) {
+                    return back()->with('error', 'Akumulasi jumlah potongan tidak sama dengan total potongan!');
+                }
+            }
+
+            $validatedData['total_potongan'] = $request->total_potongan;
 
             Potongan::where('id', $request->potongan_id)->update($validatedData);
             return back()->with('success', "Potongan berhasil diubah!");
@@ -1928,9 +1653,6 @@ class PayrollController extends BaseController
             'bulan_pinjam' => $convertbulan,
             'tahun_pinjam' => $request->tahun,
         ];
-
-        $data['mulai_pinjam'] = "$request->tahun-$convertbulan-01";
-
         Loan::create($data);
         return to_route('payroll.loan.index')->with('message', 'Pinjaman Berhasil Ditambahkan');
     }
@@ -1972,89 +1694,5 @@ class PayrollController extends BaseController
         return view('payroll.loan.index', compact('karyawan', 'loan'));
     }
 
-
     /* ===========================================*/
-    /* ============== Pengajuan Gaji =============*/
-    /* ===========================================*/
-
-    public function createSalarySubmission(Request $request)
-    {
-        try {
-
-            // status karyawan
-            $statusLabel = '';
-            $status = $request->status;
-            if ($status == 0) $statusLabel = 'Tetap/Percobaan/PKWT';
-            if ($status == 1) $statusLabel = 'Proyek';
-            if ($status == 2) $statusLabel = 'Harian';
-
-            // get HR Payroll data
-            $hrPayrollEmployee = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang', 'atasanApprove', 'jabatanAtasanApprove'])
-                ->where('jabatan_id', 36)
-                ->where('department_id', 9)
-                ->orderBy('id', 'DESC')
-                ->first();
-
-            // get letter number
-            $noSurat = null;
-            $kodeSurat = 'SPG';
-
-            $noSurat = $this->suratController->getNoSuratBaruKaryawan($kodeSurat, $hrPayrollEmployee->karyawan_id);
-
-            //create surat kontrak
-            $dataSurat = [
-                'karyawan_pembuat_id'       => $hrPayrollEmployee->id,
-                'kategori_kode'             => $kodeSurat,
-                'no_surat'                  => $noSurat,
-                'perihal'                   => "Pengajuan Gaji Karyawan $statusLabel"
-            ];
-
-            $this->suratController->storeSurat($dataSurat);
-
-            $data = [];
-
-            if ($request->status == 2) {
-                $data = [
-                    'tgl_mulai' => $request->dari,
-                    'tgl_selesai' => $request->sampai,
-                ];
-            } else {
-                $data = [
-                    'bulan' => $request->bulan,
-                    'tahun' => $request->tahun,
-                ];
-            }
-
-            $data['no_surat'] = $noSurat;
-            $data['status_karyawan'] = $request->status;
-
-            PengajuanGaji::create($data);
-            return to_route('payroll.')->with('success', "Payroll Karyawan $statusLabel Berhasil Diajukan !");
-        } catch (exception $e) {
-            return to_route('payroll.')->with('error', $e->getMessage());
-        }
-    }
-
-    public function salaryAjax(Request $request)
-    {
-        try {
-            //Get Data Gaji
-            $dataGaji = PengajuanGaji::where('id', $request->gajiId)
-                ->first();
-            //Get Gaji Tracking
-            $gajiTracking = TrackingGaji::with(['pengajuangaji'])
-                ->where('pengajuan_gaji_id', $request->gajiId)
-                ->get();
-            return [
-                'error'         => false,
-                'dataGaji'      => $dataGaji,
-                'gajiTracking'  => $gajiTracking,
-            ];
-        } catch (Exception $e) {
-            return [
-                'error'     => true,
-                'message'   => $e->getMessage(),
-            ];
-        }
-    }
 }

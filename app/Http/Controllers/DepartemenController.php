@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Yajra\DataTables\Facades\DataTables;
 
-class DepartemenController extends Controller
+class DepartemenController extends BaseController
 {
     /*=================================================
                     DATATABLES

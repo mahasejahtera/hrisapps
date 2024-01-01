@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
 
-class DashboardController extends Controller
+class DashboardController extends BaseController
 {
     private $suratController;
 
@@ -44,15 +44,28 @@ class DashboardController extends Controller
         $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
         $departmentId = Auth::guard('karyawan')->user()->contract->department_id;
         $approveCount = 0;
+        $isView = false;
 
         // search employeeSalarySubmission Count
-        if($roleId == 2 && $departmentId == 9 || $jabatanId == 34) $approveCount += PengajuanGaji::where('status_approved', 0)->count();
-        if($roleId == 4) $approveCount += PengajuanGaji::where('status_approved', 1)->count();
-        if($roleId == 5) $approveCount += PengajuanGaji::where('status_approved', 2)->count();
+        if($roleId == 2 && $departmentId == 9 || $jabatanId == 34) {
+            $approveCount += PengajuanGaji::where('status_approved', 0)->count();
+            $isView = true;
+        }
+
+        if($roleId == 4) {
+            $approveCount += PengajuanGaji::where('status_approved', 1)->count();
+            $isView = true;
+        }
+        if($roleId == 5) {
+            $approveCount += PengajuanGaji::where('status_approved', 2)->count();
+            $isView = true;
+        }
+
 
         $data = [
             'title'             => 'Dashboard Karyawan | PT. Maha Akbar Sejahtera',
-            'approveCount'      => $approveCount
+            'approveCount'      => $approveCount,
+            'isView'            => $isView
         ];
 
 
@@ -1259,11 +1272,17 @@ class DashboardController extends Controller
             ->first();
 
 
-        $leaderboard = DB::table('presensi')
-            ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
-            ->where('tgl_presensi', $hariini)
-            ->orderBy('jam_in')
-            ->get();
+        // $leaderboard = DB::table('presensi')
+        //     ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+        //     ->where('tgl_presensi', $hariini)
+        //     ->orderBy('jam_in')
+        //     ->get();
+
+        $leaderboard = Presensi::with(['karyawan', 'jam_kerja'])
+                        ->where('tgl_presensi', $hariini)
+                        ->orderBy('jam_in')
+                        ->get();
+
         $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Desember"];
 
         $rekapizin = DB::table('pengajuan_izin')

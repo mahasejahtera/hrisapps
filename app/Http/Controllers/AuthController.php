@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Redirect;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Str;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
 
     /*=========================
@@ -41,11 +41,6 @@ class AuthController extends Controller
 
         if (Auth::guard('karyawan')->attempt($credentials)) {
             $request->session()->regenerate();
-            $karyawan = Auth::guard('karyawan')->user();
-            $dept = Departemen::find($karyawan->id);
-            $kode = $dept->kode_dept;
-            $karyawan->kode_dept_init = $kode;
-            $karyawan->save();
             return redirect()->intended('karyawan');
             // return to_route('karyawan');
         } else {
@@ -82,14 +77,12 @@ class AuthController extends Controller
     public function prosesRegister(Request $request)
     {
         $validatedData = $request->validate([
-            // 'username'      => 'required|min:3|unique:karyawan,username|alpha_dash',
             'nama_lengkap'  => 'required|min:3|max:100',
-            'password'      => 'required|min:6',
-            // 'email'         => 'required|email|unique:karyawan,email',
             'email'         => 'required|email|unique:karyawan,email|ends_with:@mahasejahtera.com',
             'jabatan'       => 'required',
             'kode_dept'     => 'required',
             'kode_cabang'   => 'required',
+            'password'      => 'required|min:6',
         ]);
 
         $validatedData['role_id'] = 1;

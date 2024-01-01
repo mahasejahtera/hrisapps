@@ -7,11 +7,13 @@ use App\Models\Departemen;
 use App\Models\Jabatan;
 use App\Models\Karyawan;
 use App\Models\KaryawanBiodata;
+use App\Models\KaryawanBlacklist;
 use App\Models\KaryawanChildren;
 use App\Models\KaryawanContract;
 use App\Models\KaryawanDocument;
 use App\Models\KaryawanEducation;
 use App\Models\KaryawanFamily;
+use App\Models\KaryawanHarianDokumen;
 use App\Models\KaryawanJobdesk;
 use App\Models\KaryawanSibling;
 use App\Models\KaryawanTransfer;
@@ -25,7 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
-class KaryawanController extends Controller
+class KaryawanController extends BaseController
 {
     private $suratController;
 
@@ -39,40 +41,133 @@ class KaryawanController extends Controller
     ===========================================*/
     public function karyawanDatatable(Request $request)
     {
-        if($request->ajax()) {
-            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract']);
+        if ($request->ajax()) {
+            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                ->where('is_daily', 0);
 
-            if($request->jenisKontrak) {
-                $karyawan = $karyawan->join('karyawan_contract as kc', 'kc.id', '=', 'karyawan.contract_id')
-                            ->where('kc.contract_status', $request->jenisKontrak);
+            if ($request->jenisKontrak) {
+                $karyawan = $karyawan->whereRelation('contract', 'contract_status', $request->jenisKontrak);
             }
 
-            if($request->department) {
-                $karyawan = $karyawan->join('karyawan_contract as kc', 'kc.id', '=', 'karyawan.contract_id')
-                            ->where('kc.department_id', $request->department);
+            if ($request->department) {
+                $karyawan = $karyawan->whereRelation('contract', 'department_id', $request->department);
             }
 
-            if(!is_null($request->status)) {
+            if ($request->cabang) {
+                $karyawan = $karyawan->whereRelation('contract', 'kode_cabang', $request->cabang);
+            }
+
+            if (!is_null($request->status)) {
                 $karyawan = $karyawan->where('status', $request->status);
             }
+
+            return DataTables::of($karyawan)
+                ->addIndexColumn()
+                ->addColumn('statuslabel', function (Karyawan $d) {
+                    $status = '';
+
+                    if ($d->status == 0) $status = '<p class="text-danger">Verifikasi Register</p>';
+                    if ($d->status == 1) $status = '<p class="text-secondary">Pengisian Data</p>';
+                    if ($d->status == 2) $status = '<p class="text-primary">Verifikasi Data</p>';
+                    if ($d->status == 3) $status = '<p class="text-success">Aktif</p>';
+                    if ($d->status == 4) $status = '<p class="text-danger">Nonaktif</p>';
+                    if ($d->status == 5) $status = '<p class="text-danger">Daftar Hitam</p>';
+
+                    return $status;
+                })
+                ->addColumn('contract.jabatan', function (Karyawan $karyawan) {
+                    $kry = $karyawan->select('jbt.nama_jabatan')->join('karyawan_contract as kc', 'kc.id', '=', 'karyawan.contract_id')
+                        ->join('jabatan as jbt', 'jbt.id', '=', 'kc.jabatan_id')
+                        ->where('kc.karyawan_id', $karyawan->id)
+                        ->first();
+
+                    return $kry;
+                })
+                ->addColumn('action', function (Karyawan $d) {
+                    $action = '<span class="dropdown">
+                                        <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
+                                        <div class="dropdown-menu dropdown-menu-end">';
+                    $statusAction = '';
+                    if ($d->status == 0) $statusAction =  "<a class='dropdown-item btn-verification' data-status='register' data-karyawan='$d->id' data-email='$d->email' href='#'>
+                                                                                Verifikasi Register
+                                                                            </a>";
+                    if ($d->status == 2) $statusAction =  "<a class='dropdown-item btn-verification' data-status='data' data-karyawan='$d->id' data-email='$d->email' href='#'>
+                                                                                Verifikasi Data
+                                                                            </a>";
+                    if ($d->status == 3) $statusAction =  "<a class='dropdown-item btn-verification' data-status='aktif' data-karyawan='$d->id' data-email='$d->email' href='#'>
+                                                                                Nonaktifkan
+                                                                            </a>";
+                    if ($d->status == 4 || $d->status == 5) $statusAction = "<a class='dropdown-item btn-verification' data-status='nonaktif' data-karyawan='$d->id' data-email='$d->email' href='#'>
+                                                                                Aktifkan
+                                                                            </a>";
+                    $action .= $statusAction;
+                    $action .= '<a class="dropdown-item" href="' . route("admin.karyawan.detail", $d->email) . '">
+                                        Detail
+                                    </a>
+                                    <a class="dropdown-item" href="' . route("karyawan.jamkerja", $d->email) . '">
+                                        Set Jam Kerja
+                                    </a>';
+
+                    if ($d->status == 3) {
+                        $action .= '<a class="dropdown-item transfer-action" data-karyawan="' . $d->id . '" href="#">
+                                            Transfer
+                                        </a>';
+                    }
+
+                    $daftarHitam = '';
+                    if($d->status != 5) $daftarHitam = '<a class="dropdown-item btn-daftar-hitam" data-karyawan="' . $d->id . '" href="#">
+                                                            Daftar Hitam
+                                                        </a>';
+
+                    $action .= '<a class="dropdown-item" href="' . route("karyawan.delete", $d->id) . '" onclick="return confirm(`Anda yakin ingin menghapus ' . $d->nama_lengkap . ' ?`)">
+                                        Hapus
+                                    </a>
+                                    <a class="dropdown-item btn-change-password" data-karyawan="' . $d->id . '" href="#">
+                                        Ubah Password
+                                    </a>
+                                    '. $daftarHitam .'
+                                </div>
+                            </span>';
+                    return $action;
+                })
+                ->rawColumns(['statuslabel', 'action'])
+                ->make(true);
+        }
+    }
+
+    public function karyawanHarianDatatable(Request $request)
+    {
+        if($request->ajax()) {
+            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('is_daily', 1);
 
             return DataTables::of($karyawan)
                     ->addIndexColumn()
                     ->addColumn('statuslabel', function(Karyawan $d) {
                         $status = '';
-
                         if($d->status == 0) $status = '<p class="text-danger">Verifikasi Register</p>';
                         if($d->status == 1) $status = '<p class="text-secondary">Pengisian Data</p>';
                         if($d->status == 2) $status = '<p class="text-primary">Verifikasi Data</p>';
                         if($d->status == 3) $status = '<p class="text-success">Aktif</p>';
                         if($d->status == 4) $status = '<p class="text-danger">Nonaktif</p>';
-
+                        if ($d->status == 5) $status = '<p class="text-danger">Daftar Hitam</p>';
                         return $status;
                     })
                     ->addColumn('contract.jabatan', function(Karyawan $karyawan) {
                         $kry = $karyawan->select('jbt.nama_jabatan')->join('karyawan_contract as kc', 'kc.id', '=', 'karyawan.contract_id')
                                         ->join('jabatan as jbt', 'jbt.id', '=', 'kc.jabatan_id')
                                         ->where('kc.karyawan_id', $karyawan->id)
+                                        ->where('karyawan.is_daily', 1)
+                                        ->first();
+
+                        return $kry;
+                    })
+                    ->addColumn('contract.cabang', function(Karyawan $karyawan) {
+                        $kry = $karyawan->select('cbg.nama_cabang')
+                                        ->join('karyawan_contract as kc', 'kc.id', '=', 'karyawan.contract_id')
+                                        ->join('cabang as cbg', 'cbg.kode_cabang', '=', 'kc.kode_cabang')
+                                        ->where('kc.karyawan_id', $karyawan->id)
+                                        ->where('karyawan.is_daily', 1)
                                         ->first();
 
                         return $kry;
@@ -82,49 +177,88 @@ class KaryawanController extends Controller
                                         <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
                                         <div class="dropdown-menu dropdown-menu-end">';
 
-                                        $statusAction = '';
+                        if ($d->status == 3) {
+                            $action .= "<a class='dropdown-item btn-verification' data-status='aktif' data-karyawan='$d->id' data-email='$d->email' href='#'>
+                                            Nonaktifkan
+                                        </a>";
+                        }else{
+                            $action .= "<a class='dropdown-item btn-verification' data-status='nonaktif' data-karyawan='$d->id' data-email='$d->email' href='#'>
+                                        Aktif
+                                    </a>";
+                        }
 
-                                        if($d->status == 0) $statusAction =  "<a class='dropdown-item btn-verification' data-status='register' data-karyawan='$d->id' data-email='$d->email' href='#'>
-                                                                                Verifikasi Register
-                                                                            </a>";
-                                        if($d->status == 2) $statusAction =  "<a class='dropdown-item btn-verification' data-status='data' data-karyawan='$d->id' data-email='$d->email' href='#'>
-                                                                                Verifikasi Data
-                                                                            </a>";
-                                        if($d->status == 3) $statusAction =  "<a class='dropdown-item btn-verification' data-status='aktif' data-karyawan='$d->id' data-email='$d->email' href='#'>
-                                                                                Nonaktifkan
-                                                                            </a>";
-                                        if ($d->status == 4) $statusAction = "<a class='dropdown-item btn-verification' data-status='nonaktif' data-karyawan='$d->id' data-email='$d->email' href='#'>
-                                                                                Aktif
-                                                                            </a>";
-
-                        $action .= $statusAction;
-
-                        $action .= '<a class="dropdown-item" href="' .route("admin.karyawan.detail", $d->email) .'">
+                        $action .= '<a class="dropdown-item" href="' .route("admin.karyawan.harian.detail", $d->id) .'">
                                         Detail
                                     </a>
-                                    <a class="dropdown-item" href="'. route("karyawan.jamkerja", $d->email) .'">
+                                    <a class="dropdown-item" href="'. route("karyawan.harian.jamkerja", $d->id) .'">
                                         Set Jam Kerja
+                                    </a>
+                                    <a class="dropdown-item btn-daftar-hitam-harian" data-karyawan="' . $d->id . '" href="#">
+                                        Daftar Hitam
                                     </a>';
-
                         if ($d->status == 3) {
                             $action .= '<a class="dropdown-item transfer-action" data-karyawan="'. $d->id .'" href="#">
                                             Transfer
                                         </a>';
                         }
 
-                        $action .= '<a class="dropdown-item" href="'. route("karyawan.delete", $d->id) .'">
-                                        Hapus
-                                    </a>
-                                    <a class="dropdown-item btn-change-password" data-karyawan="'. $d->id .'" href="#">
-                                        Ubah Password
-                                    </a>
-                                </div>
-                            </span>';
-
                         return $action;
                     })
-                    ->rawColumns(['statuslabel', 'action'])
+                    ->rawColumns(['action', 'statuslabel'])
                     ->make(true);
+        }
+    }
+
+
+    /*===========================================
+                    DAFTAR HITAM
+    ===========================================*/
+
+    // BiodataAjax
+    public function biodataAjax(Request $request)
+    {
+        try {
+            $dataKaryawan = KaryawanBiodata::with(['karyawan'])
+                ->where('karyawan_id', $request->karyawanID)
+                ->first();
+            $dataKaryawanHarian = Karyawan::where('id', $request->karyawanID)
+                ->first();
+            return [
+                'error'                 => false,
+                'dataKaryawan'          => $dataKaryawan,
+                'dataKaryawanHarian'    => $dataKaryawanHarian,
+            ];
+        } catch (Exception $e) {
+            return [
+                'error'     => true,
+                'message'   => $e->getMessage(),
+            ];
+        }
+    }
+
+    public function addBlacklistKaryawan(Request $request)
+    {
+        try {
+            $message = ['karyawan_id.unique'   => 'Karyawan sudah ada di daftar hitam !.'];
+
+            $request->validate([
+                'karyawan_id'   => 'required|unique:karyawan_blacklist,karyawan_id'
+            ], $message);
+
+            $data = [
+                'karyawan_id'   => $request->karyawan_id,
+                'nik'           => $request->nik,
+                'nama'          => $request->nama_lengkap,
+                'keterangan'    => $request->keterangan,
+            ];
+
+            KaryawanBlacklist::create($data);
+            Karyawan::where('id', $request->karyawan_id)->update(['status' => 5]);
+
+            return back()->with('success', 'Karyawan berhasil ditambahkan ke daftar hitam !');
+
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 
@@ -146,11 +280,16 @@ class KaryawanController extends Controller
             $query->where('karyawan.kode_dept', $request->kode_dept);
         }
         $karyawan = $query->paginate(10);
+        $jabatan = Jabatan::with(['department'])->where('is_daily', 1)->get();
 
         $departemen = DB::table('departemen')->get();
         $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
-        return view('karyawan.index', compact('karyawan', 'departemen', 'cabang'));
+        return view('karyawan.index', compact('karyawan', 'departemen', 'cabang', 'jabatan'));
     }
+
+    /*===========================================
+                    KARYAWAN INTI
+    ===========================================*/
 
     public function karyawanDataRegister(Request $request)
     {
@@ -239,705 +378,6 @@ class KaryawanController extends Controller
             return back()->with('error', $e->getMessage());
         }
     }
-
-
-
-
-    /*=========================================
-                Verifikasi
-    ======================================= */
-
-    public function verificationRegister(Request $request)
-    {
-
-        try {
-            $validatedData = $request->validate([
-                'nik'               => 'required|unique:karyawan,nik',
-                'status_karyawan'   => 'required',
-                'salary'            => 'required|numeric|max:999999999',
-                'kontrak_tampil'    => 'required',
-            ]);
-
-            // if($request->status_karyawan == 'tetap') {
-            //     $request->validate([
-            //         'kontrak_tampil'     => 'required',
-            //     ]);
-            //     $validatedData['kontrak_tampil'] = $request->kontrak_tampil;
-            // }
-
-            if($request->status_karyawan == 'pkwt' || $request->status_karyawan == 'percobaan') {
-                $request->validate([
-                    'lama_kontrak_num'      => 'required',
-                    'lama_kontrak_waktu'    => 'required',
-                    'mulai_kontrak'         => 'required',
-                    'akhir_kontrak'          => 'required'
-                ]);
-            }
-
-            if($request->status_karyawan == 'project') {
-                $request->validate([
-                    'project'           => 'required',
-                    'mulai_kontrak'     => 'required',
-                ]);
-            }
-
-            if($request->status_karyawan == 'harian') {
-                $request->validate([
-                    'mulai_kontrak'     => 'required',
-                ]);
-            }
-
-            $validatedData['status'] = 1;
-            $validatedData['project'] = $request->project;
-            $validatedData['lama_kontrak_num'] = $request->lama_kontrak_num;
-            $validatedData['lama_kontrak_waktu'] = $request->lama_kontrak_waktu;
-            $validatedData['mulai_kontrak'] = $request->mulai_kontrak;
-            $validatedData['akhir_kontrak'] = $request->akhir_kontrak;
-            $validatedData['jobdesk_content'] = $request->jobdesk_content;
-            $validatedData['karyawan_id'] = $request->karyawan_id;
-
-            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang'])->where('id', $request->karyawan_id)->get();
-            $karyawan = $karyawan[0];
-
-
-            //========================
-                /* NO SURAT */
-            //========================
-
-            $noSuratKontrak = null;
-            $kodeSuratKontrak = 'SPK.K';
-            $kodeSuratPernyataan = 'SPT';
-
-            // SURAT KONTRAK
-            if($request->kontrak_tampil == 1) {
-                $noSuratKontrak = $this->suratController->getNoSuratBaruPerusahaan($kodeSuratKontrak);
-
-                //create surat kontrak
-                $dataSuratKontrak = [
-                    'karyawan_penerima_id'      => $request->karyawan_id,
-                    'kategori_kode'             => $kodeSuratKontrak,
-                    'no_surat'                  => $noSuratKontrak,
-                    'perihal'                   => "Kontrak Kerja $karyawan->nama_lengkap"
-                ];
-
-                $this->suratController->storeSurat($dataSuratKontrak);
-            }
-
-            // SURAT PERNYATAAN
-            $noSuratPernyataan = $this->suratController->getNoSuratBaruPerusahaan($kodeSuratPernyataan);
-
-            $dataSuratPernyataan = [
-                'karyawan_penerima_id'      => $request->karyawan_id,
-                'kategori_kode'             => $kodeSuratPernyataan,
-                'no_surat'                  => $noSuratPernyataan,
-                'perihal'                   => "Surat Pernyataan $karyawan->nama_lengkap",
-                'keterangan'                => 'Pernyataan saat awal register pada aplikasi HRIS PT. Maha Akbar Sejahtera'
-            ];
-
-            $this->suratController->storeSurat($dataSuratPernyataan);
-
-            // ===========================
-
-
-            // contract data
-            $dataKontrak = [
-                'karyawan_id'               => $request->karyawan_id,
-                'no_surat'                  => $noSuratKontrak,
-                'jabatan_id'                => $karyawan->jabatan,
-                'department_id'             => $karyawan->kode_dept,
-                'kode_cabang'               => $karyawan->kode_cabang,
-                'contract_status'           => $request->status_karyawan,
-                'salary'                    => $request->salary,
-                'project'                   => $request->project,
-                'lama_kontrak_num'          => $request->lama_kontrak_num,
-                'lama_kontrak_waktu'        => $request->lama_kontrak_waktu,
-                'mulai_kontrak'             => $request->mulai_kontrak,
-                'akhir_kontrak'             => $request->akhir_kontrak,
-                'jobdesk_content'           => $request->jobdesk_content,
-            ];
-
-            // get contract
-            $karyawanContract = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang'])->where('id', $karyawan->contract_id)->get();
-
-            if(count($karyawanContract) > 0) {
-                $newContract = KaryawanContract::where('id', $karyawanContract[0]->id)->update($dataKontrak);
-                $contractId = $karyawanContract[0]->id;
-            } else {
-                $newContract = KaryawanContract::create($dataKontrak);
-                $contractId = $newContract->id;
-            }
-
-            $karyawanData = [
-                'nik'                           => $request->nik,
-                'no_surat_pakta_integritas'     => $noSuratPernyataan,
-                'contract_id'                   => $contractId,
-                'kontrak_tampil'                => $request->kontrak_tampil,
-                'status'                        => 1
-            ];
-
-            Karyawan::where('id', $request->karyawan_id)->update($karyawanData);
-            return back()->with('success', 'Data berhasil diupdate!');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-
-    public function verificationData(Request $request)
-    {
-        try {
-            $validatedData = $request->validate([
-                'kode_surat_karyawan'   => 'required|min:2|max:2|unique:karyawan,kode_surat_karyawan'
-            ]);
-
-            $validatedData['kode_surat_karyawan'] = Str::upper($request->kode_surat_karyawan);
-            $validatedData['status'] = 3;
-
-            // get karyawan data
-            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-                        ->where('id', $request->karyawan_id)
-                        ->first();
-            // get karyawan contract
-            $karyawanContract = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang'])
-                                ->where('id', $karyawan->contract_id)->first();
-
-
-            if($karyawan->kontrak_tampil == 1) {
-
-                $atasanApprove = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-                                        ->where('role_id', 4)
-                                        ->where('status', 3)
-                                        ->orderBy('id', 'desc')
-                                        ->first();
-
-                // set atasan approve di karyawan contract database
-                $karyawanContract->id_atasan_approve = $atasanApprove->id;
-                $karyawanContract->jabatan_atasan_approve = $atasanApprove->contract->jabatan_id;
-                $karyawanContract->save();
-
-                // get atasan approve contract
-                // cek bukan direktur dan komisaris
-                // if($karyawan->role_id != 4 && $karyawan->role_id != 5) {
-                //     // kalau bukan direktur dan komisaris cek apakah dia manager hrd
-                //     if($karyawan->role_id == 2 && $karyawanContract->department_id == 9) {
-                //         //get atasan approve nya direktur
-                //         $atasanApprove = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-                //                         ->where('role_id', 4)
-                //                         ->where('status', 3)
-                //                         ->orderBy('id', 'desc')
-                //                         ->first();
-
-                //         // set atasan approve di karyawan contract database
-                //         $karyawanContract->id_atasan_approve = $atasanApprove->id;
-                //         $karyawanContract->jabatan_atasan_approve = $atasanApprove->contract->jabatan_id;
-                //         $karyawanContract->save();
-
-                //     } else {
-                //         $atasanApprove = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-                //                 ->select('karyawan.*', 'jabatan.id as id_jbt')
-                //                 ->join('karyawan_contract', 'karyawan.contract_id', '=', 'karyawan_contract.id')
-                //                 ->join('jabatan', 'karyawan_contract.jabatan_id', '=', 'jabatan.id')
-                //                 ->where('karyawan.role_id', 2)
-                //                 ->where('karyawan_contract.department_id', 9)
-                //                 ->where('karyawan.status', 3)
-                //                 ->orderBy('karyawan.id', 'desc')
-                //                 ->first();
-
-                //         // set atasan approve di karyawan contract database
-                //         $karyawanContract->id_atasan_approve = $atasanApprove->id;
-                //         $karyawanContract->jabatan_atasan_approve = $atasanApprove->id_jbt;
-                //         $karyawanContract->save();
-                //     }
-
-                // }
-            }
-
-            Karyawan::where('id', $request->karyawan_id)->update($validatedData);
-
-            return back()->with('success', 'Data karyawan berhasil di verifikasi');
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-    // public function nonaktifkanKaryawan(Request $request)
-    // {
-    //     try{
-    //         Karyawan::where('id', $request->karyawan_id)->update(['status' => 4]);
-    //         return back()->with('success', 'Karyawan berhasil dinonaktifkan!');
-    //     } catch (Exception $e) {
-    //         return back()->with('error', 'Karyawan gagal dinonaktifkan!');
-    //     }
-    // }
-
-
-
-    /* ===================================
-                    JOBDESK
-     ===================================== */
-
-     public function karyawanJobdesk(Karyawan $karyawan)
-     {
-        $data = [
-            'title'     => 'Admin - Jobdesk | PT. Maha Akbar Sejahtera',
-            'karyawan'  => $karyawan,
-            'jobdesk'   => KaryawanJobdesk::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get()
-        ];
-
-        return view('karyawan.jobdesk', $data);
-     }
-
-
-     public function karyawanJobdeskStore(Request $request)
-     {
-        $jobdesk = $request->jobdesk;
-
-        try {
-            for($i=0; $i < count($jobdesk); $i++) {
-                if(!empty($jobdesk[$i])) {
-                    $data = [
-                        'karyawan_id'   => $request->karyawan_id,
-                        'jobdesk'       => $jobdesk[$i]
-                    ];
-
-                    KaryawanJobdesk::create($data);
-                }
-            }
-
-            return back()->with('success', "Jobdesk berhasil ditambah!");
-        } catch (Exception $e) {
-            return back()->with('error', "Hanya berhasil menambah $i jobdesk dari " . count($jobdesk) . " total inputan!");
-        }
-     }
-
-     public function karyawanJobdeskDestroy(Request $request)
-     {
-        try{
-            KaryawanJobdesk::where('id', $request->jobdesk_id)->delete();
-            return back()->with('success', 'Jobdesk berhasil dihapus!');
-        } catch (Exception $e) {
-            return back()->with('error', 'Jobdesk gagal dihapus!');
-        }
-
-     }
-
-
-     public function getKaryawanJobdeskById(Request $request)
-     {
-        try {
-            $karyawanJobdesk = KaryawanJobdesk::with(['karyawan'])->where('id', $request->value)->get();
-
-            return [
-                'error'     => false,
-                'jobdesk'   => [
-                    'id'        => $karyawanJobdesk[0]->id,
-                    'jobdesk'   => $karyawanJobdesk[0]->jobdesk
-                ]
-            ];
-            ;
-        } catch (Exception $e) {
-            return [
-                'error'     => true,
-                'message'   => $e->getMessage()
-            ];
-        }
-     }
-
-
-     public function karyawanJobdeskUpdate(Request $request)
-     {
-        try {
-            KaryawanJobdesk::where('id', $request->jobdesk_id)->update(['jobdesk'   => $request->jobdesk]);
-            return back()->with('success', 'Jobdesk berhasil diubah!');
-        } catch (Exception $e) {
-            return back()->with('error', 'Jobdesk gagal diubah!');
-        }
-     }
-
-
-    //  ========================================================
-
-    public function store(Request $request)
-    {
-        $nik = $request->nik;
-        $nama_lengkap = $request->nama_lengkap;
-        $jabatan = $request->jabatan;
-        $no_hp = $request->no_hp;
-        $kode_dept = $request->kode_dept;
-        $password = Hash::make('12345');
-        $kode_cabang = $request->kode_cabang;
-        if ($request->hasFile('foto')) {
-            $foto = $nik . "." . $request->file('foto')->getClientOriginalExtension();
-        } else {
-            $foto = null;
-        }
-
-        try {
-            $data =  [
-                'nik' => $nik,
-                'nama_lengkap' => $nama_lengkap,
-                'jabatan' => $jabatan,
-                'no_hp' => $no_hp,
-                'kode_dept' => $kode_dept,
-                'foto' => $foto,
-                'password' => $password,
-                'kode_cabang' => $kode_cabang
-            ];
-            $simpan = DB::table('karyawan')->insert($data);
-            if ($simpan) {
-                if ($request->hasFile('foto')) {
-                    $folderPath = "public/uploads/karyawan/";
-                    $request->file('foto')->storeAs($folderPath, $foto);
-                }
-                return Redirect::back()->with(['success' => 'Data Berhasil Disimpan']);
-            }
-        } catch (Exception $e) {
-
-            if ($e->getCode() == 23000) {
-                $message = "Data dengan Nik " . $nik . " Sudah Ada";
-            } else {
-                $message = "Hubungi IT";
-            }
-            return Redirect::back()->with(['warning' => 'Data Gagal Disimpan ' . $message]);
-        }
-    }
-
-    public function edit(Request $request)
-    {
-        $nik = $request->nik;
-        $departemen = DB::table('departemen')->get();
-        $cabang = DB::table('cabang')->orderBy('kode_cabang')->get();
-        $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
-        return view('karyawan.edit', compact('departemen', 'karyawan', 'cabang'));
-    }
-
-    public function update($nik, Request $request)
-    {
-        $nik = $request->nik;
-        $nama_lengkap = $request->nama_lengkap;
-        $jabatan = $request->jabatan;
-        $no_hp = $request->no_hp;
-        $kode_dept = $request->kode_dept;
-        $kode_cabang = $request->kode_cabang;
-        $password = Hash::make('12345');
-        $old_foto = $request->old_foto;
-        if ($request->hasFile('foto')) {
-            $foto = $nik . "." . $request->file('foto')->getClientOriginalExtension();
-        } else {
-            $foto = $old_foto;
-        }
-
-        try {
-            $data =  [
-                'nama_lengkap' => $nama_lengkap,
-                'jabatan' => $jabatan,
-                'no_hp' => $no_hp,
-                'kode_dept' => $kode_dept,
-                'foto' => $foto,
-                'password' => $password,
-                'kode_cabang' => $kode_cabang
-            ];
-            $update = DB::table('karyawan')->where('nik', $nik)->update($data);
-            if ($update) {
-                if ($request->hasFile('foto')) {
-                    $folderPath = "public/uploads/karyawan/";
-                    $folderPathOld = "public/uploads/karyawan/" . $old_foto;
-                    Storage::delete($folderPathOld);
-                    $request->file('foto')->storeAs($folderPath, $foto);
-                }
-                return Redirect::back()->with(['success' => 'Data Berhasil Update']);
-            }
-        } catch (Exception $e) {
-            //dd($e->message);
-            return Redirect::back()->with(['warning' => 'Data Gagal Diupdate']);
-        }
-    }
-
-    // public function delete($nik)
-    // {
-    //     $delete = DB::table('karyawan')->where('nik', $nik)->delete();
-    //     if ($delete) {
-    //         return Redirect::back()->with(['success' => 'Data Berhasil Dihapus']);
-    //     } else {
-    //         return Redirect::back()->with(['warning' => 'Data Gagal Dihapus']);
-    //     }
-    // }
-
-
-
-
-
-    /*============================================================
-                        KARYAWAN TRANSFER
-    ============================================================*/
-
-    public function karyawanTrnaferStore(Request $request)
-    {
-        $request->validate([
-            'status_transfer'       => 'required'
-        ]);
-
-
-        $statusTransfer = $request->status_transfer;
-        $karyawanId = $request->karyawan_id;
-
-        // get karyawan
-        $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract'])->where('id', $karyawanId)->get();
-
-        // mutasi
-        if($statusTransfer == 1) {
-            $request->validate([
-                'cabang'       => 'required'
-            ]);
-
-
-            $newCabang = $request->cabang;
-            $oldCabang = $karyawan[0]->contract->kode_cabang;
-            $contractId = $karyawan[0]->contract_id;
-
-            try {
-
-                $data = [
-                    'karyawan_id'           => $karyawanId,
-                    'status'                => 1,
-                    'old_branch_mutation'   => $oldCabang,
-                    'new_branch_mutation'   => $newCabang,
-                    'contract_id'           => $contractId
-                ];
-                // create mutasi transfer
-                KaryawanTransfer::create($data);
-                // update cabang karyawab
-                Karyawan::where('id', $karyawanId)->update(['kode_cabang' => $newCabang]);
-
-                return back()->with('success', $karyawan[0]->nama_lengkap . ' berhasil dimutasi!');
-            } catch (Exception $e) {
-                return back()->with('error', $karyawan[0]->nama_lengkap . ' gagal dimutasi...!!!');
-            }
-        }
-
-        // promosi / demosi
-        if($statusTransfer == 2 || $statusTransfer == 3) {
-            // validate input
-            $request->validate([
-                'department_id'             => 'required',
-                'jabatan_id'                => 'required',
-                'cabang'                    => 'required',
-                'status_karyawan'           => 'required',
-                'salary'                    => 'required',
-                'jobdesk_content'           => 'required'
-            ]);
-
-            $statusKaryawan = $request->status_karyawan;
-
-
-            if($statusKaryawan == 'pkwt' || $statusKaryawan == 'percobaan') {
-                $request->validate([
-                    'lama_kontrak_num'      => 'required',
-                    'lama_kontrak_waktu'    => 'required',
-                    'mulai_kontrak'         => 'required',
-                    'akhir_kontrak'         => 'required'
-                ]);
-            }
-
-            if($statusKaryawan == 'project') {
-                $request->validate([
-                    'project'           => 'required',
-                    'mulai_kontrak'     => 'required',
-                ]);
-            }
-
-            if($statusKaryawan == 'harian') {
-                $request->validate([
-                    'mulai_kontrak'     => 'required',
-                ]);
-            }
-
-
-            // data kontrak
-            $dataKontrak = [
-                'karyawan_id'           => $karyawanId,
-                'jabatan_id'            => $request->jabatan_id,
-                'department_id'         => $request->department_id,
-                'kode_cabang'           => $request->cabang,
-                'contract_status'       => $statusKaryawan,
-                'salary'                => $request->salary,
-                'project'               => $request->project,
-                'lama_kontrak_num'      => $request->lama_kontrak_num,
-                'lama_kontrak_waktu'    => $request->lama_kontrak_waktu,
-                'mulai_kontrak'         => $request->mulai_kontrak,
-                'akhir_kontrak'         => $request->akhir_kontrak,
-                'jobdesk_content'       => $request->jobdesk_content
-            ];
-
-            //status transfer ;abel
-            $statusTransferLabel = '';
-
-            if($statusTransfer == 2) $statusTransferLabel = 'promosi';
-            if($statusTransfer == 3) $statusTransferLabel = 'demosi';
-
-            try {
-                // create new contract
-                $newContract = KaryawanContract::create($dataKontrak);
-                $newContractId = $newContract->id;
-
-                $oldContractId = $karyawan[0]->contract_id;
-
-                // update karyawan
-                $dataKaryawanUpdate = [
-                    'contract_id'       => $newContractId,
-                    'old_contract_id'   => $oldContractId
-                ];
-
-                Karyawan::where('id', $karyawanId)->update($dataKaryawanUpdate);
-
-                // create transfer
-                $dataTransfer = [
-                    'karyawan_id'           => $karyawanId,
-                    'status'                => $statusTransfer,
-                    'old_contract_id'       => $oldContractId,
-                    'contract_id'           => $newContractId
-                ];
-
-                KaryawanTransfer::create($dataTransfer);
-                return back()->with('success', $karyawan[0]->nama_lengkap . " berhasil di$statusTransferLabel...!!!");
-
-            } catch (Exception $e) {
-                return back()->with('error', $karyawan[0]->nama_lengkap . " gagal di$statusTransferLabel...!!!");
-            }
-        }
-    }
-
-    //change password
-    public function changePasswordKaryawanPanel(Request $request)
-    {
-        try {
-            //get karyawan
-            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-                        ->where('id', $request->karyawan_id)
-                        ->first();
-
-            $karyawan->password = password_hash($request->new_password, PASSWORD_DEFAULT);
-            $karyawan->save();
-            return back()->with('success', "Password $karyawan->nama_lengkap berhasil diubah!");
-
-        } catch (Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
-
-    /*============================================================
-                        ADMIN PANEL
-    ============================================================*/
-    public function createKaryawanAdmin()
-    {
-        $data = [
-            'title'             => 'Tambah Karyawan Harian | PT. Maha Akbar Sejahtera'
-        ];
-    }
-
-
-    /*============================================================
-                        FRONT END USER
-    ============================================================*/
-
-    public function profile(Karyawan $karyawan)
-    {
-        $data = [
-            'title'             => 'Profil Karyawan | PT. Maha Akbar Sejahtera',
-            'karyawan'          => $karyawan,
-            'karyawanBiodata'   => KaryawanBiodata::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanChildren'  => KaryawanChildren::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanDocument'  => KaryawanDocument::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanEducation' => KaryawanEducation::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanFamily'    => KaryawanFamily::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanSibling'   => KaryawanSibling::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-        ];
-
-
-        return view('frontend.karyawan.profiledata', $data);
-    }
-
-
-    public function kontrakKerja(Karyawan $karyawan)
-    {
-
-        $data = [
-            'title'             => 'Kontrak Kerja | PT. Maha Akbar Sejahtera',
-            'karyawan'          => $karyawan,
-            'karyawanBiodata'   => KaryawanBiodata::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanEducation' => KaryawanEducation::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-            'karyawanJobdesk'   => KaryawanJobdesk::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-        ];
-
-        return view('frontend.karyawan.show-contract', $data);
-    }
-
-
-    public function changePassword()
-    {
-        $data = [
-            'title'     => 'Ubah Password | PT. Maha Akbar Sejahtera'
-        ];
-
-        return view('frontend.karyawan.change-password', $data);
-    }
-
-    public function storeChangePassword(Request $request)
-    {
-        // try {
-            //validate
-            $request->validate([
-                'old_password'      => 'required',
-                'password'          => 'required|min:6|confirmed'
-            ]);
-
-            // cek password lama sama atau tidak
-            if(!Hash::check($request->old_password, Auth::guard('karyawan')->user()->password)) {
-                return back()->with('error', 'Password lama anda salah!');
-            }
-
-            // kalau password baru sama dengan yang lama
-            if(strcmp($request->old_password, $request->password) == 0) {
-                return back()->with('error', 'Password baru anda tidak boleh sama dengan yang lama!');
-            }
-
-            $data = [
-                'password'  => Hash::make($request->password)
-            ];
-
-            Karyawan::where('email', Auth::guard('karyawan')->user()->email)->update($data);
-            return back()->with('success', 'Password berhasil diubah!');
-
-        // } catch (Exception $e) {
-        //     return back()->with('error', $e->getMessage());
-        // }
-    }
-
-
-    public function showPaktaIntegritas(Karyawan $karyawan)
-    {
-        $data = [
-            'title'             => 'SPT TTD Digital | PT. Maha Akbar Sejahtera',
-            'karyawan'          => $karyawan,
-            'karyawanBiodata'   => KaryawanBiodata::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
-        ];
-
-        if($karyawan->pakta_integritas_check == 1) {
-            return view('frontend.karyawan.pakta_integirtas', $data);
-        } else {
-            echo "<script>
-                    alert('Tidak ada surat pernyataan tanda tangan digital $karyawan->nama_lengkap');
-                </script>";
-            abort(404);
-        }
-
-    }
-
-
-    /*============================================
-                GABUNG ARDI
-    ========================================== */
 
     public function karyawanEdit(Karyawan $karyawan)
     {
@@ -1238,21 +678,48 @@ class KaryawanController extends Controller
        }
     }
 
-    public function nonaktifkanKaryawan(Request $request)
-    {
-        try{
-            Karyawan::where('id', $request->karyawan_id)->update(['status' => 4]);
-            return back()->with('success', 'Karyawan berhasil dinonaktifkan!');
-        } catch (Exception $e) {
-            return back()->with('error', 'Karyawan gagal dinonaktifkan!');
-        }
-    }
+    // public function nonaktifkanKaryawan(Request $request)
+    // {
+    //     try{
+    //         Karyawan::where('id', $request->karyawan_id)->update(['status' => 4]);
+    //         return back()->with('success', 'Karyawan berhasil dinonaktifkan!');
+    //     } catch (Exception $e) {
+    //         return back()->with('error', 'Karyawan gagal dinonaktifkan!');
+    //     }
+    // }
 
-    public function aktifkanKaryawan(Request $request)
+    // public function aktifkanKaryawan(Request $request)
+    // {
+    //     try{
+    //         // hapus blacklist
+    //         KaryawanBlacklist::where('karyawan_id', $request->karyawan_id)->delete();
+    //         //update status
+    //         Karyawan::where('id', $request->karyawan_id)->update(['status' => 3]);
+    //         return back()->with('success', 'Karyawan berhasil diaktifkan!');
+    //     } catch (Exception $e) {
+    //         return back()->with('error', 'Karyawan gagal diaktifkan!');
+    //     }
+    // }
+
+    public function ubahKaryawanStatus(Request $request)
     {
         try{
-            Karyawan::where('id', $request->karyawan_id)->update(['status' => 3]);
-            return back()->with('success', 'Karyawan berhasil diaktifkan!');
+            $status = intval($request->status);
+            // hapus blacklist
+            if($status == 3) KaryawanBlacklist::where('karyawan_id', $request->karyawan_id)->delete();
+
+            //update status
+            Karyawan::where('id', $request->karyawan_id)->update(['status' => $status]);
+
+            // status label
+            $statusLabel = 'aktifkan';
+            if($status == 0) $statusLabel = 'tangguhkan';
+            if($status == 1) $statusLabel = 'ubah ke pengisian data';
+            if($status == 2) $statusLabel = 'ubah ke penangguhan data';
+            if($status == 4) $statusLabel = 'nonaktifkan';
+            if($status == 5) $statusLabel = 'blacklist';
+
+            return back()->with('success', "Karyawan berhasil di$statusLabel!");
         } catch (Exception $e) {
             return back()->with('error', 'Karyawan gagal diaktifkan!');
         }
@@ -1295,5 +762,764 @@ class KaryawanController extends Controller
         }
     }
 
+
+    /*==============================================*/
+    /*================= VERIFIKASI =================*/
+    /*==============================================*/
+
+    public function verificationRegister(Request $request)
+    {
+
+        try {
+            $validatedData = $request->validate([
+                'nik'               => 'required|unique:karyawan,nik',
+                'status_karyawan'   => 'required',
+                'salary'            => 'required|numeric|max:999999999',
+                'kontrak_tampil'    => 'required',
+            ]);
+
+            // if($request->status_karyawan == 'tetap') {
+            //     $request->validate([
+            //         'kontrak_tampil'     => 'required',
+            //     ]);
+            //     $validatedData['kontrak_tampil'] = $request->kontrak_tampil;
+            // }
+
+            if($request->kontrak_tampil == 1) {
+                if($request->status_karyawan == 'pkwt' || $request->status_karyawan == 'percobaan') {
+                    $request->validate([
+                        'lama_kontrak_num'      => 'required',
+                        'lama_kontrak_waktu'    => 'required',
+                        'mulai_kontrak'         => 'required',
+                        'akhir_kontrak'          => 'required'
+                    ]);
+                }
+
+                if($request->status_karyawan == 'project') {
+                    $request->validate([
+                        'project'           => 'required',
+                        'mulai_kontrak'     => 'required',
+                    ]);
+                }
+
+                if($request->status_karyawan == 'harian') {
+                    $request->validate([
+                        'mulai_kontrak'     => 'required',
+                    ]);
+                }
+            }
+
+            $validatedData['status'] = 1;
+            $validatedData['project'] = $request->project;
+            $validatedData['lama_kontrak_num'] = $request->lama_kontrak_num;
+            $validatedData['lama_kontrak_waktu'] = $request->lama_kontrak_waktu;
+            $validatedData['mulai_kontrak'] = $request->mulai_kontrak;
+            $validatedData['akhir_kontrak'] = $request->akhir_kontrak;
+            $validatedData['jobdesk_content'] = $request->jobdesk_content;
+            $validatedData['karyawan_id'] = $request->karyawan_id;
+
+            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang'])->where('id', $request->karyawan_id)->get();
+            $karyawan = $karyawan[0];
+
+
+            //========================
+                /* NO SURAT */
+            //========================
+
+            $noSuratKontrak = null;
+            $kodeSuratKontrak = 'SPK.K';
+            $kodeSuratPernyataan = 'SPT';
+
+            // SURAT KONTRAK
+            if($request->kontrak_tampil == 1) {
+                $noSuratKontrak = $this->suratController->getNoSuratBaruPerusahaan($kodeSuratKontrak);
+
+                //create surat kontrak
+                $dataSuratKontrak = [
+                    'karyawan_penerima_id'      => $request->karyawan_id,
+                    'kategori_kode'             => $kodeSuratKontrak,
+                    'no_surat'                  => $noSuratKontrak,
+                    'perihal'                   => "Kontrak Kerja $karyawan->nama_lengkap"
+                ];
+
+                $this->suratController->storeSurat($dataSuratKontrak);
+            }
+
+            // SURAT PERNYATAAN
+            $noSuratPernyataan = $this->suratController->getNoSuratBaruPerusahaan($kodeSuratPernyataan);
+
+            $dataSuratPernyataan = [
+                'karyawan_penerima_id'      => $request->karyawan_id,
+                'kategori_kode'             => $kodeSuratPernyataan,
+                'no_surat'                  => $noSuratPernyataan,
+                'perihal'                   => "Surat Pernyataan $karyawan->nama_lengkap",
+                'keterangan'                => 'Pernyataan saat awal register pada aplikasi HRIS PT. Maha Akbar Sejahtera'
+            ];
+
+            $this->suratController->storeSurat($dataSuratPernyataan);
+
+            // ===========================
+
+
+            // contract data
+            $dataKontrak = [
+                'karyawan_id'               => $request->karyawan_id,
+                'no_surat'                  => $noSuratKontrak,
+                'jabatan_id'                => $karyawan->jabatan,
+                'department_id'             => $karyawan->kode_dept,
+                'kode_cabang'               => $karyawan->kode_cabang,
+                'contract_status'           => $request->status_karyawan,
+                'salary'                    => $request->salary,
+                'project'                   => $request->project,
+                'lama_kontrak_num'          => $request->lama_kontrak_num,
+                'lama_kontrak_waktu'        => $request->lama_kontrak_waktu,
+                'mulai_kontrak'             => $request->mulai_kontrak,
+                'akhir_kontrak'             => $request->akhir_kontrak,
+                'jobdesk_content'           => $request->jobdesk_content,
+            ];
+
+            // get contract
+            $karyawanContract = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang'])->where('id', $karyawan->contract_id)->get();
+
+            if(count($karyawanContract) > 0) {
+                $newContract = KaryawanContract::where('id', $karyawanContract[0]->id)->update($dataKontrak);
+                $contractId = $karyawanContract[0]->id;
+            } else {
+                $newContract = KaryawanContract::create($dataKontrak);
+                $contractId = $newContract->id;
+            }
+
+            $karyawanData = [
+                'nik'                           => $request->nik,
+                'no_surat_pakta_integritas'     => $noSuratPernyataan,
+                'contract_id'                   => $contractId,
+                'kontrak_tampil'                => $request->kontrak_tampil,
+                'status'                        => 1
+            ];
+
+            Karyawan::where('id', $request->karyawan_id)->update($karyawanData);
+            return back()->with('success', 'Data berhasil diupdate!');
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+
+    public function verificationData(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'kode_surat_karyawan'   => 'required|min:2|max:2|unique:karyawan,kode_surat_karyawan'
+            ]);
+
+            $validatedData['kode_surat_karyawan'] = Str::upper($request->kode_surat_karyawan);
+            $validatedData['status'] = 3;
+
+            // get karyawan data
+            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('id', $request->karyawan_id)
+                        ->first();
+            // get karyawan contract
+            $karyawanContract = KaryawanContract::with(['karyawan', 'jabatan', 'department', 'cabang'])
+                                ->where('id', $karyawan->contract_id)->first();
+
+
+            if($karyawan->kontrak_tampil == 1) {
+
+                $atasanApprove = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                                        ->where('role_id', 4)
+                                        ->where('status', 3)
+                                        ->orderBy('id', 'desc')
+                                        ->first();
+
+                // set atasan approve di karyawan contract database
+                $karyawanContract->id_atasan_approve = $atasanApprove->id;
+                $karyawanContract->jabatan_atasan_approve = $atasanApprove->contract->jabatan_id;
+                $karyawanContract->save();
+
+                // get atasan approve contract
+                // cek bukan direktur dan komisaris
+                // if($karyawan->role_id != 4 && $karyawan->role_id != 5) {
+                //     // kalau bukan direktur dan komisaris cek apakah dia manager hrd
+                //     if($karyawan->role_id == 2 && $karyawanContract->department_id == 9) {
+                //         //get atasan approve nya direktur
+                //         $atasanApprove = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                //                         ->where('role_id', 4)
+                //                         ->where('status', 3)
+                //                         ->orderBy('id', 'desc')
+                //                         ->first();
+
+                //         // set atasan approve di karyawan contract database
+                //         $karyawanContract->id_atasan_approve = $atasanApprove->id;
+                //         $karyawanContract->jabatan_atasan_approve = $atasanApprove->contract->jabatan_id;
+                //         $karyawanContract->save();
+
+                //     } else {
+                //         $atasanApprove = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                //                 ->select('karyawan.*', 'jabatan.id as id_jbt')
+                //                 ->join('karyawan_contract', 'karyawan.contract_id', '=', 'karyawan_contract.id')
+                //                 ->join('jabatan', 'karyawan_contract.jabatan_id', '=', 'jabatan.id')
+                //                 ->where('karyawan.role_id', 2)
+                //                 ->where('karyawan_contract.department_id', 9)
+                //                 ->where('karyawan.status', 3)
+                //                 ->orderBy('karyawan.id', 'desc')
+                //                 ->first();
+
+                //         // set atasan approve di karyawan contract database
+                //         $karyawanContract->id_atasan_approve = $atasanApprove->id;
+                //         $karyawanContract->jabatan_atasan_approve = $atasanApprove->id_jbt;
+                //         $karyawanContract->save();
+                //     }
+
+                // }
+            }
+
+            Karyawan::where('id', $request->karyawan_id)->update($validatedData);
+
+            return back()->with('success', 'Data karyawan berhasil di verifikasi');
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    /*=========================================*/
+    /*=============== JOBDESK =================*/
+    /*=========================================*/
+
+     public function karyawanJobdesk(Karyawan $karyawan)
+     {
+        $data = [
+            'title'     => 'Admin - Jobdesk | PT. Maha Akbar Sejahtera',
+            'karyawan'  => $karyawan,
+            'jobdesk'   => KaryawanJobdesk::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get()
+        ];
+
+        return view('karyawan.jobdesk', $data);
+     }
+
+
+     public function karyawanJobdeskStore(Request $request)
+     {
+        $jobdesk = $request->jobdesk;
+
+        try {
+            for($i=0; $i < count($jobdesk); $i++) {
+                if(!empty($jobdesk[$i])) {
+                    $data = [
+                        'karyawan_id'   => $request->karyawan_id,
+                        'jobdesk'       => $jobdesk[$i]
+                    ];
+
+                    KaryawanJobdesk::create($data);
+                }
+            }
+
+            return back()->with('success', "Jobdesk berhasil ditambah!");
+        } catch (Exception $e) {
+            return back()->with('error', "Hanya berhasil menambah $i jobdesk dari " . count($jobdesk) . " total inputan!");
+        }
+     }
+
+     public function karyawanJobdeskDestroy(Request $request)
+     {
+        try{
+            KaryawanJobdesk::where('id', $request->jobdesk_id)->delete();
+            return back()->with('success', 'Jobdesk berhasil dihapus!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Jobdesk gagal dihapus!');
+        }
+
+     }
+
+
+     public function getKaryawanJobdeskById(Request $request)
+     {
+        try {
+            $karyawanJobdesk = KaryawanJobdesk::with(['karyawan'])->where('id', $request->value)->get();
+
+            return [
+                'error'     => false,
+                'jobdesk'   => [
+                    'id'        => $karyawanJobdesk[0]->id,
+                    'jobdesk'   => $karyawanJobdesk[0]->jobdesk
+                ]
+            ];
+            ;
+        } catch (Exception $e) {
+            return [
+                'error'     => true,
+                'message'   => $e->getMessage()
+            ];
+        }
+     }
+
+
+     public function karyawanJobdeskUpdate(Request $request)
+     {
+        try {
+            KaryawanJobdesk::where('id', $request->jobdesk_id)->update(['jobdesk'   => $request->jobdesk]);
+            return back()->with('success', 'Jobdesk berhasil diubah!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Jobdesk gagal diubah!');
+        }
+     }
+
+
+    /*============================= ============*/
+    /*=============== TRANSFER =================*/
+    /*============================ =============*/
+
+    public function karyawanTransferStore(Request $request)
+    {
+        $request->validate([
+            'status_transfer'       => 'required'
+        ]);
+
+
+        $statusTransfer = $request->status_transfer;
+        $karyawanId = $request->karyawan_id;
+
+        // get karyawan
+        $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract'])->where('id', $karyawanId)->get();
+
+        // mutasi
+        if($statusTransfer == 1) {
+            $request->validate([
+                'cabang'       => 'required'
+            ]);
+
+
+            $newCabang = $request->cabang;
+            $oldCabang = $karyawan[0]->contract->kode_cabang;
+            $contractId = $karyawan[0]->contract_id;
+
+            try {
+
+                $data = [
+                    'karyawan_id'           => $karyawanId,
+                    'status'                => 1,
+                    'old_branch_mutation'   => $oldCabang,
+                    'new_branch_mutation'   => $newCabang,
+                    'contract_id'           => $contractId
+                ];
+                // create mutasi transfer
+                KaryawanTransfer::create($data);
+                // update cabang karyawab
+                Karyawan::where('id', $karyawanId)->update(['kode_cabang' => $newCabang]);
+                KaryawanContract::where('id', $contractId)->update(['kode_cabang' => $newCabang]);
+
+
+                return back()->with('success', $karyawan[0]->nama_lengkap . ' berhasil dimutasi!');
+            } catch (Exception $e) {
+                return back()->with('error', $karyawan[0]->nama_lengkap . ' gagal dimutasi...!!!');
+            }
+        }
+
+        // promosi / demosi
+        if($statusTransfer == 2 || $statusTransfer == 3) {
+            // validate input
+            $request->validate([
+                'department_id'             => 'required',
+                'jabatan_id'                => 'required',
+                'cabang'                    => 'required',
+                'status_karyawan'           => 'required',
+                'salary'                    => 'required',
+                'jobdesk_content'           => 'required'
+            ]);
+
+            $statusKaryawan = $request->status_karyawan;
+
+
+            if($statusKaryawan == 'pkwt' || $statusKaryawan == 'percobaan') {
+                $request->validate([
+                    'lama_kontrak_num'      => 'required',
+                    'lama_kontrak_waktu'    => 'required',
+                    'mulai_kontrak'         => 'required',
+                    'akhir_kontrak'         => 'required'
+                ]);
+            }
+
+            if($statusKaryawan == 'project') {
+                $request->validate([
+                    'project'           => 'required',
+                    'mulai_kontrak'     => 'required',
+                ]);
+            }
+
+            if($statusKaryawan == 'harian') {
+                $request->validate([
+                    'mulai_kontrak'     => 'required',
+                ]);
+            }
+
+
+            // data kontrak
+            $dataKontrak = [
+                'karyawan_id'           => $karyawanId,
+                'jabatan_id'            => $request->jabatan_id,
+                'department_id'         => $request->department_id,
+                'kode_cabang'           => $request->cabang,
+                'contract_status'       => $statusKaryawan,
+                'salary'                => $request->salary,
+                'project'               => $request->project,
+                'lama_kontrak_num'      => $request->lama_kontrak_num,
+                'lama_kontrak_waktu'    => $request->lama_kontrak_waktu,
+                'mulai_kontrak'         => $request->mulai_kontrak,
+                'akhir_kontrak'         => $request->akhir_kontrak,
+                'jobdesk_content'       => $request->jobdesk_content
+            ];
+
+            //status transfer ;abel
+            $statusTransferLabel = '';
+
+            if($statusTransfer == 2) $statusTransferLabel = 'promosi';
+            if($statusTransfer == 3) $statusTransferLabel = 'demosi';
+
+            try {
+                // create new contract
+                $newContract = KaryawanContract::create($dataKontrak);
+                $newContractId = $newContract->id;
+
+                $oldContractId = $karyawan[0]->contract_id;
+
+                // update karyawan
+                $dataKaryawanUpdate = [
+                    'contract_id'       => $newContractId,
+                    'old_contract_id'   => $oldContractId
+                ];
+
+                Karyawan::where('id', $karyawanId)->update($dataKaryawanUpdate);
+
+                // create transfer
+                $dataTransfer = [
+                    'karyawan_id'           => $karyawanId,
+                    'status'                => $statusTransfer,
+                    'old_contract_id'       => $oldContractId,
+                    'contract_id'           => $newContractId
+                ];
+
+                KaryawanTransfer::create($dataTransfer);
+                return back()->with('success', $karyawan[0]->nama_lengkap . " berhasil di$statusTransferLabel...!!!");
+
+            } catch (Exception $e) {
+                return back()->with('error', $karyawan[0]->nama_lengkap . " gagal di$statusTransferLabel...!!!");
+            }
+        }
+    }
+
+    //change password
+    public function changePasswordKaryawanPanel(Request $request)
+    {
+        try {
+            //get karyawan
+            $karyawan = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('id', $request->karyawan_id)
+                        ->first();
+
+            $karyawan->password = password_hash($request->new_password, PASSWORD_DEFAULT);
+            $karyawan->save();
+            return back()->with('success', "Password $karyawan->nama_lengkap berhasil diubah!");
+
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+
+     /*===========================================
+                    KARYAWAN HARIAN
+    ===========================================*/
+
+    public function storeKaryawanHarian(Request $request)
+    {
+        //validate
+        $request->validate([
+            'nik'               => 'required',
+            'nama_lengkap'      => 'required',
+            'no_hp'             => 'required',
+            'alamat_sekarang'   => 'required',
+            'jabatan'           => 'required',
+            'kode_cabang'       => 'required',
+            'salary'            => 'required',
+            'no_rekening'       => 'required',
+            'foto'              => 'required|image|file|max:2048',
+            'ktp'               => 'required|mimes:png,jpg,pdf|file|max:2048'
+        ]);
+
+        try {
+
+            $dataKaryawan = [
+                'nik'               => $request->nik,
+                'nama_lengkap'      => $request->nama_lengkap,
+                'no_hp'             => $request->no_hp,
+                'alamat_sekarang'   => $request->alamat_sekarang,
+                'jabatan'           => $request->jabatan,
+                'kode_cabang'       => $request->kode_cabang,
+                'salary'            => $request->salary,
+                'no_rekening'       => $request->no_rekening,
+                'status'            => 3,
+                'is_daily'          => 1
+            ];
+
+
+            //create karyawan
+            $karyawan = Karyawan::create($dataKaryawan);
+
+            // create contract
+            $dataContract = [
+                'karyawan_id'       => $karyawan->id,
+                'jabatan_id'        => $request->jabatan,
+                'kode_cabang'       => $request->kode_cabang,
+                'contract_status'   => 'harian',
+                'salary'            => $request->salary,
+            ];
+
+            $karyawanContract = KaryawanContract::create($dataContract);
+
+            //upload foto
+            $pathFoto = $request->file('foto')->store("document/karyawan/$karyawan->id/foto", 'public');
+
+            // update karyawan
+            $karyawan->foto = $pathFoto;
+            $karyawan->contract_id = $karyawanContract->id;
+            $karyawan->status_karyawan = $karyawanContract->contract_status;
+            $karyawan->save();
+
+            //upload dokumen
+            $pathKtp = $request->file('ktp')->store("document/karyawan/$karyawan->id/ktp", 'public');
+
+            $dataDokumen = [
+                'karyawan_id'       => $karyawan->id,
+                'jenis_dokumen'     => 'ktp',
+                'file_dokumen'      => $pathKtp
+            ];
+
+            KaryawanHarianDokumen::create($dataDokumen);
+
+            return back()->with('success', 'Karyawan harian berhasil di tambah!');
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function karyawanHarianDetail(string $id)
+    {
+        $data = [
+            'title'                 => 'Admin - Detail Karyawan Harian',
+            'karyawan'              => Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])->where('id', $id)->first(),
+            'karyawanContract'      => KaryawanContract::with(['karyawan'])->where('karyawan_id', $id)->get(),
+            'karyawanDocument'      => KaryawanHarianDokumen::with(['karyawan'])->where('karyawan_id', $id)->where('jenis_dokumen', 'ktp')->first(),
+            'HarianDokumen'         => KaryawanHarianDokumen::with(['karyawan'])->where('karyawan_id', $id)->where('jenis_dokumen', 'pernyataan')->get(),
+            'jabatan'               => Jabatan::with(['department'])->where('is_daily', 1)->get(),
+            'cabang'                => Cabang::all(),
+        ];
+        return view('karyawan.detail-harian', $data);
+    }
+
+    public function updateKaryawanHarian(Request $request, string $id)
+    {
+        try {
+
+            $data = [
+                'nik'              => $request->nik,
+                'nama_lengkap'     => $request->nama_lengkap,
+                'jabatan'          => $request->jabatan,
+                'kode_cabang'      => $request->kode_cabang,
+                'no_hp'            => $request->no_hp,
+                'alamat_sekarang' => $request->alamat_sekarang,
+                'no_rekening'      => $request->no_rekening,
+            ];
+            $karyawan = Karyawan::find($id);
+            if ($request->foto) {
+                if ($karyawan->foto) {
+                    Storage::delete('public/' . $karyawan->foto);
+                }
+                $fotoPath = $request->file('foto')->store('document/karyawan/'. $id , 'public');
+                $data['foto'] = $fotoPath;
+            }
+            $salary = $request->salary;
+            $karyawan = Karyawan::where('id', $id)->update($data);
+            $karyawanContract = KaryawanContract::where('karyawan_id', $id)->update(['salary' => $salary]);
+            return back()->with('success', 'Data berhasil diupdate!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Data gagal diupdate!');
+        }
+    }
+
+    public function addSuratPernyataan(Request $request){
+        try {
+            $request->validate([
+                'file'     => 'required|mimes:pdf|file|max:5120'
+            ]);
+            $karyawan = Karyawan::find($request->id);
+            $data = [
+                'karyawan_id' => $request->id,
+                'keterangan' => $request->keterangan,
+                'jenis_dokumen' => 'pernyataan',
+            ];
+            if ($request->file) {
+                $fileDokumen = $request->file('file')->getClientOriginalName();
+                $fileDokumenPath = $request->file('file')->store('document/karyawan/'. $request->id , 'public');
+                $data['file_dokumen'] = $fileDokumenPath;
+            }
+            $karyawanDocument = KaryawanHarianDokumen::create($data);
+            return back()->with('success', 'Data berhasil ditambahkan!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Data gagal ditambahkan! Hubungi TIM IT');
+        }
+    }
+
+    public function editSuratPernyataan(Request $request, string $id){
+        try {
+            $jenisDokumen = $karyawanHarianDokumen = KaryawanHarianDokumen::find($id);
+            if ($jenisDokumen->jenis_dokumen == 'ktp') {
+                $request->validate([
+                    'file'     => 'mimes:pdf,jpg,jpeg,png|file|max:5120'
+                ]);
+                $data = [];
+                $fileKaryawanDokumen = KaryawanHarianDokumen::find($id);
+                if ($request->file) {
+                    if ($fileKaryawanDokumen->file_dokumen) {
+                        Storage::delete('public/' . $fileKaryawanDokumen->file_dokumen);
+                    }
+                    $fileDokumenPath = $request->file('file')->store('document/karyawan/'. $fileKaryawanDokumen->karyawan_id , 'public');
+                    $data['file_dokumen'] = $fileDokumenPath;
+                }
+                $UpdatekaryawanDocument = KaryawanHarianDokumen::where('id', $id)->update($data);
+                return back()->with('success', 'Data berhasil diupdate!');
+            }else{
+                $request->validate([
+                    'file'     => 'mimes:pdf|file|max:5120'
+                ]);
+                $data = [
+                    'keterangan' => $request->keterangan,
+                ];
+                $fileKaryawanDokumen = KaryawanHarianDokumen::find($id);
+                if ($request->file) {
+                    if ($fileKaryawanDokumen->file_dokumen) {
+                        Storage::delete('public/' . $fileKaryawanDokumen->file_dokumen);
+                    }
+                    $fileDokumenPath = $request->file('file')->store('document/karyawan/'. $fileKaryawanDokumen->karyawan_id , 'public');
+                    $data['file_dokumen'] = $fileDokumenPath;
+                }
+                $UpdatekaryawanDocument = KaryawanHarianDokumen::where('id', $id)->update($data);
+                return back()->with('success', 'Data berhasil diupdate!');
+            }
+        } catch (Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function deleteSuratPernyataan(string $id){
+        try {
+            $karyawanDocument = KaryawanHarianDokumen::find($id);
+            if ($karyawanDocument->file_dokumen) {
+                Storage::delete('public/' . $karyawanDocument->file_dokumen);
+            }
+            $karyawanDocument->delete();
+            return back()->with('success', 'Data berhasil dihapus!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Data gagal dihapus!');
+        }
+    }
+
+
+
+    /*============================================================
+                        FRONT END USER
+    ============================================================*/
+
+    public function profile(Karyawan $karyawan)
+    {
+        $data = [
+            'title'             => 'Profil Karyawan | PT. Maha Akbar Sejahtera',
+            'karyawan'          => $karyawan,
+            'karyawanBiodata'   => KaryawanBiodata::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanChildren'  => KaryawanChildren::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanDocument'  => KaryawanDocument::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanEducation' => KaryawanEducation::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanFamily'    => KaryawanFamily::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanSibling'   => KaryawanSibling::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+        ];
+
+
+        return view('frontend.karyawan.profiledata', $data);
+    }
+
+
+    public function kontrakKerja(Karyawan $karyawan)
+    {
+
+        $data = [
+            'title'             => 'Kontrak Kerja | PT. Maha Akbar Sejahtera',
+            'karyawan'          => $karyawan,
+            'karyawanBiodata'   => KaryawanBiodata::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanEducation' => KaryawanEducation::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+            'karyawanJobdesk'   => KaryawanJobdesk::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+        ];
+
+        return view('frontend.karyawan.show-contract', $data);
+    }
+
+
+    public function changePassword()
+    {
+        $data = [
+            'title'     => 'Ubah Password | PT. Maha Akbar Sejahtera'
+        ];
+
+        return view('frontend.karyawan.change-password', $data);
+    }
+
+    public function storeChangePassword(Request $request)
+    {
+        // try {
+            //validate
+            $request->validate([
+                'old_password'      => 'required',
+                'password'          => 'required|min:6|confirmed'
+            ]);
+
+            // cek password lama sama atau tidak
+            if(!Hash::check($request->old_password, Auth::guard('karyawan')->user()->password)) {
+                return back()->with('error', 'Password lama anda salah!');
+            }
+
+            // kalau password baru sama dengan yang lama
+            if(strcmp($request->old_password, $request->password) == 0) {
+                return back()->with('error', 'Password baru anda tidak boleh sama dengan yang lama!');
+            }
+
+            $data = [
+                'password'  => Hash::make($request->password)
+            ];
+
+            Karyawan::where('email', Auth::guard('karyawan')->user()->email)->update($data);
+            return back()->with('success', 'Password berhasil diubah!');
+
+        // } catch (Exception $e) {
+        //     return back()->with('error', $e->getMessage());
+        // }
+    }
+
+
+    public function showPaktaIntegritas(Karyawan $karyawan)
+    {
+        $data = [
+            'title'             => 'SPT TTD Digital | PT. Maha Akbar Sejahtera',
+            'karyawan'          => $karyawan,
+            'karyawanBiodata'   => KaryawanBiodata::with(['karyawan'])->where('karyawan_id', $karyawan->id)->get(),
+        ];
+
+        if($karyawan->pakta_integritas_check == 1) {
+            return view('frontend.karyawan.pakta_integirtas', $data);
+        } else {
+            echo "<script>
+                    alert('Tidak ada surat pernyataan tanda tangan digital $karyawan->nama_lengkap');
+                </script>";
+            abort(404);
+        }
+
+    }
 
 }

@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
-class PresensiController extends Controller
+class PresensiController extends BaseController
 {
 
     public function gethari()
@@ -133,9 +133,10 @@ class PresensiController extends Controller
 
     public function store(Request $request)
     {
-
         $nik = Auth::guard('karyawan')->user()->nik;
-        $kode_cabang = Auth::guard('karyawan')->user()->kode_cabang;
+        $kode_cabang = Auth::guard('karyawan')->user()->contract->kode_cabang;
+        $cabangStatus = Auth::guard('karyawan')->user()->contract->cabang->is_project;
+        $contractStatus = Auth::guard('karyawan')->user()->contract->contract_status;
         $tgl_presensi = date("Y-m-d");
         $jam = date("H:i:s");
         $lok_kantor = DB::table('cabang')->where('kode_cabang', $kode_cabang)->first();
@@ -146,7 +147,7 @@ class PresensiController extends Controller
         $lokasiuser = explode(",", $lokasi);
         $latitudeuser = $lokasiuser[0];
         $longitudeuser = $lokasiuser[1];
-        $inZone = ($request->inZone == true) ? 1 : 0;
+        $inZone = ($request->inZone == 'true') ? 1 : 0;
 
         $jarak = $this->distance($latitudekantor, $longitudekantor, $latitudeuser, $longitudeuser);
         $radius = round($jarak["meters"]);
@@ -181,52 +182,63 @@ class PresensiController extends Controller
             // echo "error|Maaf Anda Berada Diluar Radius, Jarak Anda " . $radius . " meter dari Kantor|radius";
 
             if($cek < 1) {
-                $data = [
-                    'nik' => $nik,
-                    'tgl_presensi' => $tgl_presensi,
-                    'jadwal_masuk'  => $jamMasuk,
-                    'jadwal_pulang' => $jamPulang,
-                    'jam_in' => $jam,
-                    'foto_in' => $fileName,
-                    'lokasi_in' => $lokasi,
-                    'kode_jam_kerja' => $jamkerja->kode_jam_kerja,
-                    'status_absen'  => 1,
-                    'absen_masuk_type' => 1,
-                    'status'        => 0,
-                    'absen_in_status' => 0,
-                    'absen_in_zone' => $inZone
-                ];
-
-                if($jam > $jamMasuk) {
-                    $data['is_late'] = 1;
+                if ($jam < $jamkerja->awal_jam_masuk) {
+                    echo "error|Maaf Belum Waktunya Melakuan Presensi|in";
+                } else if ($jam > $jamkerja->akhir_jam_masuk) {
+                    echo "error|Maaf Waktu Untuk Presensi Sudah Habis |in";
                 } else {
-                    $data['is_late'] = 0;
-                }
+                    $data = [
+                        'nik' => $nik,
+                        'tgl_presensi' => $tgl_presensi,
+                        'jadwal_masuk'  => $jamMasuk,
+                        'jadwal_pulang' => $jamPulang,
+                        'jam_in' => $jam,
+                        'foto_in' => $fileName,
+                        'lokasi_in' => $lokasi,
+                        'kode_jam_kerja' => $jamkerja->kode_jam_kerja,
+                        'status_absen'  => 1,
+                        'absen_masuk_type' => 1,
+                        'status'        => 0,
+                        'absen_in_status' => 0,
+                        'absen_in_zone' => $inZone,
+                        'cabang_absen'  => $kode_cabang
+                    ];
 
-                $simpan = DB::table('presensi')->insert($data);
-                if ($simpan) {
-                    echo "warning|Anda absen diluar radius dan memerlukan persetujuan admin...!!!|in";
-                    Storage::put($file, $image_base64);
-                } else {
-                    echo "error|Maaf Gagal absen, Hubungi HRD|in";
+                    if($jam > $jamMasuk) {
+                        $data['is_late'] = 1;
+                    } else {
+                        $data['is_late'] = 0;
+                    }
+
+                    $simpan = DB::table('presensi')->insert($data);
+                    if ($simpan) {
+                        echo "warning|Anda absen diluar radius dan memerlukan persetujuan admin...!!!|in";
+                        Storage::put($file, $image_base64);
+                    } else {
+                        echo "error|Maaf Gagal absen, Hubungi HRD|in";
+                    }
                 }
             } else {
-                $data_pulang = [
-                    'jam_out' => $jam,
-                    'foto_out' => $fileName,
-                    'lokasi_out' => $lokasi,
-                    'absen_pulang_type' => 1,
-                    'status'        => 5,
-                    'absen_out_status'  => 0,
-                    'absen_out_zone' => $inZone,
-                ];
-
-                $update = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->update($data_pulang);
-                if ($update) {
-                    echo "warning|Absen pulang diluar radius dan memerlukan persetujuan admin...!!!|out";
-                    Storage::put($file, $image_base64);
+                if ($jam < $jamkerja->jam_pulang) {
+                    echo "error|Maaf Belum Waktunya Pulang |out";
                 } else {
-                    echo "error|Maaf Gagal absen pulang, Hubungi HRD|out";
+                    $data_pulang = [
+                        'jam_out' => $jam,
+                        'foto_out' => $fileName,
+                        'lokasi_out' => $lokasi,
+                        'absen_pulang_type' => 1,
+                        'status'        => 5,
+                        'absen_out_status'  => 0,
+                        'absen_out_zone' => $inZone,
+                    ];
+
+                    $update = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->update($data_pulang);
+                    if ($update) {
+                        echo "warning|Absen pulang diluar radius dan memerlukan persetujuan admin...!!!|out";
+                        Storage::put($file, $image_base64);
+                    } else {
+                        echo "error|Maaf Gagal absen pulang, Hubungi HRD|out";
+                    }
                 }
             }
 
@@ -269,6 +281,7 @@ class PresensiController extends Controller
                         'status_absen'  => 1,
                         'absen_masuk_type' => 1,
                         'absen_in_zone' => $inZone,
+                        'cabang_absen'  => $kode_cabang
                     ];
 
                     if($jam > $jamMasuk) {
@@ -276,6 +289,9 @@ class PresensiController extends Controller
                     } else {
                         $data['is_late'] = 0;
                     }
+
+                    // cek karyawan inti di proyek, kalau iya uang makan include 3
+                    if($contractStatus != 'harian' && $contractStatus != 'project' && $cabangStatus == 1) $data['meal_num'] = 3;
 
                     $simpan = DB::table('presensi')->insert($data);
                     if ($simpan) {
@@ -377,6 +393,39 @@ class PresensiController extends Controller
     }
 
 
+    public function getJumlahLibur(Request $request)
+    {
+        try {
+            $startDate = $request->startDate;
+            $endDate = $request->endDate;
+
+            $jumlahLibur = 0;
+            $jumlahLibur += Holiday::whereBetween('holidays_date', [$startDate, $endDate])->count();
+            $jumlahLibur += jumlahHariMinggu($startDate, $endDate);
+
+            $tglAkhirWrap = date('Y-m-d', strtotime("+$jumlahLibur days", strtotime($endDate)));
+
+            //hitung jml hari minggu dan hari libur
+            $jmlHariMinggu = jumlahHariMinggu($startDate, $tglAkhirWrap);
+            $jmlHariLibur = Holiday::whereBetween('holidays_date', [$startDate, $tglAkhirWrap])->count();
+            $totalLibur = $jmlHariMinggu + $jmlHariLibur;
+
+            // dd($totalLibur);
+
+            return [
+                'error'     => false,
+                'amount'    => $totalLibur
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'error'     => true,
+                'message'   => $e->getMessage()
+            ];
+        }
+    }
+
+
     /*=====================================
             PENGAJUAN IZIN
     ==================================== */
@@ -384,11 +433,12 @@ class PresensiController extends Controller
     public function izin()
     {
         $nik = Auth::guard('karyawan')->user()->nik;
+        $jabatan = Auth::guard('karyawan')->user()->contract->jabatan_id;
         $dataizin = Pengajuanizin::with(['karyawan', 'jenisizin'])->where('nik', $nik)->get();
 
         $roleId = Auth::guard('karyawan')->user()->role_id;
 
-        if($roleId > 1) {
+        if($roleId > 1 || $jabatan == 34) {
             return view('presensi.frontend.izin.izin-optionmenu');
         } else {
             return view('presensi.frontend.izin.izin', compact('dataizin'));
@@ -406,7 +456,18 @@ class PresensiController extends Controller
     public function izinKaryawan()
     {
         $roleId = Auth::guard('karyawan')->user()->role_id;
-        $deptId = Auth::guard('karyawan')->user()->kode_dept;
+        $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+        $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
+
+        if($roleId == 1 && $jabatanId == 34) {
+            $dataIzinKaryawan = Pengajuanizin::with(['karyawan', 'jenisizin'])
+                                ->select('karyawan.*', 'pengajuan_izin.id as id_pi', 'pengajuan_izin.tgl_mulai_izin', 'pengajuan_izin.tgl_akhir_izin', 'pengajuan_izin.status', 'pengajuan_izin.keterangan', 'pengajuan_izin.lampiran', 'pengajuan_izin.status_approved', 'pengajuan_izin.is_read')
+                                ->join('karyawan', 'pengajuan_izin.nik', '=', 'karyawan.nik')
+                                ->where('pengajuan_izin.status_approved', '>=', 2)
+                                ->where('pengajuan_izin.status_approved', '!=', 6)
+                                ->where('pengajuan_izin.status_approved', '!=', 7)
+                                ->get();
+        }
 
         if($roleId == 2) {
             if($deptId == 9) {
@@ -462,6 +523,8 @@ class PresensiController extends Controller
 
         // STATUS APPROVED
         $kodeStatusApproved = 0;
+
+        if($roleId == 1 && $jabatanId == 34) $kodeStatusApproved = 2;
 
         if($roleId == 2)  {
             if($deptId == 9) {
@@ -523,7 +586,7 @@ class PresensiController extends Controller
             $request->validate([
                 'tgl_mulai_izin'     => 'required|date',
                 'tgl_akhir_izin'     => 'required|date',
-                'lampiran'           => 'required|file|max:2048|mimes:pdf,jpg,jpeg,png'
+                'lampiran'           => 'required|file|max:5120|mimes:pdf,jpg,jpeg,png'
             ]);
         }
 
@@ -552,6 +615,7 @@ class PresensiController extends Controller
         if($request->status == 'c') {
             if($request->jenis_izin_id == 1) {
                 $request->validate([
+                    'tgl_mulai_izin'    => 'required|date',
                     'tgl_akhir_izin'    => 'required|date'
                 ]);
             } else {
@@ -599,8 +663,44 @@ class PresensiController extends Controller
 
         // status approved
         $roleId = Auth::guard('karyawan')->user()->role_id;
-        $deptId = Auth::guard('karyawan')->user()->kode_dept;
+        $deptId = Auth::guard('karyawan')->user()->contract->department_id;
         $newStatusApprove = 0;
+
+
+        // get manager
+        $managerData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 2)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', $deptId)
+                        ->count();
+        // get hrd manager
+        $managerHrdData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 2)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', 9)
+                        ->count();
+        // get hrd manager
+        $hrdSpvData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 1)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', 9)
+                        ->whereRelation('contract', 'jabatan_id', 34)
+                        ->count();
+        // get gm
+        $gmData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 3)
+                        ->where('status', 3)
+                        ->count();
+        // get direktur
+        $direkturData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 4)
+                        ->where('status', 3)
+                        ->count();
+        // get komisaris
+        $komisarisData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 5)
+                        ->where('status', 3)
+                        ->count();
 
         // manager
         if($roleId == 2) {
@@ -615,14 +715,63 @@ class PresensiController extends Controller
             }
         }
 
+        // staff
+        if($roleId == 1) {
+            //staff direktur
+            if($deptId == 2) {
+                $newStatusApprove = 3;
+            } else {
+                //staff department
+                $newStatusApprove = 0;
+
+                // cek department teknik dan produksi
+                if($deptId == 6 || $deptId == 8) {
+                    if($managerData < 1) $newStatusApprove = 1;
+                } else {
+                    if($managerData < 1) $newStatusApprove = 2;
+                }
+            }
+        }
+
         // gm
         if($roleId == 3) $newStatusApprove = 2;
+
+        // direktur
         if($roleId == 4) $newStatusApprove = 4;
+
+        //komisaris
         if($roleId == 5) $newStatusApprove = 5;
 
 
+
+        //=============================
+        // cek data karyawan ada atau tidak
+        if($newStatusApprove == 1) {
+            if($gmData < 1) $newStatusApprove = 2;
+        }
+
+        if($newStatusApprove == 2) {
+            if($managerHrdData < 1) {
+                if($hrdSpvData < 1) $newStatusApprove = 3;
+            }
+        }
+
+        if($newStatusApprove == 3) {
+            if($direkturData < 1) $newStatusApprove = 4;
+        }
+
+        if($newStatusApprove == 4) {
+            if($komisarisData < 1) $newStatusApprove = 5;
+        }
+        //================================
+
         $validatedData['status_approved'] = $newStatusApprove;
         $validatedData['jumlah_hari'] = jumlahHari($validatedData['tgl_mulai_izin'], $validatedData['tgl_akhir_izin']);
+
+        $bagiHariBulan = jmlPembagianHariIzin($validatedData['tgl_mulai_izin'], $validatedData['tgl_akhir_izin']);
+        $validatedData['bulan_pertama'] = $bagiHariBulan['bulanPertama'];
+        $validatedData['bulan_kedua'] = $bagiHariBulan['bulanKedua'];
+
 
         try {
             Pengajuanizin::create($validatedData);
@@ -641,8 +790,31 @@ class PresensiController extends Controller
 
             // STATUS APPROVED
             $roleId = Auth::guard('karyawan')->user()->role_id;
-            $deptId = Auth::guard('karyawan')->user()->kode_dept;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+            $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
             $kodeStatusApproved = 0;
+
+            if($roleId == 1 && $jabatanId == 34) {
+                $kodeStatusApproved = 2;
+
+                // get tracking manager hrd read
+                $trackingIzin = TrackingIzin::with(['pengajuanizin', 'karyawan'])
+                                ->where('pengajuan_izin_id', $pengajuanIzin->id)
+                                ->where('status', 7)
+                                ->get();
+
+                if(count($trackingIzin) < 1) {
+                    // update tracking read
+                    $dataTracking = [
+                        'pengajuan_izin_id'         => $pengajuanIzin->id,
+                        'keterangan'                => 'Dilihat HRD SPV',
+                        'status'                    => 7,
+                        'date'                      => date('Y-m-d'),
+                    ];
+
+                    TrackingIzin::create($dataTracking);
+                }
+            }
 
             if($roleId == 2)  {
                 if($deptId == 9) {
@@ -754,7 +926,7 @@ class PresensiController extends Controller
                 }
             }
 
-            if($pengajuanIzin->status_approved == $kodeStatusApproved && $roleId != 1) {
+            if($pengajuanIzin->status_approved == $kodeStatusApproved && $roleId != 1 || $jabatanId == 34) {
                 // update read
                 Pengajuanizin::where('id', $pengajuanIzin->id)->update(['is_read'   => 1]);
             }
@@ -783,15 +955,82 @@ class PresensiController extends Controller
     {
         try {
             $roleId = Auth::guard('karyawan')->user()->role_id;
-            $deptId = Auth::guard('karyawan')->user()->kode_dept;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+            $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
+
+            // get manager
+            $managerData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 2)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', $deptId)
+                        ->count();
+            // get hrd manager
+            $managerHrdData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                            ->where('role_id', 2)
+                            ->where('status', 3)
+                            ->whereRelation('contract', 'department_id', 9)
+                            ->count();
+            // get hrd manager
+            $hrdSpvData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 1)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', 9)
+                        ->whereRelation('contract', 'jabatan_id', 34)
+                        ->count();
+            // get gm
+            $gmData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 3)
+                    ->where('status', 3)
+                    ->count();
+            // get direktur
+            $direkturData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 4)
+                        ->where('status', 3)
+                        ->count();
+            // get komisaris
+            $komisarisData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 5)
+                        ->where('status', 3)
+                        ->count();
 
             $newStatusApprove = 0;
             $dataUpdate = [];
+
+            // hrd spv
+            if($roleId == 1 && $jabatanId == 34) {
+                $newStatusApprove = 3;
+                if($pengajuanIzin->status == 'i') $newStatusApprove = 5;
+
+                // get tracking manager approve
+                $trackingIzin = TrackingIzin::with(['pengajuanizin', 'karyawan'])
+                                ->where('pengajuan_izin_id', $pengajuanIzin->id)
+                                ->where('status', 8)
+                                ->get();
+
+                if(count($trackingIzin) < 1) {
+                    // update tracking read
+                    $dataTracking = [
+                        'pengajuan_izin_id'         => $pengajuanIzin->id,
+                        'keterangan'                => 'Disetujui HRD SPV',
+                        'status'                    => 8,
+                        'date'                      => date('Y-m-d'),
+                    ];
+
+                    TrackingIzin::create($dataTracking);
+                }
+
+                $dataUpdate = [
+                    'status_approved'       => $newStatusApprove,
+                    'hrd_approve_date'  => date('Y-m-d'),
+                    'is_read'               => 0
+                ];
+            }
 
             // manager
             if($roleId == 2) {
                 if($deptId == 9) {
                     $newStatusApprove = 3;
+                    if($pengajuanIzin->status == 'i') $newStatusApprove = 5;
 
                     // get tracking manager approve
                     $trackingIzin = TrackingIzin::with(['pengajuanizin', 'karyawan'])
@@ -851,7 +1090,7 @@ class PresensiController extends Controller
                 }
             }
 
-            // direktur
+            // gm
             if($roleId == 3) {
                 $newStatusApprove = 2;
 
@@ -942,6 +1181,29 @@ class PresensiController extends Controller
             }
 
 
+            //=============================
+            // cek data karyawan ada atau tidak
+            if($newStatusApprove == 1) {
+                if($gmData < 1) $newStatusApprove = 2;
+            }
+
+            if($newStatusApprove == 2) {
+                if($managerHrdData < 1) {
+                    if($hrdSpvData < 1) $newStatusApprove = 3;
+                }
+            }
+
+            if($newStatusApprove == 3) {
+                if($direkturData < 1) $newStatusApprove = 4;
+            }
+
+            if($newStatusApprove == 4) {
+                if($komisarisData < 1) $newStatusApprove = 5;
+            }
+            //================================
+
+            $dataUpdate['status_approved'] = $newStatusApprove;
+
             // update
             Pengajuanizin::where('id', $pengajuanIzin->id)->update($dataUpdate);
             return to_route('presensi.izinkaryawan')->with('success', 'Izin berhasil diterima!');
@@ -960,10 +1222,35 @@ class PresensiController extends Controller
             ]);
 
             $roleId = Auth::guard('karyawan')->user()->role_id;
-            $deptId = Auth::guard('karyawan')->user()->kode_dept;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+            $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
 
             $newStatusApprove = 6;
             $dataUpdate = [];
+
+            // hrd spv
+            if($roleId == 1 && $jabatanId == 34) {
+                $newStatusApprove = 8;
+
+                // get tracking manager approve
+                $trackingIzin = TrackingIzin::with(['pengajuanizin', 'karyawan'])
+                                ->where('pengajuan_izin_id', $pengajuanIzin->id)
+                                ->where('status', 9)
+                                ->get();
+
+                if(count($trackingIzin) < 1) {
+                    // update tracking read
+                    $dataTracking = [
+                        'pengajuan_izin_id'         => $pengajuanIzin->id,
+                        'keterangan'                => 'Ditolak HRD SPV',
+                        'keterangan_tolak'          => $request->keterangan_tolak,
+                        'status'                    => 9,
+                        'date'                      => date('Y-m-d'),
+                    ];
+
+                    TrackingIzin::create($dataTracking);
+                }
+            }
 
             // manager
             if($roleId == 2) {
@@ -1102,6 +1389,21 @@ class PresensiController extends Controller
         }
     }
 
+    public function destroyIzin(Pengajuanizin $pengajuanIzin)
+    {
+        try {
+            // cek lampiran kalau ada hapus
+            if(!empty($pengajuanIzin->lampiran)) {
+                Storage::disk('public')->delete($pengajuanIzin->lampiran);
+            }
+
+            Pengajuanizin::where('id', $pengajuanIzin->id)->delete();
+            return back()->with('success', 'Pengajuan Izin berhasil dihapus!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Pengajuan Izin gagal dihapus!');
+        }
+    }
+
 
     /*===========================================================================================*/
 
@@ -1114,14 +1416,15 @@ class PresensiController extends Controller
     {
         $idKaryawan = Auth::guard('karyawan')->user()->id;
         $roleId = Auth::guard('karyawan')->user()->role_id;
+        $jabatan = Auth::guard('karyawan')->user()->contract->jabatan_id;
 
         $data = [
             'title'         => 'Lembur | PT. Maha Akbar Sejahtera',
             'dataLembur'    => Lembur::with(['karyawan'])->where('karyawan_id', $idKaryawan)->get()
         ];
 
-        if($roleId > 1) {
-            return view('presensi.frontend.lembur.lembur-optionmenu');
+        if($roleId > 1 || $jabatan == 34) {
+            return view('presensi.frontend.lembur.lembur-optionmenu', compact('jabatan'));
         } else {
             return view('presensi.frontend.lembur.index', $data);
         }
@@ -1134,27 +1437,198 @@ class PresensiController extends Controller
         return view('presensi.frontend.lembur.index', compact('dataLembur'));
     }
 
+    public function perintahLembur()
+    {
+        $id = Auth::guard('karyawan')->user()->id;
+        $dataLembur = Lembur::with(['karyawan'])
+        ->where('atasan_id', $id)
+        ->get();
+        return view('presensi.frontend.lembur.perintah-lembur', compact('dataLembur'));
+    }
+
+    public function addPerintahLembur()
+    {
+        $id = Auth::guard('karyawan')->user()->id;
+        $karyawan = Karyawan::find($id);
+        if($karyawan->role_id == 2) {
+            $bawahan = Karyawan::where('role_id', 1)
+            ->where('kode_dept', $karyawan->kode_dept)
+            ->get();
+        } elseif ($karyawan->role_id == 3) {
+            $bawahan = Karyawan::where('role_id', 1)
+            ->whereIn('kode_dept', [6,8])
+            ->get();
+        }elseif ($karyawan->role_id == 4 || $karyawan->role_id == 5 ) {
+            $bawahan = Karyawan::where('role_id', 1)
+            ->get();
+        }else{
+            $bawahan = Karyawan::where('role_id', 1)
+            ->where('kode_dept', $karyawan->kode_dept)
+            ->get();
+        }
+        return view('presensi.frontend.lembur.add-perintah-lembur', compact('karyawan', 'bawahan'));
+    }
+
+    public function storePerintahLembur(Request $request){
+
+        $validatedData = $request->validate([
+            'penerima'         => 'required',
+            'tgl_lembur'        => 'required',
+            'jam_mulai'         => 'required',
+            'jam_selesai'       => 'required',
+            'perihal'           => 'required',
+            'keterangan'        => 'required'
+        ]);
+
+
+        try {
+            $atasan = Auth::guard('karyawan')->user()->id;
+            $atasanrole =  Auth::guard('karyawan')->user()->role_id;
+            $atasankodedept =  Auth::guard('karyawan')->user()->contract->department_id;
+            $atasanJabatan = Auth::guard('karyawan')->user()->contract->jabatan_id;
+
+            // get hrd manager
+            $managerHrdData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 2)
+                    ->where('status', 3)
+                    ->whereRelation('contract', 'department_id', 9)
+                    ->count();
+            // get hrd manager
+            $hrdSpvData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 1)
+                    ->where('status', 3)
+                    ->whereRelation('contract', 'department_id', 9)
+                    ->whereRelation('contract', 'jabatan_id', 34)
+                    ->count();
+            // get gm
+            $gmData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 3)
+                    ->where('status', 3)
+                    ->count();
+            // get direktur
+            $direkturData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 4)
+                    ->where('status', 3)
+                    ->count();
+            // get komisaris
+            $komisarisData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 5)
+                    ->where('status', 3)
+                    ->count();
+
+
+            $lemburCek = Lembur::with(['karyawan'])
+                                ->where('tgl_lembur', $request->tgl_lembur)
+                                ->where('atasan_id', $atasan)
+                                ->where('karyawan_id', $request->penerima)
+                                ->count();
+            if($lemburCek > 0) {
+                return back()->with('error', 'Anda sudah mengajukan lembur pada tanggal '. $request->tgl_lembur);
+            }
+            $data = [
+                'atasan_id'        => $atasan,
+                'karyawan_id'      => $request->penerima,
+                'tgl_lembur'       => $request->tgl_lembur,
+                'jam_mulai'        => $request->jam_mulai,
+                'jam_selesai'      => $request->jam_selesai,
+                'perihal'          => $request->perihal,
+                'keterangan'       => $request->keterangan,
+            ];
+
+            $statusApproved = 11;
+
+            //spv manager
+            if($atasanrole == 1 && $atasankodedept == 9 && $atasanJabatan == 34) $statusApproved = 3;
+
+            // role manager
+            if($atasanrole == 2) {
+                if($atasankodedept == 9) {
+                    $statusApproved = 3;
+                } else {
+                    //cek departemen teknik atau tidak
+                    if($atasankodedept == 6 || $atasankodedept == 8) {
+                        $statusApproved = 1;
+                    } else {
+                        $statusApproved = 2;
+                    }
+                }
+            }
+
+            //GM
+            if ($atasanrole == 3) $statusApproved = 2;
+            // direktur
+            if ($atasanrole == 4) $statusApproved = 4;
+            // komisaris
+            if ($atasanrole == 5) $statusApproved = 11;
+
+            //=============================
+            // cek data karyawan ada atau tidak
+            if($statusApproved == 1) {
+                if($gmData < 1) $statusApproved = 2;
+            }
+
+            if($statusApproved == 2) {
+                if($managerHrdData < 1) {
+                    if($hrdSpvData < 1) $statusApproved = 3;
+                }
+            }
+
+            if($statusApproved == 3) {
+                if($direkturData < 1) $statusApproved = 4;
+            }
+
+            if($statusApproved == 4) {
+                if($komisarisData < 1) $statusApproved = 11;
+            }
+            //================================
+
+            $data['status_approved'] = $statusApproved;
+
+            Lembur::create($data);
+            return to_route('presensi.perintahlembur')->with('success', 'Perintah Lembur Ditambah !');
+        } catch (Exception $e) {
+            return back()->with('error', 'Terjadi Kesalahan, Hubungi TIM IT !');
+        }
+
+    }
+
     public function lemburKaryawan()
     {
         $roleId = Auth::guard('karyawan')->user()->role_id;
-        $deptId = Auth::guard('karyawan')->user()->kode_dept;
+        $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+        $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
+
+        if($roleId == 1 && $jabatanId == 34) {
+            $dataLemburKaryawan = Lembur::with(['karyawan'])
+                                ->select('karyawan.*', 'lembur.id as id_lb', 'lembur.tgl_lembur', 'lembur.perihal', 'lembur.keterangan', 'lembur.status_approved', 'lembur.is_read')
+                                ->join('karyawan', 'lembur.karyawan_id', '=', 'karyawan.id')
+                                // ->whereNull('lembur.atasan_id') // Menggunakan whereNull untuk memeriksa kolom yang bernilai NULL
+                                ->where('lembur.status_approved', '>=', 2)
+                                ->where('lembur.status_approved', '!=', 6)
+                                ->where('lembur.status_approved', '!=', 7)
+                                ->where('lembur.status_approved', '!=', 11)
+                                ->get();
+        }
 
         if($roleId == 2) {
             if($deptId == 9) {
                 $dataLemburKaryawan = Lembur::with(['karyawan'])
                                                 ->select('karyawan.*', 'lembur.id as id_lb', 'lembur.tgl_lembur', 'lembur.perihal', 'lembur.keterangan', 'lembur.status_approved', 'lembur.is_read')
                                                 ->join('karyawan', 'lembur.karyawan_id', '=', 'karyawan.id')
+                                                // ->whereNull('lembur.atasan_id') // Menggunakan whereNull untuk memeriksa kolom yang bernilai NULL
                                                 ->where('lembur.status_approved', '>=', 2)
                                                 ->where('lembur.status_approved', '!=', 6)
                                                 ->where('lembur.status_approved', '!=', 7)
+                                                ->where('lembur.status_approved', '!=', 11)
                                                 ->get();
             } else {
                 $dataLemburKaryawan = Lembur::with(['karyawan'])
-                                                ->select('karyawan.*', 'lembur.id as id_lb', 'lembur.tgl_lembur', 'lembur.perihal', 'lembur.keterangan', 'lembur.status_approved', 'lembur.is_read')
-                                                ->join('karyawan', 'lembur.karyawan_id', '=', 'karyawan.id')
-                                                ->where('karyawan.kode_dept', $deptId)
-                                                ->where('karyawan.role_id', 1)
-                                                ->get();
+                                    ->select('karyawan.*', 'lembur.id as id_lb', 'lembur.tgl_lembur', 'lembur.perihal', 'lembur.keterangan', 'lembur.status_approved', 'lembur.is_read')
+                                    ->join('karyawan', 'lembur.karyawan_id', '=', 'karyawan.id')
+                                    ->where('karyawan.kode_dept', $deptId)
+                                    ->where('karyawan.role_id', 1)
+                                    ->where('lembur.status_approved', '!=', 11)
+                                    ->get();
             }
         }
 
@@ -1165,6 +1639,7 @@ class PresensiController extends Controller
                                                 ->where('karyawan.kode_dept', 6)
                                                 ->orWhere('karyawan.kode_dept', 8)
                                                 ->where('lembur.status_approved', '!=', 6)
+                                                ->where('lembur.status_approved', '!=', 11)
                                                 ->get();
         }
 
@@ -1176,6 +1651,7 @@ class PresensiController extends Controller
                                                 ->where('lembur.status_approved', '!=', 6)
                                                 ->where('lembur.status_approved', '!=', 7)
                                                 ->where('lembur.status_approved', '!=', 8)
+                                                ->where('lembur.status_approved', '!=', 11)
                                                 ->get();
         }
 
@@ -1188,11 +1664,16 @@ class PresensiController extends Controller
                                                 ->where('lembur.status_approved', '!=', 7)
                                                 ->where('lembur.status_approved', '!=', 8)
                                                 ->where('lembur.status_approved', '!=', 9)
+                                                ->where('lembur.status_approved', '!=', 11)
                                                 ->get();
         }
 
         // STATUS APPROVED
         $kodeStatusApproved = 0;
+
+        if($roleId == 1 && $jabatanId == 34) {
+            $kodeStatusApproved = 2;
+        }
 
         if($roleId == 2)  {
             if($deptId == 9) {
@@ -1322,7 +1803,11 @@ class PresensiController extends Controller
                 $newLemburFoto = LemburFoto::create($data);
 
                 if($newLemburFoto) {
-                    echo "success|Foto berhasil di tambahkan!";
+                    if($statusLembur == 3) {
+                        echo "success_pulang|Foto berhasil di tambahkan!";
+                    } else {
+                        echo "success|Foto berhasil di tambahkan!";
+                    }
                 } else {
                     echo "error|Foto gagal di tambahkan!";
                 }
@@ -1356,8 +1841,31 @@ class PresensiController extends Controller
 
             // STATUS APPROVED
             $roleId = Auth::guard('karyawan')->user()->role_id;
-            $deptId = Auth::guard('karyawan')->user()->kode_dept;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+            $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
             $kodeStatusApproved = 0;
+
+            if($roleId == 1 && $jabatanId == 34) {
+                $kodeStatusApproved = 2;
+
+                // get tracking manager hrd read
+                $trackingLembur = TrackingLembur::with(['lembur'])
+                                ->where('lembur_id', $lembur->id)
+                                ->where('status', 7)
+                                ->get();
+
+                if(count($trackingLembur) < 1) {
+                    // update tracking read
+                    $dataTracking = [
+                        'lembur_id'                 => $lembur->id,
+                        'keterangan'                => 'Dilihat HRD SPV',
+                        'status'                    => 7,
+                        'date'                      => date('Y-m-d'),
+                    ];
+
+                    TrackingLembur::create($dataTracking);
+                }
+            }
 
             if($roleId == 2)  {
                 if($deptId == 9) {
@@ -1469,13 +1977,13 @@ class PresensiController extends Controller
                 }
             }
 
-            if($lembur->status_approved == $kodeStatusApproved && $roleId != 1) {
+            if($lembur->status_approved == $kodeStatusApproved && $roleId != 1 || $jabatanId == 34) {
                 // update read
                 Lembur::where('id', $lembur->id)->update(['is_read'   => 1]);
             }
 
             $data = [
-                'title'                 => 'Detail Izin Karyawan | PT. Maha Akbar Sejahtera',
+                'title'                 => 'Detail Lembur Karyawan | PT. Maha Akbar Sejahtera',
                 'dataLembur'            => $lembur,
                 'trackingLembur'        => TrackingLembur::with(['lembur'])
                                             ->where('lembur_id', $lembur->id)->get(),
@@ -1487,7 +1995,7 @@ class PresensiController extends Controller
                                             ->where('status', 3)->get(),
                 'kodeStatusApproved'    => $kodeStatusApproved,
                 'karyawan'              => Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
-                                            ->where('id', $lembur->id)
+                                            ->where('id', $lembur->karyawan_id)
                                             ->get(),
             ];
 
@@ -1501,20 +2009,108 @@ class PresensiController extends Controller
     public function ajukanLembur(Lembur $lembur)
     {
         try {
+            $statusApproved = 0;
+            $ketTracking = 'Lembur diajukan';
+            $msgSuccess = 'Lembur berhasil diajukan';
+
+            // direktur staff
+            $roleId = Auth::guard('karyawan')->user()->role_id;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+
+            // get manager
+            $managerData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 2)
+                    ->where('status', 3)
+                    ->whereRelation('contract', 'department_id', $deptId)
+                    ->count();
+            // get hrd manager
+            $managerHrdData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 2)
+                    ->where('status', 3)
+                    ->whereRelation('contract', 'department_id', 9)
+                    ->count();
+            // get hrd manager
+            $hrdSpvData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 1)
+                    ->where('status', 3)
+                    ->whereRelation('contract', 'department_id', 9)
+                    ->whereRelation('contract', 'jabatan_id', 34)
+                    ->count();
+            // get gm
+            $gmData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 3)
+                    ->where('status', 3)
+                    ->count();
+            // get direktur
+            $direkturData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 4)
+                    ->where('status', 3)
+                    ->count();
+            // get komisaris
+            $komisarisData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 5)
+                    ->where('status', 3)
+                    ->count();
+
+
+            //staff direktur
+            if($deptId == 2) {
+                $statusApproved = 3;
+            } else {
+                //staff department
+                $statusApproved = 0;
+
+                // cek department teknik dan produksi
+                if($deptId == 6 || $deptId == 8) {
+                    if($managerData < 1) $statusApproved = 1;
+                } else {
+                    if($managerData < 1) $statusApproved = 2;
+                }
+            }
+
+
+            //=============================
+            // cek data karyawan ada atau tidak
+            if($statusApproved == 1) {
+                if($gmData < 1) $statusApproved = 2;
+            }
+
+            if($statusApproved == 2) {
+                if($managerHrdData < 1) {
+                    if($hrdSpvData < 1) $statusApproved = 3;
+                }
+            }
+
+            if($statusApproved == 3) {
+                if($direkturData < 1) $statusApproved = 4;
+            }
+
+            if($statusApproved == 4) {
+                if($komisarisData < 1) $statusApproved = 5;
+            }
+            //================================
+
+            // cek lembur perintah atau bukan
+            if(!empty($lembur->atasan_id)) {
+                $statusApproved = 5;
+                $ketTracking = 'Lembur selesai dilaksanakan';
+                $msgSuccess = 'Lembur telah selesai';
+            }
+
             // update lembur status
-            Lembur::where('id', $lembur->id)->update(['status_approved' => 0]);
+            Lembur::where('id', $lembur->id)->update(['status_approved' => $statusApproved]);
 
             // create tracking
             $data = [
                 'lembur_id'         => $lembur->id,
-                'keterangan'        => 'Lembur Diajukan',
+                'keterangan'        => $ketTracking,
                 'keterangan_tolak'  => null,
                 'status'            => null,
                 'date'              => date('Y-m-d')
             ];
 
             TrackingLembur::create($data);
-            return to_route('presensi.lembur')->with('success', 'Lembur berhasil diajukan');
+            return to_route('presensi.lembur')->with('success', $msgSuccess);
         } catch(Exception $e) {
             return back()->with('error', 'Lembur gagal diajukan, silahkan coba lagi!');
         }
@@ -1529,10 +2125,35 @@ class PresensiController extends Controller
             ]);
 
             $roleId = Auth::guard('karyawan')->user()->role_id;
-            $deptId = Auth::guard('karyawan')->user()->kode_dept;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+            $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
 
             $newStatusApprove = 6;
             $dataUpdate = [];
+
+            // hrd spv
+            if($roleId == 1 && $jabatanId == 34) {
+                $newStatusApprove = 8;
+
+                // get tracking manager approve
+                $trackingLembur = TrackingLembur::with(['lembur'])
+                                ->where('lembur_id', $lembur->id)
+                                ->where('status', 9)
+                                ->get();
+
+                if(count($trackingLembur) < 1) {
+                    // update tracking read
+                    $dataTracking = [
+                        'lembur_id'                 => $lembur->id,
+                        'keterangan'                => 'Ditolak HRD SPV',
+                        'keterangan_tolak'          => $request->keterangan_tolak,
+                        'status'                    => 9,
+                        'date'                      => date('Y-m-d'),
+                    ];
+
+                    TrackingLembur::create($dataTracking);
+                }
+            }
 
             // manager
             if($roleId == 2) {
@@ -1675,10 +2296,75 @@ class PresensiController extends Controller
     {
         try {
             $roleId = Auth::guard('karyawan')->user()->role_id;
-            $deptId = Auth::guard('karyawan')->user()->kode_dept;
+            $deptId = Auth::guard('karyawan')->user()->contract->department_id;
+            $jabatanId = Auth::guard('karyawan')->user()->contract->jabatan_id;
+
+            // get manager
+            $managerData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 2)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', $deptId)
+                        ->count();
+            // get hrd manager
+            $managerHrdData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                            ->where('role_id', 2)
+                            ->where('status', 3)
+                            ->whereRelation('contract', 'department_id', 9)
+                            ->count();
+            // get hrd manager
+            $hrdSpvData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 1)
+                        ->where('status', 3)
+                        ->whereRelation('contract', 'department_id', 9)
+                        ->whereRelation('contract', 'jabatan_id', 34)
+                        ->count();
+            // get gm
+            $gmData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                    ->where('role_id', 3)
+                    ->where('status', 3)
+                    ->count();
+            // get direktur
+            $direkturData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 4)
+                        ->where('status', 3)
+                        ->count();
+            // get komisaris
+            $komisarisData = Karyawan::with(['jabatan_kerja', 'department', 'cabang', 'contract', 'oldContract'])
+                        ->where('role_id', 5)
+                        ->where('status', 3)
+                        ->count();
 
             $newStatusApprove = 0;
             $dataUpdate = [];
+
+            // HRD SPV
+            if($roleId == 1 && $jabatanId == 34) {
+                $newStatusApprove = 3;
+
+                // get tracking manager approve
+                $trackingLembur = TrackingLembur::with(['lembur'])
+                                ->where('lembur_id', $lembur->id)
+                                ->where('status', 8)
+                                ->get();
+
+                if(count($trackingLembur) < 1) {
+                    // update tracking read
+                    $dataTracking = [
+                        'lembur_id'                 => $lembur->id,
+                        'keterangan'                => 'Disetujui HRD SPV',
+                        'status'                    => 8,
+                        'date'                      => date('Y-m-d'),
+                    ];
+
+                    TrackingLembur::create($dataTracking);
+                }
+
+                $dataUpdate = [
+                    'status_approved'       => $newStatusApprove,
+                    'hrd_approve_date'  => date('Y-m-d'),
+                    'is_read'               => 0
+                ];
+            }
 
             // manager
             if($roleId == 2) {
@@ -1834,6 +2520,29 @@ class PresensiController extends Controller
             }
 
 
+            //=============================
+            // cek data karyawan ada atau tidak
+            if($newStatusApprove == 1) {
+                if($gmData < 1) $newStatusApprove = 2;
+            }
+
+            if($newStatusApprove == 2) {
+                if($managerHrdData < 1) {
+                    if($hrdSpvData < 1) $newStatusApprove = 3;
+                }
+            }
+
+            if($newStatusApprove == 3) {
+                if($direkturData < 1) $newStatusApprove = 4;
+            }
+
+            if($newStatusApprove == 4) {
+                if($komisarisData < 1) $newStatusApprove = 5;
+            }
+            //================================
+
+            $dataUpdate['status_approved'] = $newStatusApprove;
+
             // update
             Lembur::where('id', $lembur->id)->update($dataUpdate);
             return to_route('presensi.lembur.karyawan')->with('success', 'Lembur berhasil diterima!');
@@ -1844,26 +2553,31 @@ class PresensiController extends Controller
     }
 
 
+    public function destroyLembur(Lembur $lembur)
+    {
+        try {
+            $lemburFoto = LemburFoto::with(['lembur'])->where('lembur_id', $lembur->id)->get();
+
+            //cek data foto
+            if(count($lemburFoto)) {
+                //kalau ada hapus foto nya
+                foreach($lemburFoto as $item) {
+                    Storage::disk('public')->delete($item->foto_lembur);
+                }
+            }
+
+            //hapus lembur
+            LemburFoto::where('lembur_id', $lembur->id)->delete();
+            Lembur::where('id', $lembur->id)->delete();
+
+            return back()->with('success', 'Data lembur ' . tanggalBulanIndo($lembur->tgl_lembur) . ' berhasil dihapus!');
+        } catch (Exception $e) {
+            return back()->with('error', 'Data lembur ' . tanggalBulanIndo($lembur->tgl_lembur) . ' gagal dihapus!');
+        }
+    }
+
+
     //===========================================================================================
-
-    // public function monitoring()
-    // {
-    //     return view('presensi.monitoring');
-    // }
-
-    // public function getpresensi(Request $request)
-    // {
-    //     $tanggal = $request->tanggal;
-    //     $presensi = DB::table('presensi')
-    //         ->select('presensi.*', 'nama_lengkap', 'karyawan.kode_dept', 'jam_masuk', 'nama_jam_kerja', 'jam_masuk', 'jam_pulang')
-    //         ->leftJoin('jam_kerja', 'presensi.kode_jam_kerja', '=', 'jam_kerja.kode_jam_kerja')
-    //         ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
-    //         ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
-    //         ->where('tgl_presensi', $tanggal)
-    //         ->get();
-
-    //     return view('presensi.getpresensi', compact('presensi'));
-    // }
 
     public function tampilkanpeta(Request $request)
     {
@@ -2219,16 +2933,41 @@ class PresensiController extends Controller
         }
     }
 
+    public function izinAjax(Request $request){
+        try{
+            //Get Data Izin
+            $dataIzin = Pengajuanizin::with(['karyawan', 'jenisizin'])
+            ->where('id', $request->izinId)
+            ->first();
+
+            //Get Izin Tracking
+            $izinTracking = TrackingIzin::with(['pengajuanizin'])
+                ->where('pengajuan_izin_id', $request->izinId)
+                ->get();
+
+            return [
+                'error'         => false,
+                'dataIzin'      => $dataIzin,
+                'izinTracking'  => $izinTracking,
+            ];
+
+        }catch(Exception $e){
+            return [
+                'error'     => true,
+                'message'   => $e->getMessage(),
+            ];
+        }
+
+    }
+
     /*=====================================
             ARDI
     =================================== */
     public function monitoring()
     {
         $data = Presensi::with(['karyawan'])
-        ->where('status', 1)
-        ->orWhere('status', 2)
-        ->orWhere('status', 3)
-        ->paginate(10);
+        ->whereIn('absen_in_status', [1,2,5])
+        ->get();
         return view('presensi.monitoring', compact ('data'));
     }
 
@@ -2237,11 +2976,11 @@ class PresensiController extends Controller
         $tanggal = $request->input('tanggal');
         $data = Presensi::whereDate('tgl_presensi', $tanggal)
             ->where(function ($query) {
-                $query->where('status', 1)
-                    ->orWhere('status', 2)
-                    ->orWhere('status', 3);
+                $query->where('absen_in_status', 1)
+                    ->orWhere('absen_in_status', 2)
+                    ->orWhere('absen_in_status', 5);
             })
-            ->paginate(10);
+            ->get();
         $request->session()->put('selectedDate', $tanggal);
         return view('presensi.monitoring', compact('data'));
     }
@@ -2305,7 +3044,7 @@ class PresensiController extends Controller
         $tahun = $request->tahun;
         $data = Pengajuanizin::with(['karyawan', 'jenisizin'])
             ->where('status', $jenisizin)
-            ->where('status_approved', 5)
+            // ->where('status_approved', 5)
             ->whereMonth('tgl_mulai_izin', $bulan)
             ->whereYear('tgl_mulai_izin', $tahun)
             ->get();
@@ -2465,6 +3204,7 @@ class PresensiController extends Controller
         $data = Presensi::find($id);
         return view('presensi.mapkaryawan', compact('data'));
     }
+
     public function absensiMapKaryawanPulang(string $id){
         $data = Presensi::find($id);
         return view('presensi.mapkaryawanpulang', compact('data'));
