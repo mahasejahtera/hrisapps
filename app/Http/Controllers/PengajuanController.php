@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 
-class PengajuanController extends Controller
+class PengajuanController extends BaseController
 {
     /**
      * Display a listing of the resource.
